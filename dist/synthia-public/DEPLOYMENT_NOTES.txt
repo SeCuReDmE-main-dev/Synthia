@@ -1,0 +1,15 @@
+Synthia cPanel deployment notes
+
+Upload these two files to the verified document root for synthia.securedme.ca:
+- index.html
+- synthia-landing.css
+
+Expected final layout:
+synthia.securedme.ca/
+  index.html
+  synthia-landing.css
+
+Before direct server deployment, verify the server path exists:
+/home/xacm7978/synthia.securedme.ca
+
+If the path does not exist, stop and do not guess another path.

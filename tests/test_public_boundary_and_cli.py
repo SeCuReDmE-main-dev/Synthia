@@ -47,6 +47,11 @@ def test_public_nss_docs_keep_clean_chain():
         root / "docs" / "multineutrosophic_kernel.md",
         root / "docs" / "plithogenic_set_kernel.md",
         root / "docs" / "plithogenic_logic_kernel.md",
+        root / "docs" / "plithogenic_probability_statistics_kernel.md",
+        root / "docs" / "symbolic_plithogenic_algebra_kernel.md",
+        root / "docs" / "plithogenic_arithmetic_kernel.md",
+        root / "docs" / "plithogenic_hypersoft_kernel.md",
+        root / "docs" / "neutroalgebra_kernel.md",
     ]
     for path in docs:
         text = path.read_text(encoding="utf-8")

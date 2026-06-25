@@ -227,6 +227,27 @@ MATH_SOURCES: dict[str, MathSource] = {
         "public_nss",
         "symbolic plithogenic numbers and algebraic notation",
     ),
+    "nss.nidus_idearum_v": MathSource(
+        "nss.nidus_idearum_v",
+        "Nidus Idearum V",
+        "https://fs.unm.edu/NidusIdearum5-v3.pdf",
+        "public_nss",
+        "plithogenic arithmetic laws for symbolic components",
+    ),
+    "nss.plithogenic_hypersoft_set": MathSource(
+        "nss.plithogenic_hypersoft_set",
+        "Extension of Soft Set to Hypersoft Set, and then to Plithogenic Hypersoft Set",
+        "https://fs.unm.edu/NSS/ExtensionOfSoftSetToHypersoftSet.pdf",
+        "public_nss",
+        "hypersoft attribute products and plithogenic hypersoft membership",
+    ),
+    "nss.neutroalgebra_generalizes_partial_algebra": MathSource(
+        "nss.neutroalgebra_generalizes_partial_algebra",
+        "NeutroAlgebra is a Generalization of Partial Algebra",
+        "https://fs.unm.edu/NeutroAlgebra.pdf",
+        "public_nss",
+        "partial, outer-defined, and indeterminate algebraic operations",
+    ),
 }
 
 
@@ -686,8 +707,13 @@ def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
     from .neutrosophic_random_variables import random_variable_profile_for_text
     from .neutrosophic_sets import set_membership_profile_for_text
     from .neutrosophic_statistics import statistics_profile_for_text
+    from .neutroalgebra import neutroalgebra_profile_for_text
+    from .plithogenic_arithmetic import plithogenic_arithmetic_profile_for_text
+    from .plithogenic_hypersoft import plithogenic_hypersoft_profile_for_text
     from .plithogenic_logic import plithogenic_logic_profile_for_text
+    from .plithogenic_probability_statistics import plithogenic_probability_profile_for_text
     from .plithogenic_set import plithogenic_set_profile_for_text
+    from .symbolic_plithogenic_algebra import symbolic_plithogenic_profile_for_text
 
     lowered = text.lower()
     carrier_type = "fractal_geometry" if domain == "fractal_geometry" else "lexicon_distribution"
@@ -741,6 +767,21 @@ def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
     plithogenic_logic_profile = plithogenic_logic_profile_for_text(text)
     if plithogenic_logic_profile is not None:
         payload["plithogenic_logic_profile"] = plithogenic_logic_profile
+    plithogenic_probability_profile = plithogenic_probability_profile_for_text(text)
+    if plithogenic_probability_profile is not None:
+        payload["plithogenic_probability_profile"] = plithogenic_probability_profile
+    symbolic_plithogenic_profile = symbolic_plithogenic_profile_for_text(text)
+    if symbolic_plithogenic_profile is not None:
+        payload["symbolic_plithogenic_profile"] = symbolic_plithogenic_profile
+    plithogenic_arithmetic_profile = plithogenic_arithmetic_profile_for_text(text)
+    if plithogenic_arithmetic_profile is not None:
+        payload["plithogenic_arithmetic_profile"] = plithogenic_arithmetic_profile
+    plithogenic_hypersoft_profile = plithogenic_hypersoft_profile_for_text(text)
+    if plithogenic_hypersoft_profile is not None:
+        payload["plithogenic_hypersoft_profile"] = plithogenic_hypersoft_profile
+    neutroalgebra_profile = neutroalgebra_profile_for_text(text)
+    if neutroalgebra_profile is not None:
+        payload["neutroalgebra_profile"] = neutroalgebra_profile
     return payload
 
 

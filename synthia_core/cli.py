@@ -37,6 +37,7 @@ from .neutrosophic_statistics import (
     statistics_explain,
     summarize_neutrosophic_dataset,
 )
+from .neutroalgebra import classify_neutroalgebra_operation, evaluate_neutroalgebra_axiom, neutroalgebra_explain
 from .plithogenic import (
     TIF,
     classify_i_chain_text,
@@ -44,7 +45,14 @@ from .plithogenic import (
     plithogenic_profile_for_source,
     render_symbolic_notation,
 )
+from .plithogenic_arithmetic import multiply_symbolic_plithogenic_numbers, plithogenic_arithmetic_explain
+from .plithogenic_hypersoft import classify_hypersoft_mapping, hypersoft_product, plithogenic_hypersoft_explain
 from .plithogenic_logic import classify_plithogenic_logic, plithogenic_logic_explain
+from .plithogenic_probability_statistics import (
+    plithogenic_probability_explain,
+    refine_plithogenic_probability,
+    summarize_plithogenic_probability_event,
+)
 from .plithogenic_set import operate_plithogenic_sets, plithogenic_set_explain, score_plithogenic_set
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
 from .safety import HIERARCHY
@@ -60,6 +68,11 @@ from .swarm import (
     SwarmReviewPacketBuilder,
     load_json_mapping,
     parse_detection_arg,
+)
+from .symbolic_plithogenic_algebra import (
+    operate_symbolic_plithogenic_numbers,
+    parse_symbolic_plithogenic_number,
+    symbolic_plithogenic_explain,
 )
 from .taxonomy_memory import TaxonomicMemorySystem
 
@@ -164,6 +177,13 @@ def main(argv: list[str] | None = None) -> int:
     plithogenic_sub = plithogenic.add_subparsers(dest="command", required=True)
     plithogenic_profile = plithogenic_sub.add_parser("profile")
     plithogenic_profile.add_argument("--source", required=True)
+    plithogenic_probability = plithogenic_sub.add_parser("probability")
+    plithogenic_probability_sub = plithogenic_probability.add_subparsers(dest="probability_command", required=True)
+    plithogenic_probability_sub.add_parser("explain")
+    plithogenic_probability_event = plithogenic_probability_sub.add_parser("event")
+    plithogenic_probability_event.add_argument("--variables", required=True, help="JSON array or path")
+    plithogenic_probability_refine = plithogenic_probability_sub.add_parser("refine")
+    plithogenic_probability_refine.add_argument("--components", required=True, help="JSON array or path")
     plithogenic_set = plithogenic_sub.add_parser("set")
     plithogenic_set_sub = plithogenic_set.add_subparsers(dest="set_command", required=True)
     plithogenic_set_sub.add_parser("explain")
@@ -178,6 +198,39 @@ def main(argv: list[str] | None = None) -> int:
     plithogenic_logic_sub.add_parser("explain")
     plithogenic_logic_classify = plithogenic_logic_sub.add_parser("classify")
     plithogenic_logic_classify.add_argument("--variables", required=True, help="JSON array or path")
+
+    symbolic_plithogenic = subparsers.add_parser("symbolic-plithogenic")
+    symbolic_plithogenic_sub = symbolic_plithogenic.add_subparsers(dest="command", required=True)
+    symbolic_plithogenic_sub.add_parser("explain")
+    symbolic_number = symbolic_plithogenic_sub.add_parser("number")
+    symbolic_number_sub = symbolic_number.add_subparsers(dest="number_command", required=True)
+    symbolic_number_parse = symbolic_number_sub.add_parser("parse")
+    symbolic_number_parse.add_argument("--value", required=True, help="JSON object or path")
+    symbolic_operate = symbolic_plithogenic_sub.add_parser("operate")
+    symbolic_operate.add_argument("--op", choices=["add", "subtract"], required=True)
+    symbolic_operate.add_argument("--left", required=True, help="JSON object or path")
+    symbolic_operate.add_argument("--right", required=True, help="JSON object or path")
+    symbolic_multiply = symbolic_plithogenic_sub.add_parser("multiply")
+    symbolic_multiply.add_argument("--left", required=True, help="JSON object or path")
+    symbolic_multiply.add_argument("--right", required=True, help="JSON object or path")
+    symbolic_multiply.add_argument("--law", default="absorbance")
+
+    hypersoft = subparsers.add_parser("hypersoft")
+    hypersoft_sub = hypersoft.add_subparsers(dest="command", required=True)
+    hypersoft_sub.add_parser("explain")
+    hypersoft_classify = hypersoft_sub.add_parser("classify")
+    hypersoft_classify.add_argument("--mapping", required=True, help="JSON object or path")
+    hypersoft_product_parser = hypersoft_sub.add_parser("product")
+    hypersoft_product_parser.add_argument("--attributes", required=True, help="JSON object or path")
+
+    neutroalgebra = subparsers.add_parser("neutroalgebra")
+    neutroalgebra_sub = neutroalgebra.add_subparsers(dest="command", required=True)
+    neutroalgebra_sub.add_parser("explain")
+    neutroalgebra_classify = neutroalgebra_sub.add_parser("classify")
+    neutroalgebra_classify.add_argument("--operation", required=True, help="JSON object or path")
+    neutroalgebra_axiom = neutroalgebra_sub.add_parser("axiom")
+    neutroalgebra_axiom.add_argument("--axiom", choices=["associativity", "commutativity"], required=True)
+    neutroalgebra_axiom.add_argument("--table", required=True, help="JSON object or path")
 
     nss = subparsers.add_parser("nss")
     nss_sub = nss.add_subparsers(dest="command", required=True)
@@ -418,6 +471,21 @@ def main(argv: list[str] | None = None) -> int:
     if args.area == "plithogenic" and args.command == "profile":
         _print_json(plithogenic_profile_for_source(args.source))
         return 0
+    if args.area == "plithogenic" and args.command == "probability" and args.probability_command == "explain":
+        _print_json(plithogenic_probability_explain())
+        return 0
+    if args.area == "plithogenic" and args.command == "probability" and args.probability_command == "event":
+        variables = _load_json_value(args.variables)
+        if not isinstance(variables, list):
+            raise ValueError("--variables must decode to a JSON array")
+        _print_json(summarize_plithogenic_probability_event(variables))
+        return 0
+    if args.area == "plithogenic" and args.command == "probability" and args.probability_command == "refine":
+        components = _load_json_value(args.components)
+        if not isinstance(components, list):
+            raise ValueError("--components must decode to a JSON array")
+        _print_json(refine_plithogenic_probability(components))
+        return 0
     if args.area == "plithogenic" and args.command == "set" and args.set_command == "explain":
         _print_json(plithogenic_set_explain())
         return 0
@@ -443,6 +511,42 @@ def main(argv: list[str] | None = None) -> int:
             raise ValueError("--variables must decode to a JSON array")
         _print_json(classify_plithogenic_logic(variables))
         return 0
+
+    if args.area == "symbolic-plithogenic":
+        if args.command == "explain":
+            _print_json(symbolic_plithogenic_explain())
+            return 0
+        if args.command == "number" and args.number_command == "parse":
+            _print_json(parse_symbolic_plithogenic_number(_load_json_value(args.value)))
+            return 0
+        if args.command == "operate":
+            _print_json(operate_symbolic_plithogenic_numbers(args.op, _load_json_value(args.left), _load_json_value(args.right)))
+            return 0
+        if args.command == "multiply":
+            _print_json(multiply_symbolic_plithogenic_numbers(_load_json_value(args.left), _load_json_value(args.right), law=args.law))
+            return 0
+
+    if args.area == "hypersoft":
+        if args.command == "explain":
+            _print_json(plithogenic_hypersoft_explain())
+            return 0
+        if args.command == "classify":
+            _print_json(classify_hypersoft_mapping(_load_json_value(args.mapping)))
+            return 0
+        if args.command == "product":
+            _print_json(hypersoft_product(_load_json_value(args.attributes)))
+            return 0
+
+    if args.area == "neutroalgebra":
+        if args.command == "explain":
+            _print_json(neutroalgebra_explain())
+            return 0
+        if args.command == "classify":
+            _print_json(classify_neutroalgebra_operation(_load_json_value(args.operation)))
+            return 0
+        if args.command == "axiom":
+            _print_json(evaluate_neutroalgebra_axiom(args.axiom, _load_json_value(args.table)))
+            return 0
 
     if args.area == "nss":
         router = NSSMathRouter()
