@@ -171,6 +171,18 @@ class ObservationPacket:
             "novelty_score": self.novelty_score,
             "risk_score": self.risk_score,
             "tif": self.tif().as_dict(),
+            "i_lexicon_classification": PlithogenicMatrix(
+                [
+                    PlithogenicAttribute(
+                        name=detection.label,
+                        value="field_detection",
+                        tif=detection.tif(),
+                        weight=detection.confidence,
+                        source_id=detection.source,
+                    )
+                    for detection in self.detections
+                ]
+            ).indeterminacy_profile(),
             "human_review_required": True,
             "claim_boundary": "candidate observation only; not a species, structure, or hazard claim",
             "hierarchy": HIERARCHY,
@@ -948,6 +960,7 @@ class SwarmReviewPacketBuilder:
         return {
             "packet_type": "synthia_swarm_field_review_packet",
             "observation": observation.as_dict(public_safe=True),
+            "i_lexicon_review_state": observation.as_dict(public_safe=True)["i_lexicon_classification"],
             "expert_review_required": expert_review,
             "candidate_language_only": True,
             "sensitive_location_policy": "public packets round coordinates; private evidence may preserve exact coordinates under permission controls",

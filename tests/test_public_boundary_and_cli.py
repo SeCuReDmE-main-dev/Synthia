@@ -45,6 +45,32 @@ def test_cli_lexicon_classify_smoke(capsys):
     assert code == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["matched_terms"][0]["term"] == "AI-assisted traceability"
+    assert payload["i_lexicon_classification"]["plithogenic_classified_as"] == "I_system^S"
+
+
+def test_cli_i_chain_and_notation_smoke(capsys):
+    code = main(["lexicon", "i-chain", "explain", "--term", "plithogenic contradiction"])
+
+    assert code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["selected_layer"] == "I_system^S"
+
+    code = main(["lexicon", "notation", "render", "--symbol", "I_s", "--format", "algorithm"])
+
+    assert code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["symbol"] == "I_system^S"
+    assert "system_scope" in payload["rendered"]
+
+
+def test_cli_plithogenic_profile_smoke(capsys):
+    code = main(["plithogenic", "profile", "--source", "nss.plithogenic_logic"])
+
+    assert code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["canonical_indeterminacy_class"] == "I_system^S"
+    assert payload["requested_source"]["url"] == "https://fs.unm.edu/NSS/IntroductionPlithogenicLogic1.pdf"
+    assert "raw_gmail_body" not in json.dumps(payload).lower()
 
 
 def test_cli_taxonomy_packet_smoke(capsys):

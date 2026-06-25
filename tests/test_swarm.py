@@ -66,6 +66,7 @@ def test_review_packet_uses_candidate_and_sensitive_location_boundary(tmp_path: 
 
     assert packet["candidate_language_only"] is True
     assert packet["observation"]["telemetry"]["latitude"] == -3.465
+    assert packet["i_lexicon_review_state"]["plithogenic_classified_as"] == "I_system^S"
     assert packet["human_authority_boundary"].startswith("Synthia does not declare")
 
 

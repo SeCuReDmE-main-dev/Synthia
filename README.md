@@ -72,6 +72,20 @@ The goal is to help organize biological knowledge as living memory:
 
 Synthia is also intended to support physics and mathematical classification work by preserving the vocabulary of a system, not only its surface terms. Future work will explore how lexicons from Fractal NeutroGeometry, FfeD-style structures, plithogenic logic, and related classification systems can be mapped without collapsing their specialized meanings.
 
+## I_lexicon Indeterminacy Engine
+
+Synthia now has a sourced symbolic layer for the hierarchy:
+
+```text
+I -> I_system^S -> D_f -> dF -> i_fractal
+```
+
+This layer keeps each form of indeterminacy distinct. `I` is the base indeterminacy signal. `I_system^S` is the system-level form used when a lexicon, agent state, or multi-attribute classification system organizes uncertainty. `D_f` tracks fractal depth or dimension, `dF` tracks delta-fractal drift, and `i_fractal` preserves recursive fractalized indeterminacy.
+
+Plithogenic classification is now treated as `I_system^S`, with `I_s` and `I_s_system` accepted as aliases. The public repo encodes only safe NSS source pointers and sanitized evidence metadata. Private Gmail-derived doctrine remains in `Synthia_organisation`.
+
+The symbolic engine supports stable code IDs, LaTeX forms, display forms, and algorithm forms. This gives Synthia a first practical language for math notation, plithogenic matrix operations, contradiction degree, T/I/F, and refined/sub-indeterminacy without turning the project into a full symbolic algebra system yet.
+
 ## Future LLM Protection Layer
 
 One future role for Synthia is to protect large language models by helping them maintain the lexicon taxonomy of the data they are responsible for. In that direction, Synthia would act as a lexicon sentinel:
@@ -187,6 +201,10 @@ python -m synthia_core.cli sources scan-root
 python -m synthia_core.cli soul build --private-org ..\Synthia_organisation
 python -m synthia_core.cli lexicon classify --text "AI-assisted traceability supports human review." --domain ai_governance
 python -m synthia_core.cli lexicon switch --from taxonomy --to phylocode_nomenclature --context ctx-1
+python -m synthia_core.cli lexicon i-chain explain --term "plithogenic contradiction"
+python -m synthia_core.cli lexicon i-chain classify --text "D_f fractal dimension in taxonomy memory" --domain ffed_math
+python -m synthia_core.cli lexicon notation render --symbol I_s --format latex
+python -m synthia_core.cli plithogenic profile --source nss.plithogenic_logic
 python -m synthia_core.cli taxonomy aburria-packet
 python -m synthia_core.cli swarm queen status
 python -m synthia_core.cli swarm node run --config .\node_config.json

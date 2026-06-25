@@ -14,7 +14,13 @@ from .hipporag_bridge import (
     build_memory_bit_from_cli,
 )
 from .lexicon import seed_base_lexicon
-from .plithogenic import TIF
+from .plithogenic import (
+    TIF,
+    classify_i_chain_text,
+    explain_i_chain,
+    plithogenic_profile_for_source,
+    render_symbolic_notation,
+)
 from .sources import scan_root
 from .swarm import (
     DigitalPheromoneMap,
@@ -82,6 +88,23 @@ def main(argv: list[str] | None = None) -> int:
     switch.add_argument("--from", dest="from_domain", required=True)
     switch.add_argument("--to", dest="to_domain", required=True)
     switch.add_argument("--context", required=True)
+    i_chain = lexicon_sub.add_parser("i-chain")
+    i_chain_sub = i_chain.add_subparsers(dest="i_chain_command", required=True)
+    i_chain_explain = i_chain_sub.add_parser("explain")
+    i_chain_explain.add_argument("--term", required=True)
+    i_chain_classify = i_chain_sub.add_parser("classify")
+    i_chain_classify.add_argument("--text", required=True)
+    i_chain_classify.add_argument("--domain", required=True)
+    notation = lexicon_sub.add_parser("notation")
+    notation_sub = notation.add_subparsers(dest="notation_command", required=True)
+    notation_render = notation_sub.add_parser("render")
+    notation_render.add_argument("--symbol", required=True)
+    notation_render.add_argument("--format", default="ascii", choices=["ascii", "latex", "unicode", "algorithm"])
+
+    plithogenic = subparsers.add_parser("plithogenic")
+    plithogenic_sub = plithogenic.add_subparsers(dest="command", required=True)
+    plithogenic_profile = plithogenic_sub.add_parser("profile")
+    plithogenic_profile.add_argument("--source", required=True)
 
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
@@ -198,6 +221,19 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "switch":
             _print_json(registry.switch_context(args.from_domain, args.to_domain, args.context).as_dict())
             return 0
+        if args.command == "i-chain" and args.i_chain_command == "explain":
+            _print_json(explain_i_chain(args.term))
+            return 0
+        if args.command == "i-chain" and args.i_chain_command == "classify":
+            _print_json(classify_i_chain_text(args.text, args.domain))
+            return 0
+        if args.command == "notation" and args.notation_command == "render":
+            _print_json(render_symbolic_notation(args.symbol, args.format))
+            return 0
+
+    if args.area == "plithogenic" and args.command == "profile":
+        _print_json(plithogenic_profile_for_source(args.source))
+        return 0
 
     if args.area == "codex" and args.command == "status":
         _print_json(codex_status().as_dict())

@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Iterable
 from uuid import uuid4
 
-from .plithogenic import PlithogenicAttribute, PlithogenicMatrix, TIF
+from .plithogenic import PlithogenicAttribute, PlithogenicMatrix, TIF, resolve_indeterminacy_symbol, SYMBOLIC_NOTATIONS
 from .safety import HIERARCHY
 
 
@@ -41,9 +41,13 @@ class LexiconNode:
     definition: str = ""
     source_ids: tuple[str, ...] = ()
     tif: TIF = field(default_factory=TIF)
+    indeterminacy_layer: str = "I_system^S"
+    plithogenic_role: str = "lexicon classification under system-level indeterminacy"
+    private_evidence_ids: tuple[str, ...] = ()
     node_id: str = field(default_factory=lambda: f"node.{uuid4().hex}")
 
     def as_dict(self) -> dict[str, object]:
+        canonical_layer = resolve_indeterminacy_symbol(self.indeterminacy_layer)
         return {
             "node_id": self.node_id,
             "term": self.term,
@@ -52,6 +56,13 @@ class LexiconNode:
             "definition": self.definition,
             "source_ids": list(self.source_ids),
             "tif": self.tif.as_dict(),
+            "i_lexicon": {
+                "indeterminacy_layer": canonical_layer,
+                "symbolic_notation": SYMBOLIC_NOTATIONS[canonical_layer].as_dict(),
+                "plithogenic_role": self.plithogenic_role,
+                "source_ids": list(self.source_ids),
+                "private_evidence_ids": list(self.private_evidence_ids),
+            },
             "hierarchy": HIERARCHY,
         }
 
@@ -91,6 +102,7 @@ class LexiconSwitchTrace:
             "preserved_node_ids": list(self.preserved_node_ids),
             "bridge_ids": list(self.bridge_ids),
             "plithogenic_profile": self.plithogenic_profile,
+            "i_lexicon_switch_state": self.plithogenic_profile.get("indeterminacy_profile", {}),
             "hierarchy": HIERARCHY,
         }
 
@@ -151,6 +163,7 @@ class ILexicon:
             "domain": domain,
             "matched_terms": [node.as_dict() for node in matching],
             "plithogenic_profile": matrix.profile(),
+            "i_lexicon_classification": matrix.indeterminacy_profile(),
             "hierarchy": HIERARCHY,
         }
 

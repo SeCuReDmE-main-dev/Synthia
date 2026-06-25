@@ -124,6 +124,7 @@ class HippoRAGMemoryBit:
             "source_ids": list(self.source_ids),
             "tif": self.tif.as_dict(),
             "plithogenic_profile": profile,
+            "i_lexicon_trace": profile["indeterminacy_profile"],
             "created_at": self.created_at,
             "hierarchy": HIERARCHY,
         }

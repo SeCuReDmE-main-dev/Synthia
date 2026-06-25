@@ -38,6 +38,7 @@ def test_hipporag_memory_bit_preserves_lexicon_graph_and_tif():
     assert payload["selection_score"] > 0.0
     assert payload["tif"]["hierarchy"] == HIERARCHY
     assert payload["plithogenic_profile"]["hierarchy"] == HIERARCHY
+    assert payload["i_lexicon_trace"]["plithogenic_classified_as"] == "I_system^S"
 
 
 def test_hipporag_memory_bit_round_trips_mapping():
@@ -101,4 +102,3 @@ def test_cli_hipporag_backend_status_smoke(capsys):
         "hipporag_graph_edges",
         "hipporag_selection_traces",
     ]
-
