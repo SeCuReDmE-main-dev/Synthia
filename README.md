@@ -1,4 +1,4 @@
- ![Synthia-identity](./assets/Banner/wide%20banner%205.png)
+ ![Synthia-identity](./assets/Banner/repo%20banner/final%20repo%20version.png)
 
 # Synthia
 
