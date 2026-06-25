@@ -1,7 +1,9 @@
+import os
+
 from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.orm import declarative_base
 
-db_url = "postgresql://postgres:Scrde.ca7476@localhost/evolving_lexicon_db"
+db_url = os.environ.get("SYNTHIA_DATABASE_URL", "postgresql://synthia:synthia_dev_password@localhost/evolving_lexicon_db")
 Base = declarative_base()
 
 class Word(Base):

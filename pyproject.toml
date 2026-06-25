@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synthia"
+version = "0.1.0"
+description = "Synthia I_lexicon taxonomy memory core"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+synthia = "synthia_core.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["synthia_core*"]

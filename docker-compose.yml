@@ -18,7 +18,7 @@ services:
     container_name: evolving-lexicon-db
     environment:
       POSTGRES_USER: synthia
-      POSTGRES_PASSWORD: T9h#vR2p$Y7z!G4b # Use the correct password
+      POSTGRES_PASSWORD: ${SYNTHIA_DB_PASSWORD:-synthia_dev_password}
       POSTGRES_DB: evolving_lexicon_db
     ports:
       - "5432:5432"

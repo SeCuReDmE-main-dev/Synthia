@@ -1,9 +1,10 @@
+import os
+
 from sqlalchemy import create_engine, Column, Integer, String, Float, JSON
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-# Database URL - Replace with your actual credentials
-db_url = "postgresql://synthia:T9h#vR2p$Y7z!G4b@localhost/evolving_lexicon_db" # those are fake one 
+db_url = os.environ.get("SYNTHIA_DATABASE_URL", "postgresql://synthia:synthia_dev_password@localhost/evolving_lexicon_db")
 
 Base = declarative_base()
 

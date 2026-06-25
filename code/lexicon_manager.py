@@ -1,3 +1,5 @@
+import ast
+
 import numpy as np
 from sqlalchemy import create_engine, Column, Integer, String, Float, JSON
 from sqlalchemy.orm import sessionmaker
@@ -32,7 +34,7 @@ class LexiconManager:
     def get_word_vector(self, word):
         word_entry = self.session.query(Word).filter_by(word=word).first()
         if word_entry:
-            return np.array(eval(word_entry.vector))  # Convert string back to NumPy array
+            return np.array(ast.literal_eval(word_entry.vector))  # Convert string back to NumPy array
         else:
             return None
 

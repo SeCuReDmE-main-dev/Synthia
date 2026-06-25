@@ -16,3 +16,19 @@ _site/
 # counterproductive to check this file into the repository.
 # Details at https://github.com/github/pages-gem/issues/768
 Gemfile.lock
+
+# Synthia public/private boundary
+../Synthia_organisation/
+Synthia_organisation/
+private_evidence/
+*.env
+.env
+auth.json
+*.token
+*.secret
+*.key
+*.pem
+__pycache__/
+.pytest_cache/
+*.pyc
+*.egg-info/
