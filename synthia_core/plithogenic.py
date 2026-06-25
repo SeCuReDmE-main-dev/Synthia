@@ -1,4 +1,4 @@
-"""Bounded plithogenic helpers for Synthia's I_lexicon."""
+"""Bounded plithogenic and system-indeterminacy helpers for Synthia."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ def clamp01(value: float) -> float:
 
 @dataclass(frozen=True)
 class MathSource:
-    """Public or private-safe source pointer for Synthia math doctrine."""
+    """Public source pointer for Synthia math doctrine."""
 
     source_id: str
     title: str
@@ -87,6 +87,20 @@ class IndeterminacyLayer:
 
 
 MATH_SOURCES: dict[str, MathSource] = {
+    "nss.hub": MathSource(
+        "nss.hub",
+        "Neutrosophic Sets and Systems journal hub",
+        "https://fs.unm.edu/NSS/",
+        "public_nss",
+        "public mathematical source-family map",
+    ),
+    "nss.articles": MathSource(
+        "nss.articles",
+        "Neutrosophic Sets and Systems articles index",
+        "https://fs.unm.edu/NSS/Articles.htm",
+        "public_nss",
+        "source discovery and verification index",
+    ),
     "nss.indeterminacy": MathSource(
         "nss.indeterminacy",
         "Indeterminacy in Neutrosophic Theories and their Applications",
@@ -122,28 +136,6 @@ MATH_SOURCES: dict[str, MathSource] = {
         "public_nss",
         "symbolic plithogenic numbers and algebraic notation",
     ),
-    "nss.neutrogeometry_fractal": MathSource(
-        "nss.neutrogeometry_fractal",
-        "NeutroGeometry and Fractal Geometry",
-        "https://fs.unm.edu/NSS/01NeutroGeometryFractal.pdf",
-        "public_nss",
-        "fractal geometry, fractal dimension, and indeterminacy",
-    ),
-    "nss.neutrosophy_hub": MathSource(
-        "nss.neutrosophy_hub",
-        "NSS / Neutrosophy source hub",
-        "https://fs.unm.edu/neutrosophy.htm",
-        "public_nss",
-        "source index for neutrosophic and plithogenic theories",
-    ),
-    "private.gmail.prof_fs.plitho_i_system": MathSource(
-        "private.gmail.prof_fs.plitho_i_system",
-        "Private Gmail evidence ledger: Prof. FS plithogenic system-indeterminacy thread",
-        None,
-        "private_gmail_metadata",
-        "working doctrine that plithogenic belongs under I_system^S",
-        public_safe=False,
-    ),
 }
 
 
@@ -160,29 +152,50 @@ SYMBOLIC_NOTATIONS: dict[str, SymbolicNotation] = {
         ascii="I_system^S",
         latex=r"I_{\mathrm{system}}^{S}",
         unicode="I_system^S",
-        algorithm="I_system^S := system_scope(I, lexicon_domain, agent_state)",
+        algorithm="I_system^S := system_scope(I, active_system, source_context)",
         aliases=("I_s", "I_s_system", "I_system"),
+    ),
+    "H_lex": SymbolicNotation(
+        canonical_id="H_lex",
+        ascii="H_lex",
+        latex=r"H_{\mathrm{lex}}",
+        unicode="H_lex",
+        algorithm="H_lex := -sum(P(L_i) log(P(L_i))) / log(|L|)",
+    ),
+    "G_lex": SymbolicNotation(
+        canonical_id="G_lex",
+        ascii="G_lex",
+        latex=r"G_{\mathrm{lex}}",
+        unicode="G_lex",
+        algorithm="G_lex := 1 - (P_top - P_second)",
+    ),
+    "I_lexicon": SymbolicNotation(
+        canonical_id="I_lexicon",
+        ascii="I_lexicon",
+        latex=r"I_{\mathrm{lexicon}}",
+        unicode="I_lexicon",
+        algorithm="I_lexicon := bounded(alpha*H_lex + beta*G_lex + gamma*contradiction_load)",
     ),
     "D_f": SymbolicNotation(
         canonical_id="D_f",
         ascii="D_f",
         latex=r"D_f",
         unicode="D_f",
-        algorithm="D_f := fractal_depth_or_dimension(I_system^S)",
+        algorithm="D_f := explicit_fractal_geometry_carrier_only",
     ),
     "dF": SymbolicNotation(
         canonical_id="dF",
         ascii="dF",
         latex=r"dF",
         unicode="dF",
-        algorithm="dF := abs(D_f - I_system^S)",
+        algorithm="dF := explicit_fractal_geometry_delta_only",
     ),
     "i_fractal": SymbolicNotation(
         canonical_id="i_fractal",
         ascii="i_fractal",
         latex=r"i_{\mathrm{fractal}}",
         unicode="i_fractal",
-        algorithm="i_fractal := recursive_fractalized_indeterminacy(I, I_system^S, D_f, dF)",
+        algorithm="i_fractal := explicit_fractal_geometry_indeterminacy_only",
         aliases=("I_fractal",),
     ),
     "plithogenic_matrix": SymbolicNotation(
@@ -206,32 +219,34 @@ INDETERMINACY_LAYERS: dict[str, IndeterminacyLayer] = {
     "I_system^S": IndeterminacyLayer(
         "I_system^S",
         1,
-        "system-scoped indeterminacy inside the active lexicon or agent system",
+        "system-scoped indeterminacy inside the active lexicon, task, corpus, and source context",
         SYMBOLIC_NOTATIONS["I_system^S"],
-        ("nss.indeterminacy", "nss.plithogenic_logic", "private.gmail.prof_fs.plitho_i_system"),
+        ("nss.hub", "nss.indeterminacy", "nss.plithogenic_logic"),
     ),
-    "D_f": IndeterminacyLayer(
-        "D_f",
+    "H_lex": IndeterminacyLayer(
+        "H_lex",
         2,
-        "fractal depth or dimension marker of the indeterminate structure",
-        SYMBOLIC_NOTATIONS["D_f"],
-        ("nss.neutrogeometry_fractal",),
+        "normalized lexicon entropy over candidate lexicons",
+        SYMBOLIC_NOTATIONS["H_lex"],
+        ("nss.hub", "nss.plithogenic_probability_statistics"),
     ),
-    "dF": IndeterminacyLayer(
-        "dF",
+    "G_lex": IndeterminacyLayer(
+        "G_lex",
         3,
-        "delta-fractal drift between system indeterminacy and fractal depth",
-        SYMBOLIC_NOTATIONS["dF"],
-        ("nss.neutrogeometry_fractal",),
+        "lexicon decision-gap uncertainty between the strongest and second-strongest lexicon",
+        SYMBOLIC_NOTATIONS["G_lex"],
+        ("nss.hub", "nss.plithogenic_probability_statistics"),
     ),
-    "i_fractal": IndeterminacyLayer(
-        "i_fractal",
+    "I_lexicon": IndeterminacyLayer(
+        "I_lexicon",
         4,
-        "fractalized indeterminacy retained for recursive classification",
-        SYMBOLIC_NOTATIONS["i_fractal"],
-        ("nss.indeterminacy", "nss.neutrogeometry_fractal"),
+        "final context-preserving lexicon indeterminacy state",
+        SYMBOLIC_NOTATIONS["I_lexicon"],
+        ("nss.hub", "nss.plithogenic_logic", "nss.plithogenic_probability_statistics"),
     ),
 }
+
+DEFAULT_LAYER_ORDER = ("I", "I_system^S", "H_lex", "G_lex", "I_lexicon")
 
 SYMBOL_ALIASES: dict[str, str] = {}
 for _canonical, _notation in SYMBOLIC_NOTATIONS.items():
@@ -255,21 +270,99 @@ def render_symbolic_notation(symbol: str, format_name: str = "ascii") -> dict[st
 
 
 @dataclass(frozen=True)
+class FractalCarrierProfile:
+    """Explicit opt-in carrier for geometric or multiscale indeterminacy."""
+
+    D_f: float | None = None
+    dF: float | None = None
+    i_fractal: float | None = None
+    source_id: str = "fractal_neutrogeometry_internal"
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "carrier_type": "fractal_geometry",
+            "system_principle": "I must first become I_system^S before a geometric or multiscale carrier is selected.",
+            "public_default": False,
+            "variables": {
+                "D_f": None if self.D_f is None else float(self.D_f),
+                "dF": None if self.dF is None else float(self.dF),
+                "i_fractal": None if self.i_fractal is None else clamp01(self.i_fractal),
+            },
+            "source_id": self.source_id,
+            "boundary": "This carrier is specialized; it is not Synthia's public default I_lexicon chain.",
+        }
+
+
+@dataclass(frozen=True)
+class SystemIndeterminacyChain:
+    """Generic Synthia chain after I has been located inside a system."""
+
+    I: float
+    I_system: float
+    H_lex: float
+    G_lex: float
+    I_lexicon: float
+    carrier_type: str = "lexicon_distribution"
+    source: str = "derived"
+    specialized_carrier: FractalCarrierProfile | None = None
+
+    @classmethod
+    def from_tif(cls, tif: "TIF", carrier_type: str = "lexicon_distribution") -> "SystemIndeterminacyChain":
+        bounded = tif.bounded()
+        base_i = bounded.I
+        system_i = base_i if bounded.I_system is None else bounded.I_system
+        h_lex = system_i if bounded.H_lex is None else bounded.H_lex
+        g_lex = base_i if bounded.G_lex is None else bounded.G_lex
+        i_lexicon = clamp01((system_i + h_lex + g_lex) / 3.0) if bounded.I_lexicon is None else bounded.I_lexicon
+        specialized = None
+        if carrier_type == "fractal_geometry":
+            specialized = FractalCarrierProfile(bounded.D_f, bounded.dF, bounded.i_fractal)
+        return cls(
+            I=base_i,
+            I_system=system_i,
+            H_lex=h_lex,
+            G_lex=g_lex,
+            I_lexicon=i_lexicon,
+            carrier_type=carrier_type,
+            source="explicit_or_derived",
+            specialized_carrier=specialized,
+        )
+
+    def as_dict(self) -> dict[str, object]:
+        payload: dict[str, object] = {
+            "I": clamp01(self.I),
+            "I_system^S": clamp01(self.I_system),
+            "H_lex": clamp01(self.H_lex),
+            "G_lex": clamp01(self.G_lex),
+            "I_lexicon": clamp01(self.I_lexicon),
+            "carrier_type": self.carrier_type,
+            "hierarchy": HIERARCHY,
+            "classification_family": "I",
+            "source": self.source,
+            "layers": [INDETERMINACY_LAYERS[symbol].as_dict() for symbol in DEFAULT_LAYER_ORDER],
+        }
+        if self.specialized_carrier is not None:
+            payload["specialized_carrier"] = self.specialized_carrier.as_dict()
+        return payload
+
+
+IndeterminacyChain = SystemIndeterminacyChain
+
+
+@dataclass(frozen=True)
 class PlithogenicIProfile:
     """Synthia doctrine: plithogenic work belongs to I_system^S."""
 
     canonical_indeterminacy_class: str = "I_system^S"
     role: str = "multi-attribute / multi-variable system indeterminacy organizer"
-    evidence_status: str = "public_nss_supported + gmail_prof_fs_confirmed_inferred"
+    evidence_status: str = "public_nss_supported + system_indeterminacy_inferred"
     source_ids: tuple[str, ...] = (
-        "nss.indeterminacy",
+        "nss.hub",
         "nss.plithogenic_set",
         "nss.plithogenic_logic",
         "nss.plithogenic_probability_statistics",
         "nss.symbolic_plithogenic_algebra",
-        "private.gmail.prof_fs.plitho_i_system",
     )
-    private_evidence_ids: tuple[str, ...] = ("gmail.thread.19edbb1c9fd0030e",)
 
     def as_dict(self) -> dict[str, object]:
         canonical = resolve_indeterminacy_symbol(self.canonical_indeterminacy_class)
@@ -282,65 +375,21 @@ class PlithogenicIProfile:
             "notation": SYMBOLIC_NOTATIONS[canonical].as_dict(),
             "algorithm_notation": SYMBOLIC_NOTATIONS["plithogenic_matrix"].as_dict(),
             "source_ids": list(self.source_ids),
-            "private_evidence_ids": list(self.private_evidence_ids),
-            "human_authority_boundary": "Gmail evidence guides Synthia doctrine; public NSS sources remain the formal math sources.",
-        }
-
-
-@dataclass(frozen=True)
-class IndeterminacyChain:
-    """Explicit Synthia hierarchy for non-collapsed indeterminacy."""
-
-    I: float
-    I_system: float
-    D_f: float
-    dF: float
-    i_fractal: float
-    source: str = "derived"
-
-    @classmethod
-    def from_tif(cls, tif: "TIF") -> "IndeterminacyChain":
-        bounded = tif.bounded()
-        base_i = bounded.I
-        system_i = base_i if bounded.I_system is None else bounded.I_system
-        fractal_dimension = system_i if bounded.D_f is None else float(bounded.D_f)
-        delta_fractal = abs(fractal_dimension - system_i) if bounded.dF is None else float(bounded.dF)
-        fractalized_i = (
-            clamp01(max(base_i, system_i, min(1.0, abs(delta_fractal))))
-            if bounded.i_fractal is None
-            else bounded.i_fractal
-        )
-        return cls(
-            I=base_i,
-            I_system=system_i,
-            D_f=fractal_dimension,
-            dF=delta_fractal,
-            i_fractal=fractalized_i,
-            source="explicit_or_derived",
-        )
-
-    def as_dict(self) -> dict[str, object]:
-        return {
-            "I": clamp01(self.I),
-            "I_system^S": clamp01(self.I_system),
-            "D_f": float(self.D_f),
-            "dF": float(self.dF),
-            "i_fractal": clamp01(self.i_fractal),
-            "hierarchy": HIERARCHY,
-            "classification_family": "I",
-            "source": self.source,
-            "layers": [INDETERMINACY_LAYERS[symbol].as_dict() for symbol in ("I", "I_system^S", "D_f", "dF", "i_fractal")],
+            "human_authority_boundary": "Public NSS sources support the math layer; Synthia remains an educational classifier.",
         }
 
 
 @dataclass(frozen=True)
 class TIF:
-    """Truth, indeterminacy, falsity triplet."""
+    """Truth, indeterminacy, falsity triplet with optional carriers."""
 
     T: float = 1.0
     I: float = 0.0
     F: float = 0.0
     I_system: float | None = None
+    H_lex: float | None = None
+    G_lex: float | None = None
+    I_lexicon: float | None = None
     D_f: float | None = None
     dF: float | None = None
     i_fractal: float | None = None
@@ -351,33 +400,30 @@ class TIF:
             I=clamp01(self.I),
             F=clamp01(self.F),
             I_system=None if self.I_system is None else clamp01(self.I_system),
+            H_lex=None if self.H_lex is None else clamp01(self.H_lex),
+            G_lex=None if self.G_lex is None else clamp01(self.G_lex),
+            I_lexicon=None if self.I_lexicon is None else clamp01(self.I_lexicon),
             D_f=None if self.D_f is None else float(self.D_f),
             dF=None if self.dF is None else float(self.dF),
             i_fractal=None if self.i_fractal is None else clamp01(self.i_fractal),
         )
 
-    def as_dict(self) -> dict[str, object]:
+    def system_chain(self, carrier_type: str = "lexicon_distribution") -> SystemIndeterminacyChain:
+        return SystemIndeterminacyChain.from_tif(self, carrier_type=carrier_type)
+
+    def as_dict(self, carrier_type: str = "lexicon_distribution") -> dict[str, object]:
         bounded = self.bounded()
-        chain = IndeterminacyChain.from_tif(bounded)
-        explicit_layer = "I"
-        if bounded.I_system is not None:
-            explicit_layer = "I_system^S"
-        if bounded.D_f is not None:
-            explicit_layer = "D_f"
-        if bounded.dF is not None:
-            explicit_layer = "dF"
-        if bounded.i_fractal is not None:
-            explicit_layer = "i_fractal"
+        chain = bounded.system_chain(carrier_type=carrier_type)
         return {
             "T": bounded.T,
             "I": bounded.I,
             "F": bounded.F,
             "I_system^S": bounded.I_system,
-            "D_f": bounded.D_f,
-            "dF": bounded.dF,
-            "i_fractal": bounded.i_fractal,
-            "indeterminacy_chain": chain.as_dict(),
-            "i_lexicon_layer": explicit_layer,
+            "H_lex": bounded.H_lex,
+            "G_lex": bounded.G_lex,
+            "I_lexicon": bounded.I_lexicon,
+            "system_indeterminacy_chain": chain.as_dict(),
+            "i_lexicon_layer": "I_lexicon",
             "classification_family": "I",
             "hierarchy": HIERARCHY,
         }
@@ -420,10 +466,13 @@ class PlithogenicMatrix:
                         T=float(tif_payload.get("T", item.get("T", 1.0))),
                         I=float(tif_payload.get("I", item.get("I", 0.0))),
                         F=float(tif_payload.get("F", item.get("F", 0.0))),
-                        I_system=tif_payload.get("I_system^S") if "I_system^S" in tif_payload else item.get("I_system"),
-                        D_f=tif_payload.get("D_f") if "D_f" in tif_payload else item.get("D_f"),
-                        dF=tif_payload.get("dF") if "dF" in tif_payload else item.get("dF"),
-                        i_fractal=tif_payload.get("i_fractal") if "i_fractal" in tif_payload else item.get("i_fractal"),
+                        I_system=tif_payload.get("I_system^S", payload_or_none(item, "I_system")),
+                        H_lex=tif_payload.get("H_lex", payload_or_none(item, "H_lex")),
+                        G_lex=tif_payload.get("G_lex", payload_or_none(item, "G_lex")),
+                        I_lexicon=tif_payload.get("I_lexicon", payload_or_none(item, "I_lexicon")),
+                        D_f=tif_payload.get("D_f", payload_or_none(item, "D_f")),
+                        dF=tif_payload.get("dF", payload_or_none(item, "dF")),
+                        i_fractal=tif_payload.get("i_fractal", payload_or_none(item, "i_fractal")),
                     ),
                     weight=float(item.get("weight", 1.0)),
                     source_id=None if item.get("source_id") is None else str(item.get("source_id")),
@@ -460,42 +509,38 @@ class PlithogenicMatrix:
             "F": clamp01(sum(item.tif.bounded().F * max(0.0, item.weight) for item in self.attributes) / weight_sum),
         }
 
+    def system_indeterminacy_chain(self) -> SystemIndeterminacyChain:
+        if not self.attributes:
+            return TIF(T=0.0, I=1.0, F=0.0, I_system=1.0, H_lex=1.0, G_lex=1.0, I_lexicon=1.0).system_chain()
+        truth = self.weighted_cumulative_truth()
+        contradiction = float(self.contradiction_summary()["max_degree"])
+        h_lex = clamp01(max(truth["I"], contradiction))
+        g_lex = clamp01(1.0 - max(0.0, truth["T"] - truth["F"]))
+        i_lexicon = clamp01((h_lex + g_lex + contradiction) / 3.0)
+        return TIF(T=truth["T"], I=truth["I"], F=truth["F"], I_system=h_lex, H_lex=h_lex, G_lex=g_lex, I_lexicon=i_lexicon).system_chain()
+
     def feature_vector(self) -> list[float]:
         truth = self.weighted_cumulative_truth()
         contradictions = self.contradiction_summary()
-        return [truth["T"], truth["I"], truth["F"], float(contradictions["max_degree"])]
+        chain = self.system_indeterminacy_chain()
+        return [truth["T"], truth["I"], truth["F"], float(contradictions["max_degree"]), chain.H_lex, chain.G_lex, chain.I_lexicon]
 
     def indeterminacy_profile(self) -> dict[str, object]:
-        plithogenic_i = PlithogenicIProfile().as_dict()
-        if not self.attributes:
-            chain = IndeterminacyChain.from_tif(TIF(T=0.0, I=1.0, F=0.0, I_system=1.0, D_f=1.0, dF=0.0, i_fractal=1.0))
-            return {
-                "classification_family": "I",
-                "plithogenic_classified_as": "I_system^S",
-                "plithogenic_i_profile": plithogenic_i,
-                "dominant_chain": chain.as_dict(),
-                "chain_count": 0,
-                "hierarchy": HIERARCHY,
-            }
-        weighted_i = self.weighted_cumulative_truth()["I"]
-        dominant = max(
-            (IndeterminacyChain.from_tif(item.tif) for item in self.attributes),
-            key=lambda chain: chain.i_fractal,
-        )
+        chain = self.system_indeterminacy_chain()
         return {
             "classification_family": "I",
             "plithogenic_classified_as": "I_system^S",
-            "plithogenic_i_profile": plithogenic_i,
-            "weighted_I": weighted_i,
-            "dominant_chain": dominant.as_dict(),
+            "plithogenic_i_profile": PlithogenicIProfile().as_dict(),
+            "weighted_I": self.weighted_cumulative_truth()["I"] if self.attributes else 1.0,
+            "system_indeterminacy_chain": chain.as_dict(),
             "chain_count": len(self.attributes),
-            "rule": "Plithogenic classification is treated as an I-family operation because contradiction and attribute multiplicity are organized indeterminacy.",
+            "rule": "Plithogenic classification is treated as a system-level aggregation and contradiction layer before final lexicon selection.",
             "hierarchy": HIERARCHY,
         }
 
     def profile(self) -> dict[str, object]:
         return {
-            "model": "synthia_plithogenic_matrix_v1",
+            "model": "synthia_plithogenic_matrix_v2",
             "classification_family": "I",
             "plithogenic_classified_as": "I_system^S",
             "attributes": [item.as_dict() for item in self.attributes],
@@ -507,6 +552,10 @@ class PlithogenicMatrix:
         }
 
 
+def payload_or_none(payload: Mapping[str, object], key: str) -> object | None:
+    return payload.get(key) if key in payload else None
+
+
 def math_sources_payload(public_only: bool = True) -> list[dict[str, object]]:
     return [
         source.as_dict()
@@ -515,45 +564,49 @@ def math_sources_payload(public_only: bool = True) -> list[dict[str, object]]:
     ]
 
 
-def explain_i_chain(term: str = "") -> dict[str, object]:
-    lowered = term.lower()
-    selected = "I_system^S" if "plitho" in lowered else "I"
-    if "d_f" in lowered or "dimension" in lowered:
-        selected = "D_f"
-    elif "df" in lowered or "delta" in lowered or "drift" in lowered:
-        selected = "dF"
-    elif "fractal" in lowered:
-        selected = "i_fractal"
-    return {
+def explain_i_chain(term: str = "", domain: str = "general") -> dict[str, object]:
+    lowered = f"{term} {domain}".lower()
+    carrier_type = "fractal_geometry" if domain == "fractal_geometry" else "lexicon_distribution"
+    chain = TIF(T=0.0, I=1.0, F=0.0, I_system=1.0, H_lex=1.0, G_lex=1.0, I_lexicon=1.0).system_chain(carrier_type=carrier_type)
+    payload = {
         "term": term,
-        "selected_layer": selected,
-        "selected_layer_detail": INDETERMINACY_LAYERS[selected].as_dict(),
+        "domain": domain,
+        "selected_layer": "I_lexicon",
+        "carrier_type": carrier_type,
+        "selected_layer_detail": INDETERMINACY_LAYERS["I_lexicon"].as_dict(),
         "hierarchy": HIERARCHY,
-        "layers": [INDETERMINACY_LAYERS[symbol].as_dict() for symbol in ("I", "I_system^S", "D_f", "dF", "i_fractal")],
-        "plithogenic_i_profile": PlithogenicIProfile().as_dict() if "plitho" in lowered else None,
+        "layers": [INDETERMINACY_LAYERS[symbol].as_dict() for symbol in DEFAULT_LAYER_ORDER],
+        "system_indeterminacy_chain": chain.as_dict(),
         "public_sources": math_sources_payload(public_only=True),
     }
+    if "plitho" in lowered or "contradiction" in lowered:
+        payload["plithogenic_i_profile"] = PlithogenicIProfile().as_dict()
+    if carrier_type == "fractal_geometry":
+        payload["specialized_carrier"] = FractalCarrierProfile().as_dict()
+    return payload
 
 
 def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
     lowered = text.lower()
-    if "plitho" in lowered or "contradiction" in lowered or "attribute" in lowered:
-        selected = "I_system^S"
-    elif "dimension" in lowered or "d_f" in lowered:
-        selected = "D_f"
-    elif "delta" in lowered or "drift" in lowered or "df" in lowered:
-        selected = "dF"
-    elif "fractal" in lowered:
-        selected = "i_fractal"
-    else:
-        selected = "I"
+    carrier_type = "fractal_geometry" if domain == "fractal_geometry" else "lexicon_distribution"
+    chain = TIF(
+        T=0.7,
+        I=0.3,
+        F=0.0,
+        I_system=0.3,
+        H_lex=0.3,
+        G_lex=0.3,
+        I_lexicon=0.3,
+    ).system_chain(carrier_type=carrier_type)
     return {
         "domain": domain,
         "text": text,
-        "selected_layer": selected,
-        "selected_layer_detail": INDETERMINACY_LAYERS[selected].as_dict(),
-        "chain": explain_i_chain(text),
-        "plithogenic_profile": PlithogenicIProfile().as_dict() if selected == "I_system^S" else None,
+        "selected_layer": "I_lexicon" if carrier_type == "lexicon_distribution" else "I_system^S",
+        "carrier_type": carrier_type,
+        "selected_layer_detail": INDETERMINACY_LAYERS["I_lexicon"].as_dict(),
+        "chain": explain_i_chain(text, domain=domain),
+        "plithogenic_profile": PlithogenicIProfile().as_dict() if "plitho" in lowered or "contradiction" in lowered else None,
+        "system_indeterminacy_chain": chain.as_dict(),
         "hierarchy": HIERARCHY,
     }
 

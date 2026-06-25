@@ -1,10 +1,19 @@
 """Synthia public core package."""
 
 from .lexicon import ILexicon, LexiconBridge, LexiconNode, LexiconSwitchTrace
-from .plithogenic import IndeterminacyChain, MathSource, PlithogenicIProfile, PlithogenicMatrix, SymbolicNotation, TIF
+from .nss import NSSMathRouter, NSSSourceFamily
+from .plithogenic import (
+    FractalCarrierProfile,
+    MathSource,
+    PlithogenicIProfile,
+    PlithogenicMatrix,
+    SymbolicNotation,
+    SystemIndeterminacyChain,
+    TIF,
+)
 from .taxonomy_memory import TaxonomicMemorySystem
 
-HIERARCHY = "I -> I_system^S -> D_f -> dF -> i_fractal"
+HIERARCHY = "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
 
 __all__ = [
     "HIERARCHY",
@@ -12,11 +21,14 @@ __all__ = [
     "LexiconBridge",
     "LexiconNode",
     "LexiconSwitchTrace",
-    "IndeterminacyChain",
+    "FractalCarrierProfile",
     "MathSource",
+    "NSSMathRouter",
+    "NSSSourceFamily",
     "PlithogenicIProfile",
     "PlithogenicMatrix",
     "SymbolicNotation",
+    "SystemIndeterminacyChain",
     "TIF",
     "TaxonomicMemorySystem",
 ]

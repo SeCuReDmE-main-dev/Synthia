@@ -18,6 +18,7 @@ class LexiconDomain(str, Enum):
     AI_GOVERNANCE = "ai_governance"
     FFED_MATH = "ffed_math"
     PHYSICS = "physics"
+    FRACTAL_GEOMETRY = "fractal_geometry"
     ARCHAEOLOGY = "archaeology"
     CONSERVATION = "conservation"
     GENERAL = "general"
@@ -43,7 +44,7 @@ class LexiconNode:
     tif: TIF = field(default_factory=TIF)
     indeterminacy_layer: str = "I_system^S"
     plithogenic_role: str = "lexicon classification under system-level indeterminacy"
-    private_evidence_ids: tuple[str, ...] = ()
+    restricted_evidence_ids: tuple[str, ...] = ()
     node_id: str = field(default_factory=lambda: f"node.{uuid4().hex}")
 
     def as_dict(self) -> dict[str, object]:
@@ -61,7 +62,7 @@ class LexiconNode:
                 "symbolic_notation": SYMBOLIC_NOTATIONS[canonical_layer].as_dict(),
                 "plithogenic_role": self.plithogenic_role,
                 "source_ids": list(self.source_ids),
-                "private_evidence_ids": list(self.private_evidence_ids),
+                "restricted_evidence_ids": list(self.restricted_evidence_ids),
             },
             "hierarchy": HIERARCHY,
         }

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-HIERARCHY = "I -> I_system^S -> D_f -> dF -> i_fractal"
+HIERARCHY = "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
 PRIVATE_MARKERS = ("gmail", "auth.json", "token", "password", "private_evidence", "unpublished")
 
 

@@ -14,6 +14,7 @@ from .hipporag_bridge import (
     build_memory_bit_from_cli,
 )
 from .lexicon import seed_base_lexicon
+from .nss import NSSMathRouter
 from .plithogenic import (
     TIF,
     classify_i_chain_text,
@@ -92,6 +93,7 @@ def main(argv: list[str] | None = None) -> int:
     i_chain_sub = i_chain.add_subparsers(dest="i_chain_command", required=True)
     i_chain_explain = i_chain_sub.add_parser("explain")
     i_chain_explain.add_argument("--term", required=True)
+    i_chain_explain.add_argument("--domain", default="general")
     i_chain_classify = i_chain_sub.add_parser("classify")
     i_chain_classify.add_argument("--text", required=True)
     i_chain_classify.add_argument("--domain", required=True)
@@ -105,6 +107,13 @@ def main(argv: list[str] | None = None) -> int:
     plithogenic_sub = plithogenic.add_subparsers(dest="command", required=True)
     plithogenic_profile = plithogenic_sub.add_parser("profile")
     plithogenic_profile.add_argument("--source", required=True)
+
+    nss = subparsers.add_parser("nss")
+    nss_sub = nss.add_subparsers(dest="command", required=True)
+    nss_sources = nss_sub.add_parser("sources")
+    nss_sources.add_argument("action", choices=["list"])
+    nss_route = nss_sub.add_parser("route")
+    nss_route.add_argument("--text", required=True)
 
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
