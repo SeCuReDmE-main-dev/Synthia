@@ -1,3 +1,5 @@
+ ![Synthia-identity](./assets/Banner/wide%20banner%205.png)
+
 # Synthia
 
 Synthia is an educational research project for an evolving `I_lexicon`: a context-preserving lexicon and taxonomy core that updates as it learns new classification systems.
