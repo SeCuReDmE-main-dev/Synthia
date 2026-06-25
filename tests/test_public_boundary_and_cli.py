@@ -53,7 +53,8 @@ def test_cli_i_chain_and_notation_smoke(capsys):
 
     assert code == 0
     payload = json.loads(capsys.readouterr().out)
-    assert payload["selected_layer"] == "I_system^S"
+    assert payload["selected_layer"] == "I_lexicon"
+    assert payload["carrier_type"] == "lexicon_distribution"
 
     code = main(["lexicon", "notation", "render", "--symbol", "I_s", "--format", "algorithm"])
 
@@ -71,6 +72,23 @@ def test_cli_plithogenic_profile_smoke(capsys):
     assert payload["canonical_indeterminacy_class"] == "I_system^S"
     assert payload["requested_source"]["url"] == "https://fs.unm.edu/NSS/IntroductionPlithogenicLogic1.pdf"
     assert "raw_gmail_body" not in json.dumps(payload).lower()
+
+
+def test_cli_nss_sources_and_route_smoke(capsys):
+    code = main(["nss", "sources", "list"])
+
+    assert code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["entrydoor"] == "https://fs.unm.edu/NSS/"
+    assert payload["hierarchy"] == "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+
+    code = main(["nss", "route", "--text", "plithogenic contradiction degree"])
+
+    assert code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["selected_family"]["family_id"] == "plithogenic"
+    assert payload["carrier_type"] == "lexicon_distribution"
+    assert payload["plithogenic_profile"]["canonical_indeterminacy_class"] == "I_system^S"
 
 
 def test_cli_taxonomy_packet_smoke(capsys):

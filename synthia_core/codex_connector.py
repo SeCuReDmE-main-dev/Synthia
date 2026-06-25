@@ -53,7 +53,7 @@ def build_wake_prompt(private_org: str | Path) -> str:
             "Use Codex native ChatGPT/browser authentication or the existing Codex session.",
             "Do not request or store OpenAI API keys inside Synthia.",
             "Preserve the boundary: AI is traceability support, not taxonomic authority.",
-            "Preserve hierarchy: I -> I_system^S -> D_f -> dF -> i_fractal.",
+            "Preserve hierarchy: I -> I_system^S -> H_lex -> G_lex -> I_lexicon.",
             "",
             "Synthia soul excerpt:",
             soul[:4000],

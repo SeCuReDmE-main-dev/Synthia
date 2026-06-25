@@ -38,7 +38,7 @@ def test_indeterminacy_locator_keeps_sources_specific():
 
     assert "incomplete_diagnosis" in located["sources"]
     assert "species_subspecies_boundary" in located["sources"]
-    assert located["tif"]["hierarchy"] == "I -> I_system^S -> D_f -> dF -> i_fractal"
+    assert located["tif"]["hierarchy"] == "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
 
 
 def test_citation_trace_auditor_flags_missing_context():

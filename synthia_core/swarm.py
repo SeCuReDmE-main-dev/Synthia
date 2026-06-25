@@ -104,9 +104,9 @@ class VisionDetection:
             I=indeterminacy,
             F=0.0,
             I_system=indeterminacy,
-            D_f=indeterminacy,
-            dF=indeterminacy / 2,
-            i_fractal=indeterminacy,
+            H_lex=indeterminacy,
+            G_lex=indeterminacy,
+            I_lexicon=indeterminacy,
         )
 
     def as_dict(self) -> dict[str, object]:
@@ -134,7 +134,7 @@ class ObservationPacket:
 
     def tif(self) -> TIF:
         if not self.detections:
-            return TIF(T=0.0, I=1.0, F=0.0, I_system=1.0, D_f=1.0, dF=0.5, i_fractal=1.0)
+            return TIF(T=0.0, I=1.0, F=0.0, I_system=1.0, H_lex=1.0, G_lex=1.0, I_lexicon=1.0)
         profile = PlithogenicMatrix(
             [
                 PlithogenicAttribute(
@@ -152,9 +152,9 @@ class ObservationPacket:
             I=max(profile["I"], self.novelty_score),
             F=profile["F"],
             I_system=max(profile["I"], self.novelty_score),
-            D_f=self.novelty_score,
-            dF=max(0.0, self.novelty_score - profile["T"] / 2),
-            i_fractal=max(profile["I"], self.novelty_score),
+            H_lex=max(profile["I"], self.novelty_score),
+            G_lex=max(0.0, self.novelty_score - profile["T"] / 2),
+            I_lexicon=max(profile["I"], self.novelty_score),
         )
 
     def as_dict(self, public_safe: bool = True) -> dict[str, object]:
