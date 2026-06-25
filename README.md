@@ -24,7 +24,7 @@ At the moment, Synthia is a local Python research core and documentation boundar
 
 In practical terms, Synthia currently does four things:
 
-- represents concepts as `I_lexicon` nodes with domain, definition, source IDs, T/I/F values, and the preserved `I -> I_system^S -> D_f -> dF -> i_fractal` hierarchy;
+- represents concepts as `I_lexicon` nodes with domain, definition, source IDs, T/I/F values, and the preserved `I -> I_system^S -> H_lex -> G_lex -> I_lexicon` hierarchy;
 - connects concepts through typed bridges such as redescription, memory repair, analogy, contradiction, rank shift, synonymy, and uncertainty;
 - produces plithogenic profiles that summarize truth, indeterminacy, falsity, contradiction load, and feature vectors for classification state;
 - implements the first biology/taxonomy memory layer inspired by the white paper with Prof. Aguilar, including redescription traces, review packets, citation auditing, conservation links, and AI-assistance disclosure boundaries;
@@ -43,7 +43,7 @@ Synthia is designed to evolve each time it learns a new taxonomy. When a new fie
 - switch between lexicons inside one task without losing context;
 - identify when two fields use similar words with different meanings;
 - update its internal classification graph as new evidence arrives;
-- keep the hierarchy `I -> I_system^S -> D_f -> dF -> i_fractal` visible instead of flattening all uncertainty into a generic label.
+- keep the hierarchy `I -> I_system^S -> H_lex -> G_lex -> I_lexicon` visible instead of flattening all uncertainty into a generic label.
 
 ## Base Build
 
@@ -70,21 +70,35 @@ The goal is to help organize biological knowledge as living memory:
 
 ## Physics and Mathematical Classification
 
-Synthia is also intended to support physics and mathematical classification work by preserving the vocabulary of a system, not only its surface terms. Future work will explore how lexicons from Fractal NeutroGeometry, FfeD-style structures, plithogenic logic, and related classification systems can be mapped without collapsing their specialized meanings.
+Synthia is also intended to support physics and mathematical classification work by preserving the vocabulary of a system, not only its surface terms. Future work will explore how physics, FfeD-style structures, plithogenic logic, and other mathematical classification systems can be mapped as separate lexicons without collapsing their specialized meanings.
 
 ## I_lexicon Indeterminacy Engine
 
-Synthia now has a sourced symbolic layer for the hierarchy:
+Synthia now uses the following lexicon-classification hierarchy:
 
 ```text
-I -> I_system^S -> D_f -> dF -> i_fractal
+I -> I_system^S -> H_lex -> G_lex -> I_lexicon
 ```
 
-This layer keeps each form of indeterminacy distinct. `I` is the base indeterminacy signal. `I_system^S` is the system-level form used when a lexicon, agent state, or multi-attribute classification system organizes uncertainty. `D_f` tracks fractal depth or dimension, `dF` tracks delta-fractal drift, and `i_fractal` preserves recursive fractalized indeterminacy.
+This layer keeps lexicon indeterminacy distinct from generic uncertainty. `I` is the base indeterminacy signal. `I_system^S` is the system-level form used when a lexicon, agent state, corpus, or multi-attribute classification system organizes uncertainty. `H_lex` is normalized lexicon entropy: it measures how much a term, document, or observation is distributed across possible lexicons. `G_lex` is lexicon decision-gap uncertainty: it measures how weak the winning lexicon is against the second-best lexicon. `I_lexicon` is the final context-preserving lexicon indeterminacy state used for classification, filtration, switching, or quarantine.
 
 Plithogenic classification is now treated as `I_system^S`, with `I_s` and `I_s_system` accepted as aliases. The public repo encodes only safe NSS source pointers and sanitized evidence metadata. Private Gmail-derived doctrine remains in `Synthia_organisation`.
 
-The symbolic engine supports stable code IDs, LaTeX forms, display forms, and algorithm forms. This gives Synthia a first practical language for math notation, plithogenic matrix operations, contradiction degree, T/I/F, and refined/sub-indeterminacy without turning the project into a full symbolic algebra system yet.
+The mathematical base is:
+
+```text
+P(L_i | d, S) = softmax(score(L_i, d))
+
+H_lex = - sum(P(L_i) log(P(L_i))) / log(|L|)
+
+G_lex = 1 - (P_top - P_second)
+
+I_lexicon = bounded(alpha H_lex + beta G_lex + gamma contradiction_load)
+```
+
+Here `L_i` is a candidate lexicon, `d` is the document, term, or observation being classified, and `S` is the active system context. The score may combine lexical relevance, semantic similarity, taxonomy coherence, mutual-information feature dependency, source reliability, and plithogenic contradiction degree.
+
+The symbolic engine supports stable code IDs, LaTeX forms, display forms, and algorithm forms. This gives Synthia a first practical language for lexicon entropy, lexicon decision margin, plithogenic contradiction degree, T/I/F, and source-linked document filtration without turning the project into a full symbolic algebra system yet.
 
 ## Future LLM Protection Layer
 
@@ -117,7 +131,7 @@ Synthia can organize source-linked evidence and prepare human review packets. It
 The invariant below must remain visible in public payloads:
 
 ```text
-I -> I_system^S -> D_f -> dF -> i_fractal
+I -> I_system^S -> H_lex -> G_lex -> I_lexicon
 ```
 
 ## Swarm Field Scout Base
@@ -173,7 +187,7 @@ This gives Synthia a way to keep track of where a knowledge fragment lives insid
 - `memory_bit_id`: stable identifier for the remembered unit;
 - `graph_location`: namespace, node type, node id, chunk id, entity id, fact id, edge id, and hop depth;
 - `selection_mechanism`: dense passage retrieval, fact reranking, personalized PageRank, lexicon bridge, plithogenic trace, or manual review;
-- `tif`: full `T/I/F` plus `I_system^S`, `D_f`, `dF`, and `i_fractal`;
+- `tif`: full `T/I/F` plus the lexicon indeterminacy state `I_system^S`, `H_lex`, `G_lex`, and `I_lexicon` when available;
 - `plithogenic_profile`: a bounded trace of contradiction, weighted truth, and feature-vector state.
 
 The intended role is to let Synthia remember not only what a retrieved passage says, but why it was selected, which lexicon it belongs to, where it sits in the graph, and what uncertainty structure came with it. This is the bridge between Synthia’s `I_lexicon` and HippoRAG-style long-term associative memory.
@@ -202,7 +216,7 @@ python -m synthia_core.cli soul build --private-org ..\Synthia_organisation
 python -m synthia_core.cli lexicon classify --text "AI-assisted traceability supports human review." --domain ai_governance
 python -m synthia_core.cli lexicon switch --from taxonomy --to phylocode_nomenclature --context ctx-1
 python -m synthia_core.cli lexicon i-chain explain --term "plithogenic contradiction"
-python -m synthia_core.cli lexicon i-chain classify --text "D_f fractal dimension in taxonomy memory" --domain ffed_math
+python -m synthia_core.cli lexicon i-chain classify --text "lexicon entropy and weak decision gap in taxonomy memory" --domain ffed_math
 python -m synthia_core.cli lexicon notation render --symbol I_s --format latex
 python -m synthia_core.cli plithogenic profile --source nss.plithogenic_logic
 python -m synthia_core.cli taxonomy aburria-packet
