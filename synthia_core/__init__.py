@@ -17,6 +17,13 @@ from .neutrosophic_foundation import (
     NeutrosophicTruthValue,
     TIFNormalizationPolicy,
 )
+from .neutrosophic_sets import (
+    IFSCompatibilityResult,
+    NeutrosophicSetClassifier,
+    NeutrosophicSetMembership,
+    NeutrosophicSetSource,
+    TIFDependencyProfile,
+)
 from .plithogenic import (
     FractalCarrierProfile,
     IndeterminacyChain,
@@ -39,6 +46,7 @@ __all__ = [
     "LexiconSwitchTrace",
     "FractalCarrierProfile",
     "IndeterminacyChain",
+    "IFSCompatibilityResult",
     "MathSource",
     "NSSArticleFamilyScore",
     "NSSArticleIndex",
@@ -51,6 +59,9 @@ __all__ = [
     "NeutrosophicComponent",
     "NeutrosophicFoundationSource",
     "NeutrosophicProfile",
+    "NeutrosophicSetClassifier",
+    "NeutrosophicSetMembership",
+    "NeutrosophicSetSource",
     "NeutrosophicTruthValue",
     "PlithogenicIProfile",
     "PlithogenicMatrix",
@@ -58,5 +69,6 @@ __all__ = [
     "SystemIndeterminacyChain",
     "TIFNormalizationPolicy",
     "TIF",
+    "TIFDependencyProfile",
     "TaxonomicMemorySystem",
 ]

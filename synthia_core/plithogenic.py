@@ -108,6 +108,13 @@ MATH_SOURCES: dict[str, MathSource] = {
         "public_nss",
         "primary public foundation for T/I/F, logic, set, probability, and statistics",
     ),
+    "nss.neutrosophic_set_generalizes_ifs": MathSource(
+        "nss.neutrosophic_set_generalizes_ifs",
+        "Neutrosophic Set as a Generalization of the Intuitionistic Fuzzy Set",
+        "https://fs.unm.edu/IFS-generalized.pdf",
+        "public_nss",
+        "set membership, independent T/I/F, and IFS comparison boundaries",
+    ),
     "nss.indeterminacy": MathSource(
         "nss.indeterminacy",
         "Indeterminacy in Neutrosophic Theories and their Applications",
@@ -595,6 +602,7 @@ def explain_i_chain(term: str = "", domain: str = "general") -> dict[str, object
 
 def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
     from .neutrosophic_foundation import foundation_profile_for_text
+    from .neutrosophic_sets import set_membership_profile_for_text
 
     lowered = text.lower()
     carrier_type = "fractal_geometry" if domain == "fractal_geometry" else "lexicon_distribution"
@@ -621,6 +629,9 @@ def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
     foundation_profile = foundation_profile_for_text(text)
     if foundation_profile is not None:
         payload["foundation_profile"] = foundation_profile
+    set_membership_profile = set_membership_profile_for_text(text)
+    if set_membership_profile is not None:
+        payload["set_membership_profile"] = set_membership_profile
     return payload
 
 

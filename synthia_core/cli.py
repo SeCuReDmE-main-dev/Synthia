@@ -17,6 +17,7 @@ from .lexicon import seed_base_lexicon
 from .nss import NSSMathRouter
 from .nss_articles import NSSArticleIndex
 from .neutrosophic_foundation import foundation_explain, foundation_normalize, foundation_profile
+from .neutrosophic_sets import NeutrosophicSetClassifier
 from .plithogenic import (
     TIF,
     classify_i_chain_text,
@@ -144,6 +145,17 @@ def main(argv: list[str] | None = None) -> int:
     nss_foundation_normalize.add_argument("--profile", default="standard")
     nss_foundation_profile = nss_foundation_sub.add_parser("profile")
     nss_foundation_profile.add_argument("--name", required=True)
+    nss_set = nss_sub.add_parser("set")
+    nss_set_sub = nss_set.add_subparsers(dest="set_command", required=True)
+    nss_set_sub.add_parser("explain")
+    nss_set_classify = nss_set_sub.add_parser("classify")
+    nss_set_classify.add_argument("--T", type=float, required=True)
+    nss_set_classify.add_argument("--I", type=float, required=True)
+    nss_set_classify.add_argument("--F", type=float, required=True)
+    nss_set_compare = nss_set_sub.add_parser("compare-ifs")
+    nss_set_compare.add_argument("--T", type=float, required=True)
+    nss_set_compare.add_argument("--I", type=float, required=True)
+    nss_set_compare.add_argument("--F", type=float, required=True)
     nss_articles = nss_sub.add_parser("articles")
     nss_articles_sub = nss_articles.add_subparsers(dest="articles_command", required=True)
     nss_articles_scan = nss_articles_sub.add_parser("scan")
@@ -295,6 +307,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.area == "nss":
         router = NSSMathRouter()
         article_index = NSSArticleIndex()
+        set_classifier = NeutrosophicSetClassifier()
         if args.command == "sources" and args.action == "list":
             _print_json(router.list_sources())
             return 0
@@ -309,6 +322,15 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "foundation" and args.foundation_command == "profile":
             _print_json(foundation_profile(args.name))
+            return 0
+        if args.command == "set" and args.set_command == "explain":
+            _print_json(set_classifier.explain())
+            return 0
+        if args.command == "set" and args.set_command == "classify":
+            _print_json(set_classifier.classify(args.T, args.I, args.F))
+            return 0
+        if args.command == "set" and args.set_command == "compare-ifs":
+            _print_json(set_classifier.compare_ifs(args.T, args.I, args.F))
             return 0
         if args.command == "articles" and args.articles_command == "scan":
             scan_result = article_index.scan(limit=args.limit, html=_read_text_arg(args.html))
