@@ -35,6 +35,7 @@ def test_public_nss_docs_keep_clean_chain():
     docs = [
         root / "docs" / "nss_math_sources_for_synthia.md",
         root / "docs" / "nss_hub_system_classification_doctrine.md",
+        root / "docs" / "nss_articles_indexation_for_i_lexicon.md",
     ]
     for path in docs:
         text = path.read_text(encoding="utf-8")

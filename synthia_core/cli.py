@@ -15,6 +15,7 @@ from .hipporag_bridge import (
 )
 from .lexicon import seed_base_lexicon
 from .nss import NSSMathRouter
+from .nss_articles import NSSArticleIndex
 from .plithogenic import (
     TIF,
     classify_i_chain_text,
@@ -22,6 +23,7 @@ from .plithogenic import (
     plithogenic_profile_for_source,
     render_symbolic_notation,
 )
+from .safety import HIERARCHY
 from .sources import scan_root
 from .swarm import (
     DigitalPheromoneMap,
@@ -60,6 +62,23 @@ def _configure_rethinkdb_flags(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--rethinkdb-host", default=None)
     parser.add_argument("--rethinkdb-port", type=int, default=None)
     parser.add_argument("--rethinkdb-db", default=None)
+
+
+def _read_text_arg(value: str | None) -> str | None:
+    if value is None:
+        return None
+    path = Path(value)
+    if path.exists():
+        return path.read_text(encoding="utf-8", errors="replace")
+    return value
+
+
+def _write_private_nss_article_ledger(private_org: str, payload: dict[str, object]) -> Path:
+    target_dir = Path(private_org) / "02_taxonomy_lexicon_model"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target = target_dir / "nss_article_index.json"
+    target.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    return target
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -114,6 +133,21 @@ def main(argv: list[str] | None = None) -> int:
     nss_sources.add_argument("action", choices=["list"])
     nss_route = nss_sub.add_parser("route")
     nss_route.add_argument("--text", required=True)
+    nss_articles = nss_sub.add_parser("articles")
+    nss_articles_sub = nss_articles.add_subparsers(dest="articles_command", required=True)
+    nss_articles_scan = nss_articles_sub.add_parser("scan")
+    nss_articles_scan.add_argument("--limit", type=int, default=None)
+    nss_articles_scan.add_argument("--private-org", default=str(_default_private_org()))
+    nss_articles_scan.add_argument("--html", default=None, help="Optional path to a local Articles.htm fixture")
+    nss_articles_classify = nss_articles_sub.add_parser("classify")
+    nss_articles_classify.add_argument("--text", required=True)
+    nss_articles_source = nss_articles_sub.add_parser("source")
+    nss_articles_source.add_argument("--url", required=True)
+    nss_articles_source.add_argument("--title", default=None)
+    nss_index = nss_sub.add_parser("index")
+    nss_index_sub = nss_index.add_subparsers(dest="index_command", required=True)
+    nss_index_explain = nss_index_sub.add_parser("explain")
+    nss_index_explain.add_argument("--text", required=True)
 
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
@@ -249,11 +283,35 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.area == "nss":
         router = NSSMathRouter()
+        article_index = NSSArticleIndex()
         if args.command == "sources" and args.action == "list":
             _print_json(router.list_sources())
             return 0
         if args.command == "route":
             _print_json(router.route(args.text))
+            return 0
+        if args.command == "articles" and args.articles_command == "scan":
+            scan_result = article_index.scan(limit=args.limit, html=_read_text_arg(args.html))
+            ledger_path = _write_private_nss_article_ledger(args.private_org, scan_result.as_dict())
+            _print_json(
+                {
+                    "source_url": scan_result.source_url,
+                    "scanned_at": scan_result.scanned_at,
+                    "total_records": scan_result.total_records,
+                    "ledger_path": str(ledger_path),
+                    "public_output": "sanitized_scan_summary_only",
+                    "hierarchy": HIERARCHY,
+                }
+            )
+            return 0
+        if args.command == "articles" and args.articles_command == "classify":
+            _print_json(article_index.classify_text(args.text))
+            return 0
+        if args.command == "articles" and args.articles_command == "source":
+            _print_json(article_index.classify_source(args.url, title=args.title))
+            return 0
+        if args.command == "index" and args.index_command == "explain":
+            _print_json(article_index.classify_text(args.text))
             return 0
 
     if args.area == "codex" and args.command == "status":

@@ -2,6 +2,14 @@
 
 from .lexicon import ILexicon, LexiconBridge, LexiconNode, LexiconSwitchTrace
 from .nss import NSSMathRouter, NSSSourceFamily
+from .nss_articles import (
+    NSSArticleFamilyScore,
+    NSSArticleIndex,
+    NSSArticleRecord,
+    NSSIndexScanResult,
+    NSSLexiconDistribution,
+    NSSMathIndexScorer,
+)
 from .plithogenic import (
     FractalCarrierProfile,
     IndeterminacyChain,
@@ -25,7 +33,13 @@ __all__ = [
     "FractalCarrierProfile",
     "IndeterminacyChain",
     "MathSource",
+    "NSSArticleFamilyScore",
+    "NSSArticleIndex",
+    "NSSArticleRecord",
+    "NSSIndexScanResult",
+    "NSSLexiconDistribution",
     "NSSMathRouter",
+    "NSSMathIndexScorer",
     "NSSSourceFamily",
     "PlithogenicIProfile",
     "PlithogenicMatrix",

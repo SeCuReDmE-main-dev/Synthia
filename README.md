@@ -32,11 +32,12 @@ Synthia is not a production scientific authority, medical tool, environmental de
 
 At the moment, Synthia is a local Python research core and documentation boundary for building an evolving classification intelligence. She is not yet a large model, autonomous agent, field robot, or production platform. Her current value is architectural: she provides the first working skeleton for a system that can remember which lexicon it is using, why a term belongs to that lexicon, what evidence supports it, and where uncertainty or contradiction enters the classification.
 
-In practical terms, Synthia currently provides five base capabilities:
+In practical terms, Synthia currently provides six base capabilities:
 
 - represents concepts as `I_lexicon` nodes with domain, definition, source IDs, T/I/F values, and the preserved `I -> I_system^S -> H_lex -> G_lex -> I_lexicon` lexicon-classification hierarchy;
 - connects concepts through typed bridges such as redescription, memory repair, analogy, contradiction, rank shift, synonymy, and uncertainty;
 - produces plithogenic profiles that summarize truth, indeterminacy, falsity, contradiction load, and feature vectors for classification state;
+- indexes the public NSS article list as a living source-discovery surface, then derives `P(L_i | d, S)`, `H_lex`, `G_lex`, and `I_lexicon` for math-lexicon routing;
 - implements the first biology/taxonomy memory layer inspired by the white paper with Prof. Aguilar, including redescription traces, review packets, citation auditing, conservation links, and AI-assistance disclosure boundaries;
 - implements the first passive swarm field-scout layer for simulated drone observations, local vision detections, digital pheromone mapping, contextual trust, anti-entropy state reconciliation, and human-review packets.
 
@@ -109,6 +110,8 @@ I_lexicon = bounded(alpha H_lex + beta G_lex + gamma contradiction_load)
 Here `L_i` is a candidate lexicon, `d` is the document, term, or observation being classified, and `S` is the active system context. The score may combine lexical relevance, semantic similarity, taxonomy coherence, mutual-information feature dependency, source reliability, and plithogenic contradiction degree.
 
 The symbolic engine supports stable code IDs, LaTeX forms, display forms, and algorithm forms. This gives Synthia a first practical language for lexicon entropy, lexicon decision margin, plithogenic contradiction degree, T/I/F, and source-linked document filtration without turning the project into a full symbolic algebra system yet.
+
+The second NSS surface, `https://fs.unm.edu/NSS/Articles.htm`, is now treated as a living article index for source discovery. Synthia can parse article PDF links, normalize public URLs, classify titles into mathematical families, and write generated article ledgers to `Synthia_organisation` instead of the public repo. These classifications are candidate routing signals for review, not final mathematical authority.
 
 ## Future LLM Protection Layer
 
@@ -230,6 +233,10 @@ python -m synthia_core.cli lexicon i-chain classify --text "lexicon entropy and 
 python -m synthia_core.cli lexicon notation render --symbol I_s --format latex
 python -m synthia_core.cli nss sources list
 python -m synthia_core.cli nss route --text "plithogenic contradiction degree"
+python -m synthia_core.cli nss articles scan --limit 25 --private-org ..\Synthia_organisation
+python -m synthia_core.cli nss articles classify --text "neutrosophic probability distribution for lexicon entropy"
+python -m synthia_core.cli nss articles source --url https://fs.unm.edu/NSS/PlithogenicSetAnExtensionOfCrisp.pdf
+python -m synthia_core.cli nss index explain --text "hypersoft multi-criteria taxonomy filtering"
 python -m synthia_core.cli plithogenic profile --source nss.plithogenic_logic
 python -m synthia_core.cli taxonomy aburria-packet
 python -m synthia_core.cli swarm queen status
