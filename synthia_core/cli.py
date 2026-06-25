@@ -16,6 +16,8 @@ from .hipporag_bridge import (
 from .lexicon import seed_base_lexicon
 from .nss import NSSMathRouter
 from .nss_articles import NSSArticleIndex
+from .independent_neutrosophic_components import classify_components, components_explain
+from .multineutrosophic import fuse_multineutrosophic_assessments, multineutrosophic_explain
 from .neutrosophic_foundation import foundation_explain, foundation_normalize, foundation_profile
 from .neutrosophic_logic import LogicCompatibilityClassifier
 from .neutrosophic_probability import (
@@ -23,6 +25,11 @@ from .neutrosophic_probability import (
     NeutrosophicProbability,
     NeutrosophicSampleSpace,
     probability_explain,
+)
+from .neutrosophic_random_variables import (
+    NeutrosophicRandomVariable,
+    random_variable_explain,
+    summarize_random_variables,
 )
 from .neutrosophic_sets import NeutrosophicSetClassifier
 from .neutrosophic_statistics import (
@@ -37,6 +44,8 @@ from .plithogenic import (
     plithogenic_profile_for_source,
     render_symbolic_notation,
 )
+from .plithogenic_logic import classify_plithogenic_logic, plithogenic_logic_explain
+from .plithogenic_set import operate_plithogenic_sets, plithogenic_set_explain, score_plithogenic_set
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
 from .safety import HIERARCHY
 from .sources import scan_root
@@ -155,6 +164,20 @@ def main(argv: list[str] | None = None) -> int:
     plithogenic_sub = plithogenic.add_subparsers(dest="command", required=True)
     plithogenic_profile = plithogenic_sub.add_parser("profile")
     plithogenic_profile.add_argument("--source", required=True)
+    plithogenic_set = plithogenic_sub.add_parser("set")
+    plithogenic_set_sub = plithogenic_set.add_subparsers(dest="set_command", required=True)
+    plithogenic_set_sub.add_parser("explain")
+    plithogenic_set_score = plithogenic_set_sub.add_parser("score")
+    plithogenic_set_score.add_argument("--attributes", required=True, help="JSON array or path")
+    plithogenic_set_operate = plithogenic_set_sub.add_parser("operate")
+    plithogenic_set_operate.add_argument("--op", choices=["union", "intersection", "complement"], required=True)
+    plithogenic_set_operate.add_argument("--left", required=True, help="JSON object or path")
+    plithogenic_set_operate.add_argument("--right", default=None, help="JSON object or path")
+    plithogenic_logic = plithogenic_sub.add_parser("logic")
+    plithogenic_logic_sub = plithogenic_logic.add_subparsers(dest="logic_command", required=True)
+    plithogenic_logic_sub.add_parser("explain")
+    plithogenic_logic_classify = plithogenic_logic_sub.add_parser("classify")
+    plithogenic_logic_classify.add_argument("--variables", required=True, help="JSON array or path")
 
     nss = subparsers.add_parser("nss")
     nss_sub = nss.add_subparsers(dest="command", required=True)
@@ -226,6 +249,28 @@ def main(argv: list[str] | None = None) -> int:
     nss_distribution_sub = nss_distribution.add_subparsers(dest="distribution_command", required=True)
     nss_distribution_classify = nss_distribution_sub.add_parser("classify")
     nss_distribution_classify.add_argument("--text", required=True)
+    nss_random_variable = nss_sub.add_parser("random-variable")
+    nss_random_variable_sub = nss_random_variable.add_subparsers(dest="random_variable_command", required=True)
+    nss_random_variable_sub.add_parser("explain")
+    nss_random_variable_define = nss_random_variable_sub.add_parser("define")
+    nss_random_variable_define.add_argument("--name", required=True)
+    nss_random_variable_define.add_argument("--base", type=float, required=True)
+    nss_random_variable_define.add_argument("--I", type=float, required=True)
+    nss_random_variable_summarize = nss_random_variable_sub.add_parser("summarize")
+    nss_random_variable_summarize.add_argument("--values", required=True, help="JSON array or path")
+    nss_components = nss_sub.add_parser("components")
+    nss_components_sub = nss_components.add_subparsers(dest="components_command", required=True)
+    nss_components_sub.add_parser("explain")
+    nss_components_classify = nss_components_sub.add_parser("classify")
+    nss_components_classify.add_argument("--T", type=float, required=True)
+    nss_components_classify.add_argument("--I", type=float, required=True)
+    nss_components_classify.add_argument("--F", type=float, required=True)
+    nss_components_classify.add_argument("--mode", choices=["independent", "partial", "dependent", "offset"], required=True)
+    nss_multi_set = nss_sub.add_parser("multi-set")
+    nss_multi_set_sub = nss_multi_set.add_subparsers(dest="multi_set_command", required=True)
+    nss_multi_set_sub.add_parser("explain")
+    nss_multi_set_fuse = nss_multi_set_sub.add_parser("fuse")
+    nss_multi_set_fuse.add_argument("--assessments", required=True, help="JSON array or path")
     nss_articles = nss_sub.add_parser("articles")
     nss_articles_sub = nss_articles.add_subparsers(dest="articles_command", required=True)
     nss_articles_scan = nss_articles_sub.add_parser("scan")
@@ -373,6 +418,31 @@ def main(argv: list[str] | None = None) -> int:
     if args.area == "plithogenic" and args.command == "profile":
         _print_json(plithogenic_profile_for_source(args.source))
         return 0
+    if args.area == "plithogenic" and args.command == "set" and args.set_command == "explain":
+        _print_json(plithogenic_set_explain())
+        return 0
+    if args.area == "plithogenic" and args.command == "set" and args.set_command == "score":
+        attributes = _load_json_value(args.attributes)
+        if not isinstance(attributes, list):
+            raise ValueError("--attributes must decode to a JSON array")
+        _print_json(score_plithogenic_set(attributes))
+        return 0
+    if args.area == "plithogenic" and args.command == "set" and args.set_command == "operate":
+        left = _load_json_value(args.left)
+        right = _load_json_value(args.right) if args.right is not None else None
+        if not isinstance(left, dict) or (right is not None and not isinstance(right, dict)):
+            raise ValueError("--left and --right must decode to JSON objects")
+        _print_json(operate_plithogenic_sets(args.op, left, right))
+        return 0
+    if args.area == "plithogenic" and args.command == "logic" and args.logic_command == "explain":
+        _print_json(plithogenic_logic_explain())
+        return 0
+    if args.area == "plithogenic" and args.command == "logic" and args.logic_command == "classify":
+        variables = _load_json_value(args.variables)
+        if not isinstance(variables, list):
+            raise ValueError("--variables must decode to a JSON array")
+        _print_json(classify_plithogenic_logic(variables))
+        return 0
 
     if args.area == "nss":
         router = NSSMathRouter()
@@ -459,6 +529,33 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "distribution" and args.distribution_command == "classify":
             _print_json(classify_neutrosophic_distribution(args.text))
+            return 0
+        if args.command == "random-variable" and args.random_variable_command == "explain":
+            _print_json(random_variable_explain())
+            return 0
+        if args.command == "random-variable" and args.random_variable_command == "define":
+            _print_json(NeutrosophicRandomVariable(args.name, args.base, args.I).as_dict())
+            return 0
+        if args.command == "random-variable" and args.random_variable_command == "summarize":
+            values = _load_json_value(args.values)
+            if not isinstance(values, list):
+                raise ValueError("--values must decode to a JSON array")
+            _print_json(summarize_random_variables(values))
+            return 0
+        if args.command == "components" and args.components_command == "explain":
+            _print_json(components_explain())
+            return 0
+        if args.command == "components" and args.components_command == "classify":
+            _print_json(classify_components(args.T, args.I, args.F, args.mode))
+            return 0
+        if args.command == "multi-set" and args.multi_set_command == "explain":
+            _print_json(multineutrosophic_explain())
+            return 0
+        if args.command == "multi-set" and args.multi_set_command == "fuse":
+            assessments = _load_json_value(args.assessments)
+            if not isinstance(assessments, list):
+                raise ValueError("--assessments must decode to a JSON array")
+            _print_json(fuse_multineutrosophic_assessments(assessments))
             return 0
         if args.command == "articles" and args.articles_command == "scan":
             scan_result = article_index.scan(limit=args.limit, html=_read_text_arg(args.html))

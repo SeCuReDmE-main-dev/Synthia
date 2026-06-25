@@ -157,6 +157,41 @@ MATH_SOURCES: dict[str, MathSource] = {
         "public_nss",
         "distribution-level support for candidate neutrosophic statistics profiles",
     ),
+    "nss.neutrosophic_random_variables": MathSource(
+        "nss.neutrosophic_random_variables",
+        "Neutrosophic Random Variables",
+        "https://fs.unm.edu/NSS/NeutrosophicRandomVariables4.pdf",
+        "public_nss",
+        "random variables, distribution functions, expected value, variance, and stochastic I_lexicon projection",
+    ),
+    "nss.independent_neutrosophic_components": MathSource(
+        "nss.independent_neutrosophic_components",
+        "Practical Applications of the Independent Neutrosophic Components and of the Neutrosophic Offset Components",
+        "https://fs.unm.edu/NSS/PracticalIndependentNeutrosophic36.pdf",
+        "public_nss",
+        "independent, dependent, partially dependent, and offset T/I/F component interpretation",
+    ),
+    "nss.multineutrosophic_set": MathSource(
+        "nss.multineutrosophic_set",
+        "Introduction to the MultiNeutrosophic Set",
+        "https://fs.unm.edu/NSS/MultiNeutrosophicSet.pdf",
+        "public_nss",
+        "multi-source truth, indeterminacy, and falsity fusion",
+    ),
+    "nss.plithogenic_set_extension": MathSource(
+        "nss.plithogenic_set_extension",
+        "Plithogenic Set, an Extension of Crisp, Fuzzy, Intuitionistic Fuzzy, and Neutrosophic Sets",
+        "https://fs.unm.edu/NSS/PlithogenicSetAnExtensionOfCrisp.pdf",
+        "public_nss",
+        "attribute values, dominant value, contradiction degree, and plithogenic set operators",
+    ),
+    "nss.plithogenic_logic_intro": MathSource(
+        "nss.plithogenic_logic_intro",
+        "Introduction to Plithogenic Logic",
+        "https://fs.unm.edu/NSS/IntroductionPlithogenicLogic1.pdf",
+        "public_nss",
+        "many-variable proposition truth and cumulative plithogenic logic",
+    ),
     "nss.indeterminacy": MathSource(
         "nss.indeterminacy",
         "Indeterminacy in Neutrosophic Theories and their Applications",
@@ -643,11 +678,16 @@ def explain_i_chain(term: str = "", domain: str = "general") -> dict[str, object
 
 
 def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
+    from .independent_neutrosophic_components import independent_components_profile_for_text
+    from .multineutrosophic import multineutrosophic_profile_for_text
     from .neutrosophic_foundation import foundation_profile_for_text
     from .neutrosophic_logic import logic_profile_for_text
     from .neutrosophic_probability import probability_profile_for_text
+    from .neutrosophic_random_variables import random_variable_profile_for_text
     from .neutrosophic_sets import set_membership_profile_for_text
     from .neutrosophic_statistics import statistics_profile_for_text
+    from .plithogenic_logic import plithogenic_logic_profile_for_text
+    from .plithogenic_set import plithogenic_set_profile_for_text
 
     lowered = text.lower()
     carrier_type = "fractal_geometry" if domain == "fractal_geometry" else "lexicon_distribution"
@@ -686,6 +726,21 @@ def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
     statistics_profile = statistics_profile_for_text(text)
     if statistics_profile is not None:
         payload["statistics_profile"] = statistics_profile
+    random_variable_profile = random_variable_profile_for_text(text)
+    if random_variable_profile is not None:
+        payload["random_variable_profile"] = random_variable_profile
+    independent_components_profile = independent_components_profile_for_text(text)
+    if independent_components_profile is not None:
+        payload["independent_components_profile"] = independent_components_profile
+    multineutrosophic_profile = multineutrosophic_profile_for_text(text)
+    if multineutrosophic_profile is not None:
+        payload["multineutrosophic_profile"] = multineutrosophic_profile
+    plithogenic_set_profile = plithogenic_set_profile_for_text(text)
+    if plithogenic_set_profile is not None:
+        payload["plithogenic_set_profile"] = plithogenic_set_profile
+    plithogenic_logic_profile = plithogenic_logic_profile_for_text(text)
+    if plithogenic_logic_profile is not None:
+        payload["plithogenic_logic_profile"] = plithogenic_logic_profile
     return payload
 
 

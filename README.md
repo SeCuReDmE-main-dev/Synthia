@@ -38,7 +38,7 @@ In practical terms, Synthia currently provides seven base capabilities:
 - connects concepts through typed bridges such as redescription, memory repair, analogy, contradiction, rank shift, synonymy, and uncertainty;
 - produces plithogenic profiles that summarize truth, indeterminacy, falsity, contradiction load, and feature vectors for classification state;
 - indexes the public NSS article list as a living source-discovery surface, then derives `P(L_i | d, S)`, `H_lex`, `G_lex`, and `I_lexicon` for math-lexicon routing;
-- implements neutrosophic logic, single-valued neutrosophic set operations, probability events, sample-space diagnostics, statistics summaries, and distribution candidate routing as bounded public math kernels;
+- implements neutrosophic logic, single-valued neutrosophic set operations, probability events, sample-space diagnostics, statistics summaries, distribution candidate routing, random variables, independent components, multi-source fusion, plithogenic set scoring, and plithogenic logic as bounded public math kernels;
 - implements the first biology/taxonomy memory layer inspired by the white paper with Prof. Aguilar, including redescription traces, review packets, citation auditing, conservation links, and AI-assistance disclosure boundaries;
 - implements the first passive swarm field-scout layer for simulated drone observations, local vision detections, digital pheromone mapping, contextual trust, anti-entropy state reconciliation, and human-review packets.
 
@@ -123,6 +123,14 @@ The source `https://fs.unm.edu/SingleValuedNeutrosophicSets.pdf` now drives boun
 The source `https://fs.unm.edu/NeutrosophicMeasureIntegralProbability.pdf` now drives event triples, complement summaries, sample-space diagnostics, and probability-to-`I_lexicon` projection.
 
 The sources `https://fs.unm.edu/NeutrosophicStatistics.pdf` and `https://fs.unm.edu/NSS/TheNeutrosophicStatisticalDistribution.pdf` now drive known/interval/unknown dataset summaries, indeterminacy load, candidate distribution labels, and review-risk routing.
+
+The source `https://fs.unm.edu/NSS/NeutrosophicRandomVariables4.pdf` now drives random-variable definition, symbolic PDF/PMF/CDF metadata, expected value, variance, standard deviation, moment summaries, and stochastic `I_lexicon` projection.
+
+The source `https://fs.unm.edu/NSS/PracticalIndependentNeutrosophic36.pdf` now drives independent, partially dependent, dependent, and offset T/I/F component profiles.
+
+The source `https://fs.unm.edu/NSS/MultiNeutrosophicSet.pdf` now drives multi-source T/I/F fusion, agreement scoring, conflict scoring, and review-risk routing.
+
+The sources `https://fs.unm.edu/NSS/PlithogenicSetAnExtensionOfCrisp.pdf` and `https://fs.unm.edu/NSS/IntroductionPlithogenicLogic1.pdf` now drive plithogenic set scoring, dominant attribute contradiction, bounded set operations, many-variable proposition truth, and cumulative truth classification.
 
 The second NSS surface, `https://fs.unm.edu/NSS/Articles.htm`, is now treated as a living article index for source discovery. Synthia can parse article PDF links, normalize public URLs, classify titles into mathematical families, and write generated article ledgers to `Synthia_organisation` instead of the public repo. These classifications are candidate routing signals for review, not final mathematical authority.
 
@@ -264,11 +272,22 @@ python -m synthia_core.cli nss probability sample-space --events '[{"name":"a","
 python -m synthia_core.cli nss statistics explain
 python -m synthia_core.cli nss statistics summarize --values '[1,2,[3,5],null,{"unknown":true}]'
 python -m synthia_core.cli nss distribution classify --text "binomial trial with success failure and indeterminate interval"
+python -m synthia_core.cli nss random-variable explain
+python -m synthia_core.cli nss random-variable define --name X --base 2 --I 0.4
+python -m synthia_core.cli nss random-variable summarize --values '[{"base":1,"I":0.2},{"base":3,"I":0.4}]'
+python -m synthia_core.cli nss components explain
+python -m synthia_core.cli nss components classify --T 1.2 --I 0.2 --F -0.1 --mode offset
+python -m synthia_core.cli nss multi-set explain
+python -m synthia_core.cli nss multi-set fuse --assessments '[{"source":"a","T":0.8,"I":0.1,"F":0.1},{"source":"b","T":0.2,"I":0.6,"F":0.4}]'
 python -m synthia_core.cli nss articles scan --limit 25 --private-org ..\Synthia_organisation
 python -m synthia_core.cli nss articles classify --text "neutrosophic probability distribution for lexicon entropy"
 python -m synthia_core.cli nss articles source --url https://fs.unm.edu/NSS/PlithogenicSetAnExtensionOfCrisp.pdf
 python -m synthia_core.cli nss index explain --text "hypersoft multi-criteria taxonomy filtering"
 python -m synthia_core.cli plithogenic profile --source nss.plithogenic_logic
+python -m synthia_core.cli plithogenic set explain
+python -m synthia_core.cli plithogenic set score --attributes '[{"name":"color","value":"green","T":0.9,"I":0.1,"F":0.0,"dominant":true},{"name":"color","value":"brown","T":0.3,"I":0.4,"F":0.5}]'
+python -m synthia_core.cli plithogenic logic explain
+python -m synthia_core.cli plithogenic logic classify --variables '[{"name":"V1","T":0.8,"I":0.1,"F":0.1},{"name":"V2","T":0.6,"I":0.3,"F":0.2}]'
 python -m synthia_core.cli taxonomy aburria-packet
 python -m synthia_core.cli swarm queen status
 python -m synthia_core.cli swarm node run --config .\node_config.json

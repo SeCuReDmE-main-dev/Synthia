@@ -42,6 +42,11 @@ def test_public_nss_docs_keep_clean_chain():
         root / "docs" / "single_valued_neutrosophic_kernel.md",
         root / "docs" / "neutrosophic_probability_kernel.md",
         root / "docs" / "neutrosophic_statistics_distribution_kernel.md",
+        root / "docs" / "neutrosophic_random_variables_kernel.md",
+        root / "docs" / "independent_neutrosophic_components_kernel.md",
+        root / "docs" / "multineutrosophic_kernel.md",
+        root / "docs" / "plithogenic_set_kernel.md",
+        root / "docs" / "plithogenic_logic_kernel.md",
     ]
     for path in docs:
         text = path.read_text(encoding="utf-8")

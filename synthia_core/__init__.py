@@ -10,6 +10,8 @@ from .nss_articles import (
     NSSLexiconDistribution,
     NSSMathIndexScorer,
 )
+from .independent_neutrosophic_components import IndependentTIFComponentProfile
+from .multineutrosophic import MultiNeutrosophicFusion, MultiNeutrosophicSource, MultiTIFAssessment
 from .neutrosophic_foundation import (
     NeutrosophicComponent,
     NeutrosophicFoundationSource,
@@ -27,6 +29,11 @@ from .neutrosophic_probability import (
     NeutrosophicEvent,
     NeutrosophicProbability,
     NeutrosophicSampleSpace,
+)
+from .neutrosophic_random_variables import (
+    NeutrosophicRandomVariable,
+    NeutrosophicRandomVariableSummary,
+    RandomVariableDatum,
 )
 from .neutrosophic_sets import (
     IFSCompatibilityResult,
@@ -51,6 +58,8 @@ from .plithogenic import (
     SystemIndeterminacyChain,
     TIF,
 )
+from .plithogenic_logic import PlithogenicLogicalProposition, PlithogenicLogicVariable
+from .plithogenic_set import PlithogenicAttributeValue, PlithogenicSetProfile
 from .taxonomy_memory import TaxonomicMemorySystem
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperation, SVNSOperator
 
@@ -64,6 +73,7 @@ __all__ = [
     "LexiconSwitchTrace",
     "FractalCarrierProfile",
     "IndeterminacyChain",
+    "IndependentTIFComponentProfile",
     "IFSCompatibilityResult",
     "LogicCompatibilityClassifier",
     "MathSource",
@@ -75,6 +85,9 @@ __all__ = [
     "NSSMathRouter",
     "NSSMathIndexScorer",
     "NSSSourceFamily",
+    "MultiNeutrosophicFusion",
+    "MultiNeutrosophicSource",
+    "MultiTIFAssessment",
     "NeutrosophicComponent",
     "NeutrosophicDatasetProfile",
     "NeutrosophicDatum",
@@ -86,6 +99,8 @@ __all__ = [
     "NeutrosophicProbability",
     "NeutrosophicProfile",
     "NeutrosophicProposition",
+    "NeutrosophicRandomVariable",
+    "NeutrosophicRandomVariableSummary",
     "NeutrosophicSampleSpace",
     "NeutrosophicSetClassifier",
     "NeutrosophicSetMembership",
@@ -93,7 +108,12 @@ __all__ = [
     "NeutrosophicStatistic",
     "NeutrosophicTruthValue",
     "PlithogenicIProfile",
+    "PlithogenicAttributeValue",
+    "PlithogenicLogicalProposition",
+    "PlithogenicLogicVariable",
     "PlithogenicMatrix",
+    "PlithogenicSetProfile",
+    "RandomVariableDatum",
     "SingleValuedNeutrosophicSet",
     "SVNSOperation",
     "SVNSOperator",
