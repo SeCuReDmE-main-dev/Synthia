@@ -149,6 +149,35 @@ This gives Synthia a real backend memory surface for swarm work. With RethinkDB 
 
 In Synthia’s architecture, RethinkDB is not just storage. It is the first practical substrate for CTN-style swarm memory: a place where field observations, trust transitions, pheromone-map updates, and human-review boundaries can stay synchronized while the lexicon layer keeps the classification context intact.
 
+## HippoRAG Memory Trace Bridge
+
+Synthia now includes an optional HippoRAG-style memory trace layer for RethinkDB. It does not vendor or replace HippoRAG. Instead, it gives Synthia a compatible graph-memory surface where RAG memory bits can be traced by lexicon type, graph location, selection mechanism, and plithogenic state.
+
+This gives Synthia a way to keep track of where a knowledge fragment lives inside a RAG graph:
+
+- `lexicon_type`: biology, taxonomy, PhyloCode, physics, archaeology, conservation, AI governance, FfeD/math, or another domain;
+- `memory_bit_id`: stable identifier for the remembered unit;
+- `graph_location`: namespace, node type, node id, chunk id, entity id, fact id, edge id, and hop depth;
+- `selection_mechanism`: dense passage retrieval, fact reranking, personalized PageRank, lexicon bridge, plithogenic trace, or manual review;
+- `tif`: full `T/I/F` plus `I_system^S`, `D_f`, `dF`, and `i_fractal`;
+- `plithogenic_profile`: a bounded trace of contradiction, weighted truth, and feature-vector state.
+
+The intended role is to let Synthia remember not only what a retrieved passage says, but why it was selected, which lexicon it belongs to, where it sits in the graph, and what uncertainty structure came with it. This is the bridge between Synthia’s `I_lexicon` and HippoRAG-style long-term associative memory.
+
+RethinkDB tables used by this bridge:
+
+- `hipporag_memory_bits`
+- `hipporag_graph_edges`
+- `hipporag_selection_traces`
+
+Example:
+
+```powershell
+python -m synthia_core.cli hipporag backend ensure-schema
+python -m synthia_core.cli hipporag trace add --lexicon-type taxonomy --node-id fact-aburria-redescription --content "Aburria aburri redescription repairs diagnostic context." --selection-mechanism fact_rerank --relevance 0.91 --T 0.86 --I 0.12 --F 0.02 --source-id hipporag-case-study
+python -m synthia_core.cli hipporag trace select --lexicon-type taxonomy --selection-mechanism fact_rerank
+```
+
 ## CLI
 
 Run from the repository root:

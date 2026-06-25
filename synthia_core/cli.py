@@ -8,7 +8,13 @@ import os
 from pathlib import Path
 
 from .codex_connector import build_wake_prompt, codex_status
+from .hipporag_bridge import (
+    HippoRAGEdgeTrace,
+    RethinkDBHippoRAGTraceStore,
+    build_memory_bit_from_cli,
+)
 from .lexicon import seed_base_lexicon
+from .plithogenic import TIF
 from .sources import scan_root
 from .swarm import (
     DigitalPheromoneMap,
@@ -86,6 +92,44 @@ def main(argv: list[str] | None = None) -> int:
     taxonomy = subparsers.add_parser("taxonomy")
     taxonomy_sub = taxonomy.add_subparsers(dest="command", required=True)
     taxonomy_sub.add_parser("aburria-packet")
+
+    hipporag = subparsers.add_parser("hipporag")
+    hipporag_sub = hipporag.add_subparsers(dest="command", required=True)
+    hippo_backend = hipporag_sub.add_parser("backend")
+    hippo_backend.add_argument("action", choices=["status", "ensure-schema"])
+    _configure_rethinkdb_flags(hippo_backend)
+    hippo_trace = hipporag_sub.add_parser("trace")
+    hippo_trace_sub = hippo_trace.add_subparsers(dest="trace_command", required=True)
+    trace_add = hippo_trace_sub.add_parser("add")
+    trace_add.add_argument("--lexicon-type", required=True)
+    trace_add.add_argument("--content", required=True)
+    trace_add.add_argument("--namespace", default="synthia")
+    trace_add.add_argument("--node-type", default="memory_bit")
+    trace_add.add_argument("--node-id", required=True)
+    trace_add.add_argument("--selection-mechanism", default="plithogenic_trace")
+    trace_add.add_argument("--relevance", type=float, default=0.5)
+    trace_add.add_argument("--source-id", action="append", default=[])
+    trace_add.add_argument("--T", type=float, default=0.7)
+    trace_add.add_argument("--I", type=float, default=0.25)
+    trace_add.add_argument("--F", type=float, default=0.05)
+    trace_add.add_argument("--D-f", dest="D_f", type=float, default=None)
+    trace_add.add_argument("--dF", type=float, default=None)
+    trace_add.add_argument("--i-fractal", dest="i_fractal", type=float, default=None)
+    _configure_rethinkdb_flags(trace_add)
+    trace_select = hippo_trace_sub.add_parser("select")
+    trace_select.add_argument("--lexicon-type", default=None)
+    trace_select.add_argument("--selection-mechanism", default=None)
+    trace_select.add_argument("--limit", type=int, default=10)
+    _configure_rethinkdb_flags(trace_select)
+    hippo_edge = hipporag_sub.add_parser("edge")
+    hippo_edge_sub = hippo_edge.add_subparsers(dest="edge_command", required=True)
+    edge_add = hippo_edge_sub.add_parser("add")
+    edge_add.add_argument("--left", required=True)
+    edge_add.add_argument("--right", required=True)
+    edge_add.add_argument("--relation", required=True)
+    edge_add.add_argument("--lexicon-type", default="general")
+    edge_add.add_argument("--weight", type=float, default=1.0)
+    _configure_rethinkdb_flags(edge_add)
 
     swarm = subparsers.add_parser("swarm")
     swarm_sub = swarm.add_subparsers(dest="command", required=True)
@@ -169,6 +213,53 @@ def main(argv: list[str] | None = None) -> int:
 
         _print_json(TaxonomicReviewPacketBuilder().build(record))
         return 0
+
+    if args.area == "hipporag":
+        store = RethinkDBHippoRAGTraceStore(_rethinkdb_config_from_args(args))
+        if args.command == "backend" and args.action == "status":
+            _print_json(store.status())
+            return 0
+        if args.command == "backend" and args.action == "ensure-schema":
+            _print_json(store.ensure_schema())
+            return 0
+        if args.command == "trace" and args.trace_command == "add":
+            memory_bit = build_memory_bit_from_cli(
+                lexicon_type=args.lexicon_type,
+                content=args.content,
+                namespace=args.namespace,
+                node_type=args.node_type,
+                node_id=args.node_id,
+                selection_mechanism=args.selection_mechanism,
+                relevance=args.relevance,
+                source_ids=args.source_id,
+                tif=TIF(
+                    T=args.T,
+                    I=args.I,
+                    F=args.F,
+                    I_system=args.I,
+                    D_f=args.D_f,
+                    dF=args.dF,
+                    i_fractal=args.i_fractal,
+                ),
+            )
+            _print_json(store.store_memory_bit(memory_bit))
+            return 0
+        if args.command == "trace" and args.trace_command == "select":
+            _print_json(store.select_memory_bits(args.lexicon_type, args.selection_mechanism, args.limit))
+            return 0
+        if args.command == "edge" and args.edge_command == "add":
+            _print_json(
+                store.store_edge(
+                    HippoRAGEdgeTrace(
+                        left_memory_bit_id=args.left,
+                        right_memory_bit_id=args.right,
+                        relation=args.relation,
+                        lexicon_type=args.lexicon_type,
+                        weight=args.weight,
+                    )
+                )
+            )
+            return 0
 
     if args.area == "swarm":
         if args.command == "node" and args.node_command == "run":
