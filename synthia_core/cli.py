@@ -144,6 +144,9 @@ def main(argv: list[str] | None = None) -> int:
     trace_add.add_argument("--T", type=float, default=0.7)
     trace_add.add_argument("--I", type=float, default=0.25)
     trace_add.add_argument("--F", type=float, default=0.05)
+    trace_add.add_argument("--H-lex", dest="H_lex", type=float, default=None)
+    trace_add.add_argument("--G-lex", dest="G_lex", type=float, default=None)
+    trace_add.add_argument("--I-lexicon", dest="I_lexicon", type=float, default=None)
     trace_add.add_argument("--D-f", dest="D_f", type=float, default=None)
     trace_add.add_argument("--dF", type=float, default=None)
     trace_add.add_argument("--i-fractal", dest="i_fractal", type=float, default=None)
@@ -231,7 +234,7 @@ def main(argv: list[str] | None = None) -> int:
             _print_json(registry.switch_context(args.from_domain, args.to_domain, args.context).as_dict())
             return 0
         if args.command == "i-chain" and args.i_chain_command == "explain":
-            _print_json(explain_i_chain(args.term))
+            _print_json(explain_i_chain(args.term, domain=args.domain))
             return 0
         if args.command == "i-chain" and args.i_chain_command == "classify":
             _print_json(classify_i_chain_text(args.text, args.domain))
@@ -243,6 +246,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.area == "plithogenic" and args.command == "profile":
         _print_json(plithogenic_profile_for_source(args.source))
         return 0
+
+    if args.area == "nss":
+        router = NSSMathRouter()
+        if args.command == "sources" and args.action == "list":
+            _print_json(router.list_sources())
+            return 0
+        if args.command == "route":
+            _print_json(router.route(args.text))
+            return 0
 
     if args.area == "codex" and args.command == "status":
         _print_json(codex_status().as_dict())
