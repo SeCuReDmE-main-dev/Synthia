@@ -16,6 +16,7 @@ from .hipporag_bridge import (
 from .lexicon import seed_base_lexicon
 from .nss import NSSMathRouter
 from .nss_articles import NSSArticleIndex
+from .neutrosophic_foundation import foundation_explain, foundation_normalize, foundation_profile
 from .plithogenic import (
     TIF,
     classify_i_chain_text,
@@ -133,6 +134,16 @@ def main(argv: list[str] | None = None) -> int:
     nss_sources.add_argument("action", choices=["list"])
     nss_route = nss_sub.add_parser("route")
     nss_route.add_argument("--text", required=True)
+    nss_foundation = nss_sub.add_parser("foundation")
+    nss_foundation_sub = nss_foundation.add_subparsers(dest="foundation_command", required=True)
+    nss_foundation_sub.add_parser("explain")
+    nss_foundation_normalize = nss_foundation_sub.add_parser("normalize")
+    nss_foundation_normalize.add_argument("--T", type=float, required=True)
+    nss_foundation_normalize.add_argument("--I", type=float, required=True)
+    nss_foundation_normalize.add_argument("--F", type=float, required=True)
+    nss_foundation_normalize.add_argument("--profile", default="standard")
+    nss_foundation_profile = nss_foundation_sub.add_parser("profile")
+    nss_foundation_profile.add_argument("--name", required=True)
     nss_articles = nss_sub.add_parser("articles")
     nss_articles_sub = nss_articles.add_subparsers(dest="articles_command", required=True)
     nss_articles_scan = nss_articles_sub.add_parser("scan")
@@ -289,6 +300,15 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "route":
             _print_json(router.route(args.text))
+            return 0
+        if args.command == "foundation" and args.foundation_command == "explain":
+            _print_json(foundation_explain())
+            return 0
+        if args.command == "foundation" and args.foundation_command == "normalize":
+            _print_json(foundation_normalize(T=args.T, I=args.I, F=args.F, profile=args.profile))
+            return 0
+        if args.command == "foundation" and args.foundation_command == "profile":
+            _print_json(foundation_profile(args.name))
             return 0
         if args.command == "articles" and args.articles_command == "scan":
             scan_result = article_index.scan(limit=args.limit, html=_read_text_arg(args.html))

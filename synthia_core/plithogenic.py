@@ -101,6 +101,13 @@ MATH_SOURCES: dict[str, MathSource] = {
         "public_nss",
         "source discovery and verification index",
     ),
+    "nss.unifying_field_logics": MathSource(
+        "nss.unifying_field_logics",
+        "A Unifying Field in Logics: Neutrosophic Logic, Neutrosophy, Neutrosophic Set, Probability and Statistics",
+        "https://fs.unm.edu/eBook-Neutrosophics6.pdf",
+        "public_nss",
+        "primary public foundation for T/I/F, logic, set, probability, and statistics",
+    ),
     "nss.indeterminacy": MathSource(
         "nss.indeterminacy",
         "Indeterminacy in Neutrosophic Theories and their Applications",
@@ -214,14 +221,14 @@ INDETERMINACY_LAYERS: dict[str, IndeterminacyLayer] = {
         0,
         "base indeterminacy signal",
         SYMBOLIC_NOTATIONS["I"],
-        ("nss.indeterminacy",),
+        ("nss.unifying_field_logics", "nss.indeterminacy"),
     ),
     "I_system^S": IndeterminacyLayer(
         "I_system^S",
         1,
         "system-scoped indeterminacy inside the active lexicon, task, corpus, and source context",
         SYMBOLIC_NOTATIONS["I_system^S"],
-        ("nss.hub", "nss.indeterminacy", "nss.plithogenic_logic"),
+        ("nss.hub", "nss.unifying_field_logics", "nss.indeterminacy", "nss.plithogenic_logic"),
     ),
     "H_lex": IndeterminacyLayer(
         "H_lex",
@@ -587,6 +594,8 @@ def explain_i_chain(term: str = "", domain: str = "general") -> dict[str, object
 
 
 def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
+    from .neutrosophic_foundation import foundation_profile_for_text
+
     lowered = text.lower()
     carrier_type = "fractal_geometry" if domain == "fractal_geometry" else "lexicon_distribution"
     chain = TIF(
@@ -598,7 +607,7 @@ def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
         G_lex=0.3,
         I_lexicon=0.3,
     ).system_chain(carrier_type=carrier_type)
-    return {
+    payload = {
         "domain": domain,
         "text": text,
         "selected_layer": "I_lexicon" if carrier_type == "lexicon_distribution" else "I_system^S",
@@ -609,6 +618,10 @@ def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
         "system_indeterminacy_chain": chain.as_dict(),
         "hierarchy": HIERARCHY,
     }
+    foundation_profile = foundation_profile_for_text(text)
+    if foundation_profile is not None:
+        payload["foundation_profile"] = foundation_profile
+    return payload
 
 
 def plithogenic_profile_for_source(source_id: str) -> dict[str, object]:

@@ -10,6 +10,13 @@ from .nss_articles import (
     NSSLexiconDistribution,
     NSSMathIndexScorer,
 )
+from .neutrosophic_foundation import (
+    NeutrosophicComponent,
+    NeutrosophicFoundationSource,
+    NeutrosophicProfile,
+    NeutrosophicTruthValue,
+    TIFNormalizationPolicy,
+)
 from .plithogenic import (
     FractalCarrierProfile,
     IndeterminacyChain,
@@ -41,10 +48,15 @@ __all__ = [
     "NSSMathRouter",
     "NSSMathIndexScorer",
     "NSSSourceFamily",
+    "NeutrosophicComponent",
+    "NeutrosophicFoundationSource",
+    "NeutrosophicProfile",
+    "NeutrosophicTruthValue",
     "PlithogenicIProfile",
     "PlithogenicMatrix",
     "SymbolicNotation",
     "SystemIndeterminacyChain",
+    "TIFNormalizationPolicy",
     "TIF",
     "TaxonomicMemorySystem",
 ]

@@ -111,6 +111,8 @@ Here `L_i` is a candidate lexicon, `d` is the document, term, or observation bei
 
 The symbolic engine supports stable code IDs, LaTeX forms, display forms, and algorithm forms. This gives Synthia a first practical language for lexicon entropy, lexicon decision margin, plithogenic contradiction degree, T/I/F, and source-linked document filtration without turning the project into a full symbolic algebra system yet.
 
+The source `https://fs.unm.edu/eBook-Neutrosophics6.pdf` is treated as Synthia's primary public foundation for neutrosophic logic, set, probability, statistics, and `T/I/F`. Synthia preserves formal neutrosophic values as metadata, then converts them into bounded operational `TIF` values for deterministic software scoring.
+
 The second NSS surface, `https://fs.unm.edu/NSS/Articles.htm`, is now treated as a living article index for source discovery. Synthia can parse article PDF links, normalize public URLs, classify titles into mathematical families, and write generated article ledgers to `Synthia_organisation` instead of the public repo. These classifications are candidate routing signals for review, not final mathematical authority.
 
 ## Future LLM Protection Layer
@@ -233,6 +235,9 @@ python -m synthia_core.cli lexicon i-chain classify --text "lexicon entropy and 
 python -m synthia_core.cli lexicon notation render --symbol I_s --format latex
 python -m synthia_core.cli nss sources list
 python -m synthia_core.cli nss route --text "plithogenic contradiction degree"
+python -m synthia_core.cli nss foundation explain
+python -m synthia_core.cli nss foundation normalize --T 1.2 --I 0.4 --F -0.1 --profile standard
+python -m synthia_core.cli nss foundation profile --name paradoxist
 python -m synthia_core.cli nss articles scan --limit 25 --private-org ..\Synthia_organisation
 python -m synthia_core.cli nss articles classify --text "neutrosophic probability distribution for lexicon entropy"
 python -m synthia_core.cli nss articles source --url https://fs.unm.edu/NSS/PlithogenicSetAnExtensionOfCrisp.pdf
