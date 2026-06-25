@@ -9,6 +9,15 @@ from pathlib import Path
 from .codex_connector import build_wake_prompt, codex_status
 from .lexicon import seed_base_lexicon
 from .sources import scan_root
+from .swarm import (
+    DigitalPheromoneMap,
+    DroneNodeApp,
+    MissionSafetyGate,
+    QueenCoordinator,
+    SwarmReviewPacketBuilder,
+    load_json_mapping,
+    parse_detection_arg,
+)
 from .taxonomy_memory import TaxonomicMemorySystem
 
 
@@ -58,6 +67,30 @@ def main(argv: list[str] | None = None) -> int:
     taxonomy_sub = taxonomy.add_subparsers(dest="command", required=True)
     taxonomy_sub.add_parser("aburria-packet")
 
+    swarm = subparsers.add_parser("swarm")
+    swarm_sub = swarm.add_subparsers(dest="command", required=True)
+    simulate = swarm_sub.add_parser("simulate")
+    simulate.add_argument("--dataset", required=True)
+    simulate.add_argument("--node-id", default="drone.sim.1")
+    ingest_frame = swarm_sub.add_parser("ingest-frame")
+    ingest_frame.add_argument("--image", required=True)
+    ingest_frame.add_argument("--telemetry", required=True, help="JSON object or path to JSON telemetry")
+    ingest_frame.add_argument("--node-id", default="drone.sim.1")
+    ingest_frame.add_argument("--detection", action="append", default=[], help="label or label:confidence")
+    pheromone = swarm_sub.add_parser("pheromone")
+    pheromone.add_argument("action", choices=["export"])
+    pheromone.add_argument("--format", default="geojson", choices=["geojson", "json"])
+    queen = swarm_sub.add_parser("queen")
+    queen.add_argument("action", choices=["status"])
+    review = swarm_sub.add_parser("review-packet")
+    review.add_argument("action", choices=["build"])
+    review.add_argument("--image", required=False)
+    review.add_argument("--telemetry", default='{"source":"simulated"}')
+    review.add_argument("--node-id", default="drone.sim.1")
+    review.add_argument("--detection", action="append", default=[])
+    safety_check = swarm_sub.add_parser("safety-check")
+    safety_check.add_argument("--mission", required=True, help="JSON object or path to JSON mission")
+
     args = parser.parse_args(argv)
 
     if args.area == "sources" and args.command == "scan-root":
@@ -96,6 +129,60 @@ def main(argv: list[str] | None = None) -> int:
 
         _print_json(TaxonomicReviewPacketBuilder().build(record))
         return 0
+
+    if args.area == "swarm":
+        if args.command == "simulate":
+            dataset = Path(args.dataset)
+            app = DroneNodeApp(args.node_id)
+            queen = QueenCoordinator()
+            suffixes = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif"}
+            observations = []
+            for image in sorted(path for path in dataset.glob("*") if path.suffix.lower() in suffixes):
+                observation = app.ingest_frame(
+                    image,
+                    {"source": "simulated_dataset", "latitude": 0.0, "longitude": 0.0},
+                )
+                observations.append(queen.ingest_observation(observation))
+            _print_json(
+                {
+                    "dataset": str(dataset),
+                    "observation_count": len(observations),
+                    "observations": observations,
+                    "queen": queen.status(),
+                }
+            )
+            return 0
+        if args.command == "ingest-frame":
+            app = DroneNodeApp(args.node_id)
+            observation = app.ingest_frame(
+                args.image,
+                load_json_mapping(args.telemetry),
+                parse_detection_arg(args.detection) if args.detection else None,
+            )
+            queen = QueenCoordinator()
+            _print_json(queen.ingest_observation(observation))
+            return 0
+        if args.command == "pheromone" and args.action == "export":
+            pheromone_map = DigitalPheromoneMap()
+            payload = pheromone_map.as_geojson() if args.format == "geojson" else {"cells": []}
+            _print_json(payload)
+            return 0
+        if args.command == "queen" and args.action == "status":
+            _print_json(QueenCoordinator().status())
+            return 0
+        if args.command == "review-packet" and args.action == "build":
+            image = args.image or "simulated_field_frame.jpg"
+            app = DroneNodeApp(args.node_id)
+            observation = app.ingest_frame(
+                image,
+                load_json_mapping(args.telemetry),
+                parse_detection_arg(args.detection) if args.detection else None,
+            )
+            _print_json(SwarmReviewPacketBuilder().build(observation))
+            return 0
+        if args.command == "safety-check":
+            _print_json(MissionSafetyGate().evaluate(load_json_mapping(args.mission)))
+            return 0
 
     parser.error("unhandled command")
     return 2

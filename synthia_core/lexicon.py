@@ -17,6 +17,9 @@ class LexiconDomain(str, Enum):
     PHYLOCODE_NOMENCLATURE = "phylocode_nomenclature"
     AI_GOVERNANCE = "ai_governance"
     FFED_MATH = "ffed_math"
+    PHYSICS = "physics"
+    ARCHAEOLOGY = "archaeology"
+    CONSERVATION = "conservation"
     GENERAL = "general"
 
 

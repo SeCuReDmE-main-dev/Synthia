@@ -27,7 +27,8 @@ In practical terms, Synthia currently does four things:
 - represents concepts as `I_lexicon` nodes with domain, definition, source IDs, T/I/F values, and the preserved `I -> I_system^S -> D_f -> dF -> i_fractal` hierarchy;
 - connects concepts through typed bridges such as redescription, memory repair, analogy, contradiction, rank shift, synonymy, and uncertainty;
 - produces plithogenic profiles that summarize truth, indeterminacy, falsity, contradiction load, and feature vectors for classification state;
-- implements the first biology/taxonomy memory layer inspired by the white paper with Prof. Aguilar, including redescription traces, review packets, citation auditing, conservation links, and AI-assistance disclosure boundaries.
+- implements the first biology/taxonomy memory layer inspired by the white paper with Prof. Aguilar, including redescription traces, review packets, citation auditing, conservation links, and AI-assistance disclosure boundaries;
+- implements the first passive swarm field-scout layer for simulated drone observations, local vision detections, digital pheromone mapping, contextual trust, anti-entropy state reconciliation, and human-review packets.
 
 This means Synthia is currently best understood as a learning memory architecture for classification work. She does not merely store words. She stores the relation between a word, its domain, its source, its repair history, and the unresolved layers that must stay visible when the same word moves between biology, PhyloCode, AI governance, physics, or mathematical lexicons.
 
@@ -105,6 +106,24 @@ The invariant below must remain visible in public payloads:
 I -> I_system^S -> D_f -> dF -> i_fractal
 ```
 
+## Swarm Field Scout Base
+
+Synthia now includes a simulation-first swarm module. This is not an autonomous drone-control system. It is a passive perception and review architecture for future field work.
+
+The current swarm layer can:
+
+- ingest camera-frame evidence and MAVLink-like telemetry from simulated or companion-computer sources;
+- normalize local CodeProject.AI-style detections into Synthia observation packets;
+- classify field detections into biology, PhyloCode-adjacent taxonomy, physics signals, archaeology candidates, or general uncertainty;
+- build digital pheromone cells for coverage, novelty, risk, revisit pressure, and avoid-until-review hints;
+- score contextual trust with a CTN-style layer using floating location continuity, identity envelope presence, risk load, and detection quality;
+- reconcile distributed node state through an anti-entropy trust ledger so stale swarm state cannot overwrite newer trust state;
+- create review packets that preserve sensitive-location policy and candidate-only language.
+
+The FfeD identity envelope is intentionally a placeholder boundary, not custom cryptography. Before any real security deployment, it must be replaced or backed by audited cryptographic primitives and formal threat modeling.
+
+The queen coordinator currently emits task hints only. It does not command flight, change missions, override a pilot, or authorize autonomous action.
+
 ## CLI
 
 Run from the repository root:
@@ -115,6 +134,10 @@ python -m synthia_core.cli soul build --private-org ..\Synthia_organisation
 python -m synthia_core.cli lexicon classify --text "AI-assisted traceability supports human review." --domain ai_governance
 python -m synthia_core.cli lexicon switch --from taxonomy --to phylocode_nomenclature --context ctx-1
 python -m synthia_core.cli taxonomy aburria-packet
+python -m synthia_core.cli swarm queen status
+python -m synthia_core.cli swarm ingest-frame --image .\sample_tree.jpg --telemetry "{`"latitude`":1.1,`"longitude`":2.2}" --detection tree:0.74
+python -m synthia_core.cli swarm review-packet build --detection frog:0.81
+python -m synthia_core.cli swarm safety-check --mission "{`"simulation_passed`":false}"
 python -m synthia_core.cli codex status
 python -m synthia_core.cli codex wake-prompt --private-org ..\Synthia_organisation
 ```
