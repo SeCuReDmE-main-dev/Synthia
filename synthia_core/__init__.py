@@ -17,12 +17,29 @@ from .neutrosophic_foundation import (
     NeutrosophicTruthValue,
     TIFNormalizationPolicy,
 )
+from .neutrosophic_logic import (
+    LogicCompatibilityClassifier,
+    NeutrosophicLogicProfile,
+    NeutrosophicLogicSource,
+    NeutrosophicProposition,
+)
+from .neutrosophic_probability import (
+    NeutrosophicEvent,
+    NeutrosophicProbability,
+    NeutrosophicSampleSpace,
+)
 from .neutrosophic_sets import (
     IFSCompatibilityResult,
     NeutrosophicSetClassifier,
     NeutrosophicSetMembership,
     NeutrosophicSetSource,
     TIFDependencyProfile,
+)
+from .neutrosophic_statistics import (
+    NeutrosophicDatasetProfile,
+    NeutrosophicDatum,
+    NeutrosophicDistributionProfile,
+    NeutrosophicStatistic,
 )
 from .plithogenic import (
     FractalCarrierProfile,
@@ -35,6 +52,7 @@ from .plithogenic import (
     TIF,
 )
 from .taxonomy_memory import TaxonomicMemorySystem
+from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperation, SVNSOperator
 
 HIERARCHY = "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
 
@@ -47,6 +65,7 @@ __all__ = [
     "FractalCarrierProfile",
     "IndeterminacyChain",
     "IFSCompatibilityResult",
+    "LogicCompatibilityClassifier",
     "MathSource",
     "NSSArticleFamilyScore",
     "NSSArticleIndex",
@@ -57,14 +76,27 @@ __all__ = [
     "NSSMathIndexScorer",
     "NSSSourceFamily",
     "NeutrosophicComponent",
+    "NeutrosophicDatasetProfile",
+    "NeutrosophicDatum",
+    "NeutrosophicDistributionProfile",
+    "NeutrosophicEvent",
     "NeutrosophicFoundationSource",
+    "NeutrosophicLogicProfile",
+    "NeutrosophicLogicSource",
+    "NeutrosophicProbability",
     "NeutrosophicProfile",
+    "NeutrosophicProposition",
+    "NeutrosophicSampleSpace",
     "NeutrosophicSetClassifier",
     "NeutrosophicSetMembership",
     "NeutrosophicSetSource",
+    "NeutrosophicStatistic",
     "NeutrosophicTruthValue",
     "PlithogenicIProfile",
     "PlithogenicMatrix",
+    "SingleValuedNeutrosophicSet",
+    "SVNSOperation",
+    "SVNSOperator",
     "SymbolicNotation",
     "SystemIndeterminacyChain",
     "TIFNormalizationPolicy",

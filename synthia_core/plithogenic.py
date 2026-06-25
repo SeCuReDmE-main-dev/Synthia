@@ -115,6 +115,48 @@ MATH_SOURCES: dict[str, MathSource] = {
         "public_nss",
         "set membership, independent T/I/F, and IFS comparison boundaries",
     ),
+    "nss.logic_generalizes_ifl": MathSource(
+        "nss.logic_generalizes_ifl",
+        "Neutrosophic Logic as a Generalization of Intuitionistic Fuzzy Logic",
+        "https://fs.unm.edu/IFL-generalized.pdf",
+        "public_nss",
+        "proposition logic and IFL compatibility boundaries",
+    ),
+    "nss.introduction_neutrosophic_logic": MathSource(
+        "nss.introduction_neutrosophic_logic",
+        "Introduction to Neutrosophic Logic",
+        "https://fs.unm.edu/IntrodNeutLogic.pdf",
+        "public_nss",
+        "educational logic reference for proposition-level T/I/F",
+    ),
+    "nss.single_valued_neutrosophic_sets": MathSource(
+        "nss.single_valued_neutrosophic_sets",
+        "Single Valued Neutrosophic Sets",
+        "https://fs.unm.edu/SingleValuedNeutrosophicSets.pdf",
+        "public_nss",
+        "bounded set operations for current Synthia runtime",
+    ),
+    "nss.measure_integral_probability": MathSource(
+        "nss.measure_integral_probability",
+        "Introduction to Neutrosophic Measure, Integral, and Probability",
+        "https://fs.unm.edu/NeutrosophicMeasureIntegralProbability.pdf",
+        "public_nss",
+        "event triples, sample-space checks, and probability-to-I_lexicon conversion",
+    ),
+    "nss.neutrosophic_statistics": MathSource(
+        "nss.neutrosophic_statistics",
+        "Introduction to Neutrosophic Statistics",
+        "https://fs.unm.edu/NeutrosophicStatistics.pdf",
+        "public_nss",
+        "indeterminate data summaries and review-risk support",
+    ),
+    "nss.neutrosophic_statistical_distribution": MathSource(
+        "nss.neutrosophic_statistical_distribution",
+        "The Neutrosophic Statistical Distribution",
+        "https://fs.unm.edu/NSS/TheNeutrosophicStatisticalDistribution.pdf",
+        "public_nss",
+        "distribution-level support for candidate neutrosophic statistics profiles",
+    ),
     "nss.indeterminacy": MathSource(
         "nss.indeterminacy",
         "Indeterminacy in Neutrosophic Theories and their Applications",
@@ -602,7 +644,10 @@ def explain_i_chain(term: str = "", domain: str = "general") -> dict[str, object
 
 def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
     from .neutrosophic_foundation import foundation_profile_for_text
+    from .neutrosophic_logic import logic_profile_for_text
+    from .neutrosophic_probability import probability_profile_for_text
     from .neutrosophic_sets import set_membership_profile_for_text
+    from .neutrosophic_statistics import statistics_profile_for_text
 
     lowered = text.lower()
     carrier_type = "fractal_geometry" if domain == "fractal_geometry" else "lexicon_distribution"
@@ -632,6 +677,15 @@ def classify_i_chain_text(text: str, domain: str) -> dict[str, object]:
     set_membership_profile = set_membership_profile_for_text(text)
     if set_membership_profile is not None:
         payload["set_membership_profile"] = set_membership_profile
+    logic_profile = logic_profile_for_text(text)
+    if logic_profile is not None:
+        payload["logic_profile"] = logic_profile
+    probability_profile = probability_profile_for_text(text)
+    if probability_profile is not None:
+        payload["probability_profile"] = probability_profile
+    statistics_profile = statistics_profile_for_text(text)
+    if statistics_profile is not None:
+        payload["statistics_profile"] = statistics_profile
     return payload
 
 

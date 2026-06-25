@@ -32,12 +32,13 @@ Synthia is not a production scientific authority, medical tool, environmental de
 
 At the moment, Synthia is a local Python research core and documentation boundary for building an evolving classification intelligence. She is not yet a large model, autonomous agent, field robot, or production platform. Her current value is architectural: she provides the first working skeleton for a system that can remember which lexicon it is using, why a term belongs to that lexicon, what evidence supports it, and where uncertainty or contradiction enters the classification.
 
-In practical terms, Synthia currently provides six base capabilities:
+In practical terms, Synthia currently provides seven base capabilities:
 
 - represents concepts as `I_lexicon` nodes with domain, definition, source IDs, T/I/F values, and the preserved `I -> I_system^S -> H_lex -> G_lex -> I_lexicon` lexicon-classification hierarchy;
 - connects concepts through typed bridges such as redescription, memory repair, analogy, contradiction, rank shift, synonymy, and uncertainty;
 - produces plithogenic profiles that summarize truth, indeterminacy, falsity, contradiction load, and feature vectors for classification state;
 - indexes the public NSS article list as a living source-discovery surface, then derives `P(L_i | d, S)`, `H_lex`, `G_lex`, and `I_lexicon` for math-lexicon routing;
+- implements neutrosophic logic, single-valued neutrosophic set operations, probability events, sample-space diagnostics, statistics summaries, and distribution candidate routing as bounded public math kernels;
 - implements the first biology/taxonomy memory layer inspired by the white paper with Prof. Aguilar, including redescription traces, review packets, citation auditing, conservation links, and AI-assistance disclosure boundaries;
 - implements the first passive swarm field-scout layer for simulated drone observations, local vision detections, digital pheromone mapping, contextual trust, anti-entropy state reconciliation, and human-review packets.
 
@@ -114,6 +115,14 @@ The symbolic engine supports stable code IDs, LaTeX forms, display forms, and al
 The source `https://fs.unm.edu/eBook-Neutrosophics6.pdf` is treated as Synthia's primary public foundation for neutrosophic logic, set, probability, statistics, and `T/I/F`. Synthia preserves formal neutrosophic values as metadata, then converts them into bounded operational `TIF` values for deterministic software scoring.
 
 The source `https://fs.unm.edu/IFS-generalized.pdf` is treated as the public set-membership source for interpreting `T` as membership, `I` as indeterminacy, and `F` as non-membership. Synthia uses it to diagnose complete, incomplete, paraconsistent, intuitionistic-fuzzy-compatible, and general neutrosophic tuples before lifting them into `I_lexicon`.
+
+The sources `https://fs.unm.edu/IFL-generalized.pdf` and `https://fs.unm.edu/IntrodNeutLogic.pdf` now drive Synthia's proposition logic kernel. This adds relative/absolute, incomplete, paraconsistent, paradoxist, IFL-compatible, and general neutrosophic logic profiles.
+
+The source `https://fs.unm.edu/SingleValuedNeutrosophicSets.pdf` now drives bounded single-valued operations: union, intersection, difference, truth-favorite, and falsity-favorite.
+
+The source `https://fs.unm.edu/NeutrosophicMeasureIntegralProbability.pdf` now drives event triples, complement summaries, sample-space diagnostics, and probability-to-`I_lexicon` projection.
+
+The sources `https://fs.unm.edu/NeutrosophicStatistics.pdf` and `https://fs.unm.edu/NSS/TheNeutrosophicStatisticalDistribution.pdf` now drive known/interval/unknown dataset summaries, indeterminacy load, candidate distribution labels, and review-risk routing.
 
 The second NSS surface, `https://fs.unm.edu/NSS/Articles.htm`, is now treated as a living article index for source discovery. Synthia can parse article PDF links, normalize public URLs, classify titles into mathematical families, and write generated article ledgers to `Synthia_organisation` instead of the public repo. These classifications are candidate routing signals for review, not final mathematical authority.
 
@@ -243,6 +252,18 @@ python -m synthia_core.cli nss foundation profile --name paradoxist
 python -m synthia_core.cli nss set explain
 python -m synthia_core.cli nss set classify --T 0.3 --I 0.51 --F 0.28
 python -m synthia_core.cli nss set compare-ifs --T 0.8 --I 0.1 --F 0.4
+python -m synthia_core.cli nss logic explain
+python -m synthia_core.cli nss logic classify --T 0.9 --I 0.2 --F 0.9 --text "paradox proposition"
+python -m synthia_core.cli nss logic compare-ifl --T 0.8 --I 0.1 --F 0.4
+python -m synthia_core.cli nss svns explain
+python -m synthia_core.cli nss svns operate --op union --left 0.4,0.2,0.6 --right 0.7,0.5,0.3
+python -m synthia_core.cli nss svns favorite --mode truth --T 0.8 --I 0.5 --F 0.7
+python -m synthia_core.cli nss probability explain
+python -m synthia_core.cli nss probability event --name rain --T 0.6 --I 0.3 --F 0.1
+python -m synthia_core.cli nss probability sample-space --events '[{"name":"a","T":0.4,"I":0.2,"F":0.0},{"name":"b","T":0.4,"I":0.1,"F":0.0}]'
+python -m synthia_core.cli nss statistics explain
+python -m synthia_core.cli nss statistics summarize --values '[1,2,[3,5],null,{"unknown":true}]'
+python -m synthia_core.cli nss distribution classify --text "binomial trial with success failure and indeterminate interval"
 python -m synthia_core.cli nss articles scan --limit 25 --private-org ..\Synthia_organisation
 python -m synthia_core.cli nss articles classify --text "neutrosophic probability distribution for lexicon entropy"
 python -m synthia_core.cli nss articles source --url https://fs.unm.edu/NSS/PlithogenicSetAnExtensionOfCrisp.pdf

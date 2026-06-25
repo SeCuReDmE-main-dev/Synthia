@@ -17,7 +17,19 @@ from .lexicon import seed_base_lexicon
 from .nss import NSSMathRouter
 from .nss_articles import NSSArticleIndex
 from .neutrosophic_foundation import foundation_explain, foundation_normalize, foundation_profile
+from .neutrosophic_logic import LogicCompatibilityClassifier
+from .neutrosophic_probability import (
+    NeutrosophicEvent,
+    NeutrosophicProbability,
+    NeutrosophicSampleSpace,
+    probability_explain,
+)
 from .neutrosophic_sets import NeutrosophicSetClassifier
+from .neutrosophic_statistics import (
+    classify_neutrosophic_distribution,
+    statistics_explain,
+    summarize_neutrosophic_dataset,
+)
 from .plithogenic import (
     TIF,
     classify_i_chain_text,
@@ -25,6 +37,7 @@ from .plithogenic import (
     plithogenic_profile_for_source,
     render_symbolic_notation,
 )
+from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
 from .safety import HIERARCHY
 from .sources import scan_root
 from .swarm import (
@@ -81,6 +94,20 @@ def _write_private_nss_article_ledger(private_org: str, payload: dict[str, objec
     target = target_dir / "nss_article_index.json"
     target.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     return target
+
+
+def _parse_tif_triplet(value: str, label: str = "value") -> tuple[float, float, float]:
+    parts = [part.strip() for part in value.split(",")]
+    if len(parts) != 3:
+        raise ValueError(f"{label} must be formatted as T,I,F")
+    return float(parts[0]), float(parts[1]), float(parts[2])
+
+
+def _load_json_value(value: str) -> object:
+    path = Path(value)
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(value)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -156,6 +183,49 @@ def main(argv: list[str] | None = None) -> int:
     nss_set_compare.add_argument("--T", type=float, required=True)
     nss_set_compare.add_argument("--I", type=float, required=True)
     nss_set_compare.add_argument("--F", type=float, required=True)
+    nss_logic = nss_sub.add_parser("logic")
+    nss_logic_sub = nss_logic.add_subparsers(dest="logic_command", required=True)
+    nss_logic_sub.add_parser("explain")
+    nss_logic_classify = nss_logic_sub.add_parser("classify")
+    nss_logic_classify.add_argument("--T", type=float, required=True)
+    nss_logic_classify.add_argument("--I", type=float, required=True)
+    nss_logic_classify.add_argument("--F", type=float, required=True)
+    nss_logic_classify.add_argument("--text", default="")
+    nss_logic_compare = nss_logic_sub.add_parser("compare-ifl")
+    nss_logic_compare.add_argument("--T", type=float, required=True)
+    nss_logic_compare.add_argument("--I", type=float, required=True)
+    nss_logic_compare.add_argument("--F", type=float, required=True)
+    nss_svns = nss_sub.add_parser("svns")
+    nss_svns_sub = nss_svns.add_subparsers(dest="svns_command", required=True)
+    nss_svns_sub.add_parser("explain")
+    nss_svns_operate = nss_svns_sub.add_parser("operate")
+    nss_svns_operate.add_argument("--op", choices=["union", "intersection", "difference"], required=True)
+    nss_svns_operate.add_argument("--left", required=True, help="T,I,F")
+    nss_svns_operate.add_argument("--right", required=True, help="T,I,F")
+    nss_svns_favorite = nss_svns_sub.add_parser("favorite")
+    nss_svns_favorite.add_argument("--mode", choices=["truth", "falsity"], required=True)
+    nss_svns_favorite.add_argument("--T", type=float, required=True)
+    nss_svns_favorite.add_argument("--I", type=float, required=True)
+    nss_svns_favorite.add_argument("--F", type=float, required=True)
+    nss_probability = nss_sub.add_parser("probability")
+    nss_probability_sub = nss_probability.add_subparsers(dest="probability_command", required=True)
+    nss_probability_sub.add_parser("explain")
+    nss_probability_event = nss_probability_sub.add_parser("event")
+    nss_probability_event.add_argument("--name", required=True)
+    nss_probability_event.add_argument("--T", type=float, required=True)
+    nss_probability_event.add_argument("--I", type=float, required=True)
+    nss_probability_event.add_argument("--F", type=float, required=True)
+    nss_probability_sample = nss_probability_sub.add_parser("sample-space")
+    nss_probability_sample.add_argument("--events", required=True, help="JSON array or path")
+    nss_statistics = nss_sub.add_parser("statistics")
+    nss_statistics_sub = nss_statistics.add_subparsers(dest="statistics_command", required=True)
+    nss_statistics_sub.add_parser("explain")
+    nss_statistics_summarize = nss_statistics_sub.add_parser("summarize")
+    nss_statistics_summarize.add_argument("--values", required=True, help="JSON array or path")
+    nss_distribution = nss_sub.add_parser("distribution")
+    nss_distribution_sub = nss_distribution.add_subparsers(dest="distribution_command", required=True)
+    nss_distribution_classify = nss_distribution_sub.add_parser("classify")
+    nss_distribution_classify.add_argument("--text", required=True)
     nss_articles = nss_sub.add_parser("articles")
     nss_articles_sub = nss_articles.add_subparsers(dest="articles_command", required=True)
     nss_articles_scan = nss_articles_sub.add_parser("scan")
@@ -308,6 +378,8 @@ def main(argv: list[str] | None = None) -> int:
         router = NSSMathRouter()
         article_index = NSSArticleIndex()
         set_classifier = NeutrosophicSetClassifier()
+        logic_classifier = LogicCompatibilityClassifier()
+        svns_operator = SVNSOperator()
         if args.command == "sources" and args.action == "list":
             _print_json(router.list_sources())
             return 0
@@ -331,6 +403,62 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "set" and args.set_command == "compare-ifs":
             _print_json(set_classifier.compare_ifs(args.T, args.I, args.F))
+            return 0
+        if args.command == "logic" and args.logic_command == "explain":
+            _print_json(logic_classifier.explain())
+            return 0
+        if args.command == "logic" and args.logic_command == "classify":
+            _print_json(logic_classifier.classify(args.T, args.I, args.F, text=args.text))
+            return 0
+        if args.command == "logic" and args.logic_command == "compare-ifl":
+            _print_json(logic_classifier.compare_ifl(args.T, args.I, args.F))
+            return 0
+        if args.command == "svns" and args.svns_command == "explain":
+            _print_json(svns_operator.explain())
+            return 0
+        if args.command == "svns" and args.svns_command == "operate":
+            left = SingleValuedNeutrosophicSet(*_parse_tif_triplet(args.left, "left"), label="left")
+            right = SingleValuedNeutrosophicSet(*_parse_tif_triplet(args.right, "right"), label="right")
+            _print_json(svns_operator.operate(args.op, left, right))
+            return 0
+        if args.command == "svns" and args.svns_command == "favorite":
+            value = SingleValuedNeutrosophicSet(args.T, args.I, args.F, label="value")
+            _print_json(svns_operator.favorite(args.mode, value))
+            return 0
+        if args.command == "probability" and args.probability_command == "explain":
+            _print_json(probability_explain())
+            return 0
+        if args.command == "probability" and args.probability_command == "event":
+            event = NeutrosophicEvent(args.name, NeutrosophicProbability(args.T, args.I, args.F))
+            _print_json(event.as_dict())
+            return 0
+        if args.command == "probability" and args.probability_command == "sample-space":
+            raw_events = _load_json_value(args.events)
+            if not isinstance(raw_events, list):
+                raise ValueError("--events must decode to a JSON array")
+            events = []
+            for index, item in enumerate(raw_events):
+                if not isinstance(item, dict):
+                    raise ValueError("each event must be a JSON object")
+                events.append(
+                    NeutrosophicEvent(
+                        str(item.get("name", f"event_{index + 1}")),
+                        NeutrosophicProbability(float(item.get("T", 0.0)), float(item.get("I", 0.0)), float(item.get("F", 0.0))),
+                    )
+                )
+            _print_json(NeutrosophicSampleSpace(tuple(events)).as_dict())
+            return 0
+        if args.command == "statistics" and args.statistics_command == "explain":
+            _print_json(statistics_explain())
+            return 0
+        if args.command == "statistics" and args.statistics_command == "summarize":
+            values = _load_json_value(args.values)
+            if not isinstance(values, list):
+                raise ValueError("--values must decode to a JSON array")
+            _print_json(summarize_neutrosophic_dataset(values))
+            return 0
+        if args.command == "distribution" and args.distribution_command == "classify":
+            _print_json(classify_neutrosophic_distribution(args.text))
             return 0
         if args.command == "articles" and args.articles_command == "scan":
             scan_result = article_index.scan(limit=args.limit, html=_read_text_arg(args.html))

@@ -38,6 +38,10 @@ def test_public_nss_docs_keep_clean_chain():
         root / "docs" / "nss_articles_indexation_for_i_lexicon.md",
         root / "docs" / "neutrosophic_foundation_kernel.md",
         root / "docs" / "neutrosophic_set_membership_kernel.md",
+        root / "docs" / "neutrosophic_logic_kernel.md",
+        root / "docs" / "single_valued_neutrosophic_kernel.md",
+        root / "docs" / "neutrosophic_probability_kernel.md",
+        root / "docs" / "neutrosophic_statistics_distribution_kernel.md",
     ]
     for path in docs:
         text = path.read_text(encoding="utf-8")
