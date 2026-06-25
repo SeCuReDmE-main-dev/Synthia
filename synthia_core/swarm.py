@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import mimetypes
+import shutil
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -174,6 +175,50 @@ class ObservationPacket:
             "claim_boundary": "candidate observation only; not a species, structure, or hazard claim",
             "hierarchy": HIERARCHY,
         }
+
+    @classmethod
+    def from_mapping(cls, payload: Mapping[str, object]) -> "ObservationPacket":
+        telemetry_payload = payload.get("telemetry") if isinstance(payload.get("telemetry"), Mapping) else {}
+        detections_payload = payload.get("detections") if isinstance(payload.get("detections"), list) else []
+        return cls(
+            node_id=str(payload.get("node_id", telemetry_payload.get("node_id", "unknown"))),
+            telemetry=TelemetrySnapshot(
+                node_id=str(telemetry_payload.get("node_id", payload.get("node_id", "unknown"))),
+                timestamp=float(telemetry_payload.get("timestamp", payload.get("captured_at", _now()))),
+                latitude=_optional_payload_float(telemetry_payload, "latitude"),
+                longitude=_optional_payload_float(telemetry_payload, "longitude"),
+                altitude_m=_optional_payload_float(telemetry_payload, "altitude_m"),
+                heading_deg=_optional_payload_float(telemetry_payload, "heading_deg"),
+                battery_pct=_optional_payload_float(telemetry_payload, "battery_pct"),
+                source=str(telemetry_payload.get("source", "stored")),
+                flight_stack=str(telemetry_payload.get("flight_stack", "unknown")),
+                flight_mode=str(telemetry_payload.get("flight_mode", "observe_only")),
+                armed=bool(telemetry_payload.get("armed", False)),
+            ),
+            image_uri=str(payload.get("image_uri", "")),
+            image_sha256=None if payload.get("image_sha256") is None else str(payload.get("image_sha256")),
+            detections=tuple(
+                VisionDetection(
+                    label=str(item.get("label", "unknown")),
+                    confidence=float(item.get("confidence", 0.5)),
+                    source=str(item.get("source", "stored")),
+                    box_xyxy=tuple(item["box_xyxy"]) if item.get("box_xyxy") else None,
+                )
+                for item in detections_payload
+                if isinstance(item, Mapping)
+            ),
+            observation_id=str(payload.get("observation_id", f"obs.{uuid4().hex}")),
+            captured_at=float(payload.get("captured_at", _now())),
+            lexicon_domains=tuple(str(item) for item in payload.get("lexicon_domains", []) if item),
+            novelty_score=float(payload.get("novelty_score", 0.0)),
+            risk_score=float(payload.get("risk_score", 0.0)),
+        )
+
+
+def _optional_payload_float(payload: Mapping[str, object], key: str) -> float | None:
+    if key not in payload or payload[key] is None:
+        return None
+    return float(payload[key])
 
 
 class MAVLinkTelemetryAdapter:
@@ -519,6 +564,198 @@ class AntiEntropyTrustLedger:
         }
 
 
+@dataclass(frozen=True)
+class RethinkDBBackendConfig:
+    host: str = "127.0.0.1"
+    port: int = 28015
+    database: str = "synthia_swarm"
+    observations_table: str = "observations"
+    heartbeats_table: str = "heartbeats"
+    trust_table: str = "trust_state"
+    executable: str | None = None
+    data_dir: str | None = None
+
+
+class RethinkDBSwarmBackend:
+    """Optional RethinkDB backend for CTN and anti-entropy swarm state."""
+
+    def __init__(self, config: RethinkDBBackendConfig | None = None) -> None:
+        self.config = config or RethinkDBBackendConfig()
+
+    def status(self) -> dict[str, object]:
+        try:
+            r = self._driver()
+            conn = self._connect(r)
+            try:
+                dbs = r.db_list().run(conn)
+            finally:
+                conn.close()
+            return {
+                "backend": "rethinkdb",
+                "available": True,
+                "host": self.config.host,
+                "port": self.config.port,
+                "database": self.config.database,
+                "database_exists": self.config.database in dbs,
+                "executable": self.config.executable,
+                "data_dir": self.config.data_dir,
+            }
+        except Exception as exc:
+            return {
+                "backend": "rethinkdb",
+                "available": False,
+                "host": self.config.host,
+                "port": self.config.port,
+                "database": self.config.database,
+                "error": f"{type(exc).__name__}: {exc}",
+                "executable": self.config.executable,
+                "data_dir": self.config.data_dir,
+            }
+
+    def ensure_schema(self) -> dict[str, object]:
+        r = self._driver()
+        conn = self._connect(r, db=None)
+        try:
+            if self.config.database not in r.db_list().run(conn):
+                r.db_create(self.config.database).run(conn)
+            db = r.db(self.config.database)
+            existing = db.table_list().run(conn)
+            created = []
+            for table in (self.config.observations_table, self.config.heartbeats_table, self.config.trust_table):
+                if table not in existing:
+                    db.table_create(table).run(conn)
+                    created.append(table)
+            return {"database": self.config.database, "created_tables": created, "ready": True}
+        finally:
+            conn.close()
+
+    def store_observation(self, observation: ObservationPacket, extra: Mapping[str, object] | None = None) -> dict[str, object]:
+        r = self._driver()
+        conn = self._connect(r)
+        document = observation.as_dict(public_safe=False)
+        document["id"] = observation.observation_id
+        document["extra"] = dict(extra or {})
+        try:
+            result = r.table(self.config.observations_table).insert(document, conflict="replace").run(conn)
+            return {"stored": True, "backend": "rethinkdb", "result": result, "observation_id": observation.observation_id}
+        finally:
+            conn.close()
+
+    def store_heartbeat(self, node_id: str, status: Mapping[str, object]) -> dict[str, object]:
+        r = self._driver()
+        conn = self._connect(r)
+        document = {"id": node_id, "node_id": node_id, "last_seen": _now(), "status": dict(status)}
+        try:
+            result = r.table(self.config.heartbeats_table).insert(document, conflict="replace").run(conn)
+            return {"stored": True, "backend": "rethinkdb", "result": result, "node_id": node_id}
+        finally:
+            conn.close()
+
+    def load_observation(self, observation_id: str) -> ObservationPacket | None:
+        r = self._driver()
+        conn = self._connect(r)
+        try:
+            document = r.table(self.config.observations_table).get(observation_id).run(conn)
+        finally:
+            conn.close()
+        if not document:
+            return None
+        return ObservationPacket.from_mapping(document)
+
+    def _driver(self):
+        import rethinkdb  # type: ignore
+
+        if hasattr(rethinkdb, "connect"):
+            return rethinkdb
+        if hasattr(rethinkdb, "r"):
+            return rethinkdb.r
+        if hasattr(rethinkdb, "RethinkDB"):
+            return rethinkdb.RethinkDB()
+        raise RuntimeError("unsupported rethinkdb Python driver shape")
+
+    def _connect(self, r, db: str | None | object = ...):
+        target_db = self.config.database if db is ... else db
+        kwargs = {"host": self.config.host, "port": self.config.port}
+        if target_db:
+            kwargs["db"] = target_db
+        return r.connect(**kwargs)
+
+
+class EvidenceVault:
+    """Private evidence storage for observations and media outside the public repo."""
+
+    def __init__(self, root: str | Path) -> None:
+        self.root = Path(root)
+        self.observations_dir = self.root / "observations"
+        self.media_dir = self.root / "media"
+        self.notes_dir = self.root / "notes"
+
+    @classmethod
+    def from_private_org(cls, private_org: str | Path) -> "EvidenceVault":
+        return cls(Path(private_org) / "private_evidence" / "swarm")
+
+    def ensure(self) -> None:
+        self.observations_dir.mkdir(parents=True, exist_ok=True)
+        self.media_dir.mkdir(parents=True, exist_ok=True)
+        self.notes_dir.mkdir(parents=True, exist_ok=True)
+
+    def store_observation(
+        self,
+        observation: ObservationPacket,
+        private_note: str = "",
+        copy_media: bool = True,
+    ) -> dict[str, object]:
+        self.ensure()
+        payload = observation.as_dict(public_safe=False)
+        stored_media_path = None
+        source = Path(observation.image_uri)
+        if copy_media and source.exists() and source.is_file():
+            media_name = f"{observation.observation_id}_{observation.image_sha256 or hash_file(source)}{source.suffix}"
+            target = self.media_dir / media_name
+            shutil.copy2(source, target)
+            stored_media_path = str(target)
+        payload["private_note"] = private_note
+        payload["stored_media_path"] = stored_media_path
+        payload["public_repo_boundary"] = "private field evidence remains outside the public Synthia repository"
+        path = self.observations_dir / f"{observation.observation_id}.json"
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        return {"stored": True, "path": str(path), "stored_media_path": stored_media_path}
+
+    def load_observation(self, observation_id: str) -> ObservationPacket:
+        path = self.observations_dir / f"{observation_id}.json"
+        if not path.exists():
+            raise FileNotFoundError(f"observation not found in evidence vault: {observation_id}")
+        return ObservationPacket.from_mapping(json.loads(path.read_text(encoding="utf-8")))
+
+
+class OfflineObservationBuffer:
+    """Deduplicate and replay observations after node or mesh interruption."""
+
+    def __init__(self) -> None:
+        self._queued: dict[str, ObservationPacket] = {}
+        self._acked: set[str] = set()
+
+    def enqueue(self, observation: ObservationPacket) -> dict[str, object]:
+        duplicate = observation.observation_id in self._queued or observation.observation_id in self._acked
+        if not duplicate:
+            self._queued[observation.observation_id] = observation
+        return {"observation_id": observation.observation_id, "queued": not duplicate, "duplicate": duplicate}
+
+    def mark_acked(self, observation_id: str) -> None:
+        self._queued.pop(observation_id, None)
+        self._acked.add(observation_id)
+
+    def replay(self, queen: "QueenCoordinator") -> dict[str, object]:
+        replayed = []
+        for observation_id, observation in list(self._queued.items()):
+            replayed.append(queen.ingest_observation(observation))
+            self.mark_acked(observation_id)
+        return {"replayed_count": len(replayed), "results": replayed}
+
+    def status(self) -> dict[str, object]:
+        return {"queued_count": len(self._queued), "acked_count": len(self._acked)}
+
+
 class DroneNodeApp:
     def __init__(
         self,
@@ -556,13 +793,20 @@ class DroneNodeApp:
 
 
 class QueenCoordinator:
-    def __init__(self, pheromone_map: DigitalPheromoneMap | None = None) -> None:
+    def __init__(
+        self,
+        pheromone_map: DigitalPheromoneMap | None = None,
+        evidence_vault: EvidenceVault | None = None,
+        rethinkdb_backend: RethinkDBSwarmBackend | None = None,
+    ) -> None:
         self.pheromone_map = pheromone_map or DigitalPheromoneMap()
         self.nodes: dict[str, dict[str, object]] = {}
         self.observations: dict[str, ObservationPacket] = {}
         self.identity = FfeDIdentityEnvelope()
         self.ctn = ContextualTrustNetwork()
         self.anti_entropy = AntiEntropyTrustLedger()
+        self.evidence_vault = evidence_vault
+        self.rethinkdb_backend = rethinkdb_backend
 
     def heartbeat(self, node_id: str, status: Mapping[str, object] | None = None) -> dict[str, object]:
         payload = {
@@ -572,6 +816,11 @@ class QueenCoordinator:
             "actuation_allowed": False,
         }
         self.nodes[node_id] = payload
+        if self.rethinkdb_backend is not None:
+            try:
+                payload["rethinkdb"] = self.rethinkdb_backend.store_heartbeat(node_id, payload["status"])
+            except Exception as exc:
+                payload["rethinkdb"] = {"stored": False, "error": f"{type(exc).__name__}: {exc}"}
         return payload
 
     def ingest_observation(self, observation: ObservationPacket) -> dict[str, object]:
@@ -588,11 +837,23 @@ class QueenCoordinator:
                 "cell_id": cell.cell_id,
             },
         )
+        storage: dict[str, object] = {}
+        if self.evidence_vault is not None:
+            storage["evidence_vault"] = self.evidence_vault.store_observation(observation)
+        if self.rethinkdb_backend is not None:
+            try:
+                storage["rethinkdb"] = self.rethinkdb_backend.store_observation(
+                    observation,
+                    extra={"trust": trust, "pheromone_cell": cell.as_dict()},
+                )
+            except Exception as exc:
+                storage["rethinkdb"] = {"stored": False, "error": f"{type(exc).__name__}: {exc}"}
         return {
             "observation": observation.as_dict(),
             "identity_envelope": identity_envelope,
             "contextual_trust": trust,
             "pheromone_cell": cell.as_dict(),
+            "storage": storage,
             "task_hints": self.pheromone_map.task_hints(),
         }
 
@@ -607,6 +868,50 @@ class QueenCoordinator:
             "actuation_allowed": False,
             "safety_boundary": "queen coordinator emits task hints only in this milestone",
         }
+
+    def find_observation(self, observation_id: str) -> ObservationPacket | None:
+        if observation_id in self.observations:
+            return self.observations[observation_id]
+        if self.evidence_vault is not None:
+            try:
+                return self.evidence_vault.load_observation(observation_id)
+            except FileNotFoundError:
+                pass
+        if self.rethinkdb_backend is not None:
+            return self.rethinkdb_backend.load_observation(observation_id)
+        return None
+
+
+class SwarmEndpointApp:
+    """In-process implementation of the planned internal swarm endpoints."""
+
+    def __init__(self, queen: QueenCoordinator | None = None) -> None:
+        self.queen = queen or QueenCoordinator()
+
+    def get_swarm_status(self) -> dict[str, object]:
+        return self.queen.status()
+
+    def post_node_heartbeat(self, payload: Mapping[str, object]) -> dict[str, object]:
+        node_id = str(payload.get("node_id", "unknown"))
+        status = payload.get("status") if isinstance(payload.get("status"), Mapping) else payload
+        return self.queen.heartbeat(node_id, status)
+
+    def post_observation(self, payload: Mapping[str, object]) -> dict[str, object]:
+        return self.queen.ingest_observation(ObservationPacket.from_mapping(payload))
+
+    def get_pheromone_map(self) -> dict[str, object]:
+        return self.queen.pheromone_map.as_geojson()
+
+    def post_queen_task_hints(self, payload: Mapping[str, object] | None = None) -> dict[str, object]:
+        limit = int((payload or {}).get("limit", 5))
+        return {"task_hints": self.queen.pheromone_map.task_hints(limit=limit), "actuation_allowed": False}
+
+    def post_review_packet(self, payload: Mapping[str, object]) -> dict[str, object]:
+        observation_id = str(payload.get("observation_id", ""))
+        observation = self.queen.find_observation(observation_id)
+        if observation is None:
+            raise FileNotFoundError(f"observation not found: {observation_id}")
+        return SwarmReviewPacketBuilder().build(observation)
 
 
 class MissionSafetyGate:

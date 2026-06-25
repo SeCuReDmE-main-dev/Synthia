@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from .codex_connector import build_wake_prompt, codex_status
@@ -12,8 +13,11 @@ from .sources import scan_root
 from .swarm import (
     DigitalPheromoneMap,
     DroneNodeApp,
+    EvidenceVault,
     MissionSafetyGate,
     QueenCoordinator,
+    RethinkDBBackendConfig,
+    RethinkDBSwarmBackend,
     SwarmReviewPacketBuilder,
     load_json_mapping,
     parse_detection_arg,
@@ -27,6 +31,22 @@ def _print_json(payload: object) -> None:
 
 def _default_private_org() -> Path:
     return Path.cwd().parent / "Synthia_organisation"
+
+
+def _rethinkdb_config_from_args(args: argparse.Namespace) -> RethinkDBBackendConfig:
+    return RethinkDBBackendConfig(
+        host=getattr(args, "rethinkdb_host", None) or os.environ.get("SYNTHIA_RETHINKDB_HOST", "127.0.0.1"),
+        port=int(getattr(args, "rethinkdb_port", None) or os.environ.get("SYNTHIA_RETHINKDB_PORT", "28015")),
+        database=getattr(args, "rethinkdb_db", None) or os.environ.get("SYNTHIA_RETHINKDB_DB", "synthia_swarm"),
+        executable=os.environ.get("SYNTHIA_RETHINKDB_EXE"),
+        data_dir=os.environ.get("SYNTHIA_RETHINKDB_DATA"),
+    )
+
+
+def _configure_rethinkdb_flags(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--rethinkdb-host", default=None)
+    parser.add_argument("--rethinkdb-port", type=int, default=None)
+    parser.add_argument("--rethinkdb-db", default=None)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -69,14 +89,27 @@ def main(argv: list[str] | None = None) -> int:
 
     swarm = subparsers.add_parser("swarm")
     swarm_sub = swarm.add_subparsers(dest="command", required=True)
+    node = swarm_sub.add_parser("node")
+    node_sub = node.add_subparsers(dest="node_command", required=True)
+    node_run = node_sub.add_parser("run")
+    node_run.add_argument("--config", required=True)
+    node_run.add_argument("--private-org", default=str(_default_private_org()))
+    node_run.add_argument("--use-rethinkdb", action="store_true")
+    _configure_rethinkdb_flags(node_run)
     simulate = swarm_sub.add_parser("simulate")
     simulate.add_argument("--dataset", required=True)
     simulate.add_argument("--node-id", default="drone.sim.1")
+    simulate.add_argument("--private-org", default=str(_default_private_org()))
+    simulate.add_argument("--store", action="store_true")
     ingest_frame = swarm_sub.add_parser("ingest-frame")
     ingest_frame.add_argument("--image", required=True)
     ingest_frame.add_argument("--telemetry", required=True, help="JSON object or path to JSON telemetry")
     ingest_frame.add_argument("--node-id", default="drone.sim.1")
     ingest_frame.add_argument("--detection", action="append", default=[], help="label or label:confidence")
+    ingest_frame.add_argument("--private-org", default=str(_default_private_org()))
+    ingest_frame.add_argument("--store", action="store_true")
+    ingest_frame.add_argument("--use-rethinkdb", action="store_true")
+    _configure_rethinkdb_flags(ingest_frame)
     pheromone = swarm_sub.add_parser("pheromone")
     pheromone.add_argument("action", choices=["export"])
     pheromone.add_argument("--format", default="geojson", choices=["geojson", "json"])
@@ -88,8 +121,15 @@ def main(argv: list[str] | None = None) -> int:
     review.add_argument("--telemetry", default='{"source":"simulated"}')
     review.add_argument("--node-id", default="drone.sim.1")
     review.add_argument("--detection", action="append", default=[])
+    review.add_argument("--observation", default=None)
+    review.add_argument("--private-org", default=str(_default_private_org()))
+    review.add_argument("--use-rethinkdb", action="store_true")
+    _configure_rethinkdb_flags(review)
     safety_check = swarm_sub.add_parser("safety-check")
     safety_check.add_argument("--mission", required=True, help="JSON object or path to JSON mission")
+    backend = swarm_sub.add_parser("backend")
+    backend.add_argument("action", choices=["status", "ensure-schema"])
+    _configure_rethinkdb_flags(backend)
 
     args = parser.parse_args(argv)
 
@@ -131,10 +171,30 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.area == "swarm":
+        if args.command == "node" and args.node_command == "run":
+            config = load_json_mapping(args.config)
+            node_id = str(config.get("node_id", "drone.sim.1"))
+            app = DroneNodeApp(node_id)
+            vault = EvidenceVault.from_private_org(args.private_org)
+            backend = RethinkDBSwarmBackend(_rethinkdb_config_from_args(args)) if args.use_rethinkdb else None
+            queen = QueenCoordinator(evidence_vault=vault, rethinkdb_backend=backend)
+            heartbeat = queen.heartbeat(node_id, config.get("status") if isinstance(config.get("status"), dict) else {})
+            ingested = []
+            for frame in config.get("frames", []):
+                if not isinstance(frame, dict):
+                    continue
+                observation = app.ingest_frame(
+                    frame["image"],
+                    frame.get("telemetry", {}),
+                    frame.get("detections"),
+                )
+                ingested.append(queen.ingest_observation(observation))
+            _print_json({"node_id": node_id, "heartbeat": heartbeat, "ingested": ingested, "queen": queen.status()})
+            return 0
         if args.command == "simulate":
             dataset = Path(args.dataset)
             app = DroneNodeApp(args.node_id)
-            queen = QueenCoordinator()
+            queen = QueenCoordinator(evidence_vault=EvidenceVault.from_private_org(args.private_org) if args.store else None)
             suffixes = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif"}
             observations = []
             for image in sorted(path for path in dataset.glob("*") if path.suffix.lower() in suffixes):
@@ -159,7 +219,9 @@ def main(argv: list[str] | None = None) -> int:
                 load_json_mapping(args.telemetry),
                 parse_detection_arg(args.detection) if args.detection else None,
             )
-            queen = QueenCoordinator()
+            vault = EvidenceVault.from_private_org(args.private_org) if args.store else None
+            backend = RethinkDBSwarmBackend(_rethinkdb_config_from_args(args)) if args.use_rethinkdb else None
+            queen = QueenCoordinator(evidence_vault=vault, rethinkdb_backend=backend)
             _print_json(queen.ingest_observation(observation))
             return 0
         if args.command == "pheromone" and args.action == "export":
@@ -171,6 +233,14 @@ def main(argv: list[str] | None = None) -> int:
             _print_json(QueenCoordinator().status())
             return 0
         if args.command == "review-packet" and args.action == "build":
+            if args.observation:
+                vault = EvidenceVault.from_private_org(args.private_org)
+                backend = RethinkDBSwarmBackend(_rethinkdb_config_from_args(args)) if args.use_rethinkdb else None
+                observation = vault.load_observation(args.observation)
+                if backend is not None:
+                    observation = backend.load_observation(args.observation) or observation
+                _print_json(SwarmReviewPacketBuilder().build(observation))
+                return 0
             image = args.image or "simulated_field_frame.jpg"
             app = DroneNodeApp(args.node_id)
             observation = app.ingest_frame(
@@ -182,6 +252,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "safety-check":
             _print_json(MissionSafetyGate().evaluate(load_json_mapping(args.mission)))
+            return 0
+        if args.command == "backend" and args.action == "status":
+            _print_json(RethinkDBSwarmBackend(_rethinkdb_config_from_args(args)).status())
+            return 0
+        if args.command == "backend" and args.action == "ensure-schema":
+            _print_json(RethinkDBSwarmBackend(_rethinkdb_config_from_args(args)).ensure_schema())
             return 0
 
     parser.error("unhandled command")

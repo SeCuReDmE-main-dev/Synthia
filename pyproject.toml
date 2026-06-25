@@ -9,6 +9,9 @@ description = "Synthia I_lexicon taxonomy memory core"
 requires-python = ">=3.10"
 dependencies = []
 
+[project.optional-dependencies]
+rethinkdb = ["rethinkdb>=2.4"]
+
 [project.scripts]
 synthia = "synthia_core.cli:main"
 

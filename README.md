@@ -118,11 +118,36 @@ The current swarm layer can:
 - build digital pheromone cells for coverage, novelty, risk, revisit pressure, and avoid-until-review hints;
 - score contextual trust with a CTN-style layer using floating location continuity, identity envelope presence, risk load, and detection quality;
 - reconcile distributed node state through an anti-entropy trust ledger so stale swarm state cannot overwrite newer trust state;
+- store private field evidence in `Synthia_organisation` or an optional RethinkDB backend;
 - create review packets that preserve sensitive-location policy and candidate-only language.
 
 The FfeD identity envelope is intentionally a placeholder boundary, not custom cryptography. Before any real security deployment, it must be replaced or backed by audited cryptographic primitives and formal threat modeling.
 
 The queen coordinator currently emits task hints only. It does not command flight, change missions, override a pilot, or authorize autonomous action.
+
+Optional RethinkDB support can be enabled for local swarm state, heartbeats, observations, and anti-entropy experiments:
+
+```powershell
+python -m pip install -e .[rethinkdb]
+$env:SYNTHIA_RETHINKDB_HOST="127.0.0.1"
+$env:SYNTHIA_RETHINKDB_PORT="28015"
+$env:SYNTHIA_RETHINKDB_DB="synthia_swarm"
+python -m synthia_core.cli swarm backend status
+python -m synthia_core.cli swarm backend ensure-schema
+```
+
+This gives Synthia a real backend memory surface for swarm work. With RethinkDB available, Synthia can move beyond one-shot CLI packets and begin keeping a live operational history of field agents:
+
+- drone or simulator nodes can publish heartbeats into a shared trust surface;
+- observations can persist as queryable records instead of disappearing after one command;
+- CTN trust state can be reconciled across nodes instead of being held only in local process memory;
+- anti-entropy repair can reject stale swarm state and preserve newer node knowledge;
+- disconnected nodes can buffer observations, replay them later, and still deduplicate by observation identity;
+- queen coordination can reason over remembered coverage, novelty, risk, and review state;
+- future dashboards or APIs can subscribe to state changes instead of polling flat files;
+- private media and sensitive coordinates can remain in `Synthia_organisation` while public packets expose only safe summaries.
+
+In Synthia’s architecture, RethinkDB is not just storage. It is the first practical substrate for CTN-style swarm memory: a place where field observations, trust transitions, pheromone-map updates, and human-review boundaries can stay synchronized while the lexicon layer keeps the classification context intact.
 
 ## CLI
 
@@ -135,8 +160,11 @@ python -m synthia_core.cli lexicon classify --text "AI-assisted traceability sup
 python -m synthia_core.cli lexicon switch --from taxonomy --to phylocode_nomenclature --context ctx-1
 python -m synthia_core.cli taxonomy aburria-packet
 python -m synthia_core.cli swarm queen status
+python -m synthia_core.cli swarm node run --config .\node_config.json
 python -m synthia_core.cli swarm ingest-frame --image .\sample_tree.jpg --telemetry "{`"latitude`":1.1,`"longitude`":2.2}" --detection tree:0.74
+python -m synthia_core.cli swarm ingest-frame --image .\sample_tree.jpg --telemetry "{`"latitude`":1.1,`"longitude`":2.2}" --detection tree:0.74 --store
 python -m synthia_core.cli swarm review-packet build --detection frog:0.81
+python -m synthia_core.cli swarm review-packet build --observation obs.example --private-org ..\Synthia_organisation
 python -m synthia_core.cli swarm safety-check --mission "{`"simulation_passed`":false}"
 python -m synthia_core.cli codex status
 python -m synthia_core.cli codex wake-prompt --private-org ..\Synthia_organisation
