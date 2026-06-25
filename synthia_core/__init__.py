@@ -4,6 +4,7 @@ from .lexicon import ILexicon, LexiconBridge, LexiconNode, LexiconSwitchTrace
 from .nss import NSSMathRouter, NSSSourceFamily
 from .plithogenic import (
     FractalCarrierProfile,
+    IndeterminacyChain,
     MathSource,
     PlithogenicIProfile,
     PlithogenicMatrix,
@@ -22,6 +23,7 @@ __all__ = [
     "LexiconNode",
     "LexiconSwitchTrace",
     "FractalCarrierProfile",
+    "IndeterminacyChain",
     "MathSource",
     "NSSMathRouter",
     "NSSSourceFamily",

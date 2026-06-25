@@ -59,4 +59,4 @@ Plithogenic output supports `I_system^S` and helps compute contradiction load be
 
 ## Public Boundary
 
-This doctrine document cites public NSS sources only. Internal book-derived reasoning informs the architecture, but raw local notes, private correspondence, and restricted evidence are not part of the public repo.
+This doctrine document cites public NSS sources only. Internal book-derived reasoning informs the architecture, but raw local notes, correspondence, and restricted evidence are not part of the public repo.

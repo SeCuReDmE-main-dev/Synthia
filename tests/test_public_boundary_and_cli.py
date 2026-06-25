@@ -30,6 +30,20 @@ def test_public_soul_summary_filters_private_evidence(tmp_path: Path):
     assert "private_evidence" not in summary
 
 
+def test_public_nss_docs_keep_clean_chain():
+    root = Path(__file__).resolve().parents[1]
+    docs = [
+        root / "docs" / "nss_math_sources_for_synthia.md",
+        root / "docs" / "nss_hub_system_classification_doctrine.md",
+    ]
+    for path in docs:
+        text = path.read_text(encoding="utf-8")
+        assert "I -> I_system^S -> H_lex -> G_lex -> I_lexicon" in text
+        assert "private_evidence" not in text.lower()
+        assert "token" not in text.lower()
+        assert "unpublished" not in text.lower()
+
+
 def test_cli_lexicon_classify_smoke(capsys):
     code = main(
         [

@@ -228,6 +228,8 @@ python -m synthia_core.cli lexicon switch --from taxonomy --to phylocode_nomencl
 python -m synthia_core.cli lexicon i-chain explain --term "plithogenic contradiction"
 python -m synthia_core.cli lexicon i-chain classify --text "lexicon entropy and weak decision gap in taxonomy memory" --domain ffed_math
 python -m synthia_core.cli lexicon notation render --symbol I_s --format latex
+python -m synthia_core.cli nss sources list
+python -m synthia_core.cli nss route --text "plithogenic contradiction degree"
 python -m synthia_core.cli plithogenic profile --source nss.plithogenic_logic
 python -m synthia_core.cli taxonomy aburria-packet
 python -m synthia_core.cli swarm queen status
