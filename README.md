@@ -2,6 +2,14 @@
 
 Synthia is an educational research project for an evolving `I_lexicon`: a context-preserving lexicon and taxonomy core that updates as it learns new classification systems.
 
+The current public mathematical invariant is:
+
+```text
+I -> I_system^S -> H_lex -> G_lex -> I_lexicon
+```
+
+This is the lexicon-classification chain. `H_lex` is lexicon entropy, `G_lex` is lexicon decision-gap uncertainty, and `I_lexicon` is the final context-preserving indeterminacy state used when Synthia classifies, filters, switches, or quarantines information by lexicon.
+
 Author identifier: Jean-Sebastien Beaulieu, ORCID: https://orcid.org/0009-0007-2904-0443
 
 ## Project Status
@@ -22,9 +30,9 @@ Synthia is not a production scientific authority, medical tool, environmental de
 
 At the moment, Synthia is a local Python research core and documentation boundary for building an evolving classification intelligence. She is not yet a large model, autonomous agent, field robot, or production platform. Her current value is architectural: she provides the first working skeleton for a system that can remember which lexicon it is using, why a term belongs to that lexicon, what evidence supports it, and where uncertainty or contradiction enters the classification.
 
-In practical terms, Synthia currently does four things:
+In practical terms, Synthia currently provides five base capabilities:
 
-- represents concepts as `I_lexicon` nodes with domain, definition, source IDs, T/I/F values, and the preserved `I -> I_system^S -> H_lex -> G_lex -> I_lexicon` hierarchy;
+- represents concepts as `I_lexicon` nodes with domain, definition, source IDs, T/I/F values, and the preserved `I -> I_system^S -> H_lex -> G_lex -> I_lexicon` lexicon-classification hierarchy;
 - connects concepts through typed bridges such as redescription, memory repair, analogy, contradiction, rank shift, synonymy, and uncertainty;
 - produces plithogenic profiles that summarize truth, indeterminacy, falsity, contradiction load, and feature vectors for classification state;
 - implements the first biology/taxonomy memory layer inspired by the white paper with Prof. Aguilar, including redescription traces, review packets, citation auditing, conservation links, and AI-assistance disclosure boundaries;
