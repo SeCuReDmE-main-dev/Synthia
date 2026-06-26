@@ -1,23 +1,34 @@
-# Synthia public landing page
+# Synthia Landing Page
 
-Static landing page files for `synthia.securedme.ca`.
+Static landing page package for `synthia.securedme.ca`.
 
-## Files
-
-- `index.html` — public landing page and web infographic.
-- `synthia-landing.css` — standalone CSS theme.
-
-## cPanel deployment
-
-Upload both files to the document root for `synthia.securedme.ca`.
-In the current cPanel setup, that document root is named `synthia.securedme.ca`.
-
-Expected final layout:
+Deploy the generated `dist/synthia-public/` package to the cPanel document root:
 
 ```text
-synthia.securedme.ca/
+/home/xacm7978/synthia.securedme.ca/
   index.html
   synthia-landing.css
+  assets/
+    synthia-hero.png
+    synthia-logo.png
 ```
 
-The page is intentionally static: no build step, no JavaScript, no external assets, and no private source material.
+The source page is intentionally static:
+
+- no JavaScript
+- no API key
+- no server-side dependency
+- no private evidence
+
+The page presents Synthia as an educational research project for context-preserving lexicon intelligence, biology classification, source traceability, taxonomy memory, and uncertainty-aware classification. It does not present Synthia as a production scientific authority, medical tool, environmental deployment system, drone-control platform, or formal nomenclatural authority.
+
+Reusable CSS sections established here:
+
+- `.site-shell`
+- `.hero`
+- `.identity-bar`
+- `.section-band`
+- `.feature-grid`
+- `.math-strip`
+- `.boundary-note`
+- `.page-footer`
