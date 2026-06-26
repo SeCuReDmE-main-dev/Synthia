@@ -14,71 +14,85 @@
     <a class="skip-link" href="#main">Skip to content</a>
 
     <div class="site-shell">
-      <header class="identity-bar" aria-label="Synthia public identity">
-        <a class="brand-lockup" href="./index.html" aria-label="Synthia home">
-          <img src="./assets/synthia-logo.png" alt="" width="56" height="56" />
+      <header class="site-header" aria-label="Synthia public navigation">
+        <a class="brand-mark" href="./index.html" aria-label="Synthia home">
+          <img src="./assets/synthia-logo.png" alt="" width="44" height="44" />
           <span>
             <strong>SYNTHIA</strong>
-            <small>Synthetic Intelligence for Biology & Classification</small>
+            <small>Biology. Taxonomy. Lexicon intelligence.</small>
           </span>
         </a>
 
-        <nav class="top-links" aria-label="Landing page sections">
+        <nav class="nav-links" aria-label="Primary sections">
           <a href="#model">Model</a>
           <a href="#i-lexicon">I_lexicon</a>
-          <a href="./neutrosophic-lexicon.html">Neutrosophic Lexicon</a>
-          <a href="#codebase">Codebase</a>
+          <a href="./neutrosophic-lexicon.html">Neutrosophic</a>
+          <a href="#biology">Biology</a>
           <a href="#boundary">Boundary</a>
         </nav>
       </header>
 
       <main id="main">
-        <section class="hero" aria-labelledby="synthia-title">
-          <div class="hero-copy">
-            <p class="eyebrow">Educational research project</p>
-            <h1 id="synthia-title">SYNTHIA</h1>
-            <p class="hero-subtitle">Synthetic Intelligence for Biology & Classification</p>
-            <p class="hero-text">
-              Synthia is a public research workspace for evolving lexicon intelligence:
-              biology classification, PhyloCode-aware taxonomy memory, source traceability,
-              neutrosophic uncertainty, and context-preserving classification across domains.
-            </p>
+        <section class="hero-stage" aria-labelledby="synthia-title">
+          <div class="hero-backdrop" aria-hidden="true"></div>
+          <div class="hero-grid">
+            <article class="hero-copy">
+              <p class="eyebrow">Educational research project</p>
+              <h1 id="synthia-title">Synthetic Intelligence for Biology & Classification</h1>
+              <p class="lead">
+                Synthia is a public research workspace for building context-preserving
+                lexicon intelligence: a system that remembers which vocabulary it is
+                using, why it selected that vocabulary, and what uncertainty still
+                needs human review.
+              </p>
 
-            <div class="identity-links" aria-label="Public project coordinates">
-              <a class="identity-link" href="https://synthia.securedme.ca/">
-                <span>Webspace</span>
-                <strong>synthia.securedme.ca</strong>
-              </a>
-              <a class="identity-link" href="mailto:synthia@securedme.ca">
-                <span>Email</span>
-                <strong>synthia@securedme.ca</strong>
-              </a>
-              <a class="identity-link" href="https://github.com/SeCuReDmE-main-dev/Synthia">
-                <span>Repository</span>
-                <strong>SeCuReDmE-main-dev/Synthia</strong>
-              </a>
-            </div>
+              <div class="hero-actions" aria-label="Project links">
+                <a class="button primary" href="https://github.com/SeCuReDmE-main-dev/Synthia">
+                  Open repository
+                </a>
+                <a class="button secondary" href="./neutrosophic-lexicon.html">
+                  View lexicon page
+                </a>
+              </div>
+
+              <div class="coordinate-grid" aria-label="Public coordinates">
+                <a href="https://synthia.securedme.ca/">
+                  <span>Webspace</span>
+                  <strong>synthia.securedme.ca</strong>
+                </a>
+                <a href="mailto:synthia@securedme.ca">
+                  <span>Email</span>
+                  <strong>synthia@securedme.ca</strong>
+                </a>
+                <a href="https://github.com/SeCuReDmE-main-dev/Synthia">
+                  <span>Repository</span>
+                  <strong>SeCuReDmE-main-dev/Synthia</strong>
+                </a>
+              </div>
+            </article>
+
+            <aside class="signal-panel" aria-label="Synthia identity and invariant">
+              <img class="signal-logo" src="./assets/synthia-logo.png" alt="Synthia logo mark" />
+              <p class="panel-label">Public invariant</p>
+              <div class="chain-line">I -> I_system^S -> H_lex -> G_lex -> I_lexicon</div>
+              <p>
+                The chain preserves indeterminacy, system location, lexicon
+                hypothesis, graph context, and final classification state.
+              </p>
+              <div class="signal-tags" aria-label="Research tags">
+                <span>Transparent</span>
+                <span>Source-linked</span>
+                <span>Review-first</span>
+              </div>
+            </aside>
           </div>
 
-          <figure class="hero-media" aria-label="Synthia visual identity">
-            <img
-              src="./assets/synthia-hero.png"
-              alt="Synthia visual identity banner with biology, classification, intelligence, and knowledge signals"
-            />
-            <figcaption>
-              Synthia's public visual identity: biology, classification, intelligence, and trusted data.
-            </figcaption>
-          </figure>
-        </section>
-
-        <section class="math-strip" id="i-lexicon" aria-labelledby="math-title">
-          <p class="eyebrow">Public invariant</p>
-          <h2 id="math-title">I -> I_system^S -> H_lex -> G_lex -> I_lexicon</h2>
-          <p>
-            Synthia keeps lexicon indeterminacy distinct from generic uncertainty. The chain
-            preserves which vocabulary is active, how strongly a document belongs to it, and
-            what unresolved ambiguity must stay visible for human review.
-          </p>
+          <div class="boundary-ribbon">
+            <strong>Research boundary:</strong>
+            educational classification research only. Not a production authority,
+            medical tool, autonomous robot, environmental deployment system, or formal
+            nomenclatural authority.
+          </div>
         </section>
 
         <section class="section-band" id="model" aria-labelledby="model-title">
@@ -86,207 +100,131 @@
             <p class="eyebrow">What Synthia is now</p>
             <h2 id="model-title">A research core for classification memory</h2>
             <p>
-              Synthia is not yet a large model, autonomous agent, field robot, or production
-              platform. Its current value is architectural: it remembers which lexicon it is
-              using, why a term belongs there, what evidence supports it, and where
-              uncertainty or contradiction enters the classification.
+              Synthia is not yet a large model or production platform. Its current
+              value is architectural: it gives the project a clean public skeleton
+              for lexicon-aware classification, source evidence, uncertainty, and
+              taxonomy memory repair.
             </p>
           </div>
 
           <div class="feature-grid">
             <article class="feature-card">
+              <span class="card-index">01</span>
               <h3>I_lexicon nodes</h3>
-              <p>Concepts carry domain, definition, source IDs, bounded T/I/F values, and the visible lexicon-classification hierarchy.</p>
+              <p>Concepts carry domain, definition, source IDs, T/I/F values, and lexicon state.</p>
             </article>
             <article class="feature-card">
+              <span class="card-index">02</span>
+              <h3>Context switching</h3>
+              <p>A task can move between biology, taxonomy, PhyloCode, math, and AI governance without losing evidence.</p>
+            </article>
+            <article class="feature-card">
+              <span class="card-index">03</span>
               <h3>Typed bridges</h3>
-              <p>Terms can connect through redescription, memory repair, analogy, contradiction, rank shift, synonymy, and uncertainty.</p>
+              <p>Terms connect through synonymy, redescription, rank shift, analogy, contradiction, and memory repair.</p>
             </article>
             <article class="feature-card">
+              <span class="card-index">04</span>
               <h3>Plithogenic profiles</h3>
-              <p>Classification states can expose truth, indeterminacy, falsity, contradiction load, and feature-vector structure.</p>
+              <p>Multi-attribute contradiction and T/I/F scoring remain visible instead of collapsing into a single confidence number.</p>
             </article>
             <article class="feature-card">
-              <h3>NSS article routing</h3>
-              <p>The public NSS article index becomes a source-discovery surface for mathematical lexicon routing.</p>
-            </article>
-            <article class="feature-card">
+              <span class="card-index">05</span>
               <h3>Taxonomy memory</h3>
-              <p>Species names can be treated as memory objects linking descriptions, redescriptions, synonymy, ecology, geography, and review.</p>
+              <p>Species names can be treated as memory objects linking descriptions, redescriptions, synonymy, ecology, and review.</p>
             </article>
             <article class="feature-card">
-              <h3>Swarm scout base</h3>
-              <p>The simulation-first field layer stores passive observations, digital pheromone cells, safety gates, and review packets.</p>
-            </article>
-            <article class="feature-card">
-              <h3>HippoRAG trace bridge</h3>
-              <p>RAG memory bits can carry lexicon type, graph location, selection mechanism, and plithogenic trace metadata.</p>
-            </article>
-            <article class="feature-card">
-              <h3>Codex boundary</h3>
-              <p>OpenAI/Codex status is treated as a native session boundary; Synthia does not store OpenAI API keys.</p>
+              <span class="card-index">06</span>
+              <h3>Private boundary</h3>
+              <p>Evidence ledgers, drafts, and private correspondence stay outside the public repository.</p>
             </article>
           </div>
         </section>
 
-        <section class="section-band source-flow" aria-labelledby="engine-title">
-          <div>
-            <p class="eyebrow">I_lexicon engine</p>
-            <h2 id="engine-title">The public math layer</h2>
-          </div>
-
-          <div class="stacked-content">
-            <p>
-              Synthia computes lexicon state from a candidate distribution over lexicons:
-              `P(L_i | d, S)`, where `L_i` is a lexicon, `d` is the document, term, or
-              observation, and `S` is the active system context.
-            </p>
-            <pre class="code-panel"><code>P(L_i | d, S) = softmax(score(L_i, d))
-H_lex = - sum(P(L_i) log(P(L_i))) / log(|L|)
-G_lex = 1 - (P_top - P_second)
-I_lexicon = bounded(alpha H_lex + beta G_lex + gamma contradiction_load)</code></pre>
-            <p>
-              `H_lex` measures distribution across possible lexicons. `G_lex` measures how
-              weak the winning lexicon is against the second-best candidate. `I_lexicon`
-              is the final context-preserving state used for classification, filtration,
-              switching, or quarantine.
-            </p>
+        <section class="section-band dark-band" id="i-lexicon" aria-labelledby="lexicon-title">
+          <div class="split-layout">
+            <div>
+              <p class="eyebrow">I_lexicon engine</p>
+              <h2 id="lexicon-title">A classification system that knows which language it is using</h2>
+            </div>
+            <div class="stacked-content">
+              <p>
+                The goal is not only to classify a document. The goal is to preserve
+                the lexicon behind the classification: biology terms, PhyloCode terms,
+                neutrosophic math terms, governance terms, and the bridges between them.
+              </p>
+              <div class="flow-row" aria-label="I_lexicon chain">
+                <span>I</span>
+                <span>I_system^S</span>
+                <span>H_lex</span>
+                <span>G_lex</span>
+                <span>I_lexicon</span>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section class="section-band" aria-labelledby="domains-title">
+        <section class="section-band" id="biology" aria-labelledby="biology-title">
           <div class="section-heading">
-            <p class="eyebrow">Applied directions</p>
-            <h2 id="domains-title">Lexicon memory across domains</h2>
+            <p class="eyebrow">Biology and taxonomy</p>
+            <h2 id="biology-title">Built for biological classification without pretending to replace experts</h2>
           </div>
-
-          <div class="content-grid">
-            <article class="wide-card">
-              <h3>Biology and PhyloCode direction</h3>
-              <p>
-                Synthia's first applied domain is biology: taxonomy, redescription,
-                species-as-systems thinking, and PhyloCode-aware classification support.
-                The goal is to help organize biological knowledge as living memory while
-                preserving formal authorship and human authority boundaries.
-              </p>
+          <div class="feature-grid three">
+            <article class="feature-card">
+              <h3>Taxonomic memory repair</h3>
+              <p>Track original descriptions, redescriptions, synonymy, geography, ecology, conservation context, and unresolved layers.</p>
             </article>
-            <article class="wide-card">
-              <h3>Physics and mathematical classification</h3>
-              <p>
-                Synthia is designed to preserve specialized vocabulary in physics and
-                mathematical systems without collapsing field-specific meanings into generic
-                prose. FfeD-style structures, plithogenic logic, and future mathematical
-                lexicons can each become separate context modules.
-              </p>
+            <article class="feature-card">
+              <h3>PhyloCode-aware routing</h3>
+              <p>Keep rank, clade, name, and nomenclatural context visible when switching between classification systems.</p>
             </article>
-            <article class="wide-card">
-              <h3>Future LLM protection</h3>
-              <p>
-                A future role is lexicon sentinel work: tracking which domain vocabulary an
-                LLM is using, detecting taxonomy drift, preserving source-linked meanings,
-                and warning when specialized language has been flattened.
-              </p>
-            </article>
-            <article class="wide-card">
-              <h3>Future field discovery</h3>
-              <p>
-                Swarm and field work remains simulation-first. Any biodiversity, drone, or
-                field deployment would require legal authorization, ecological review, local
-                collaboration, safety controls, and expert validation.
-              </p>
+            <article class="feature-card">
+              <h3>Human review packets</h3>
+              <p>Produce source-linked candidate records for expert review rather than final scientific claims.</p>
             </article>
           </div>
         </section>
 
-        <section class="section-band lexicon-roadmap" aria-labelledby="lexicon-pages-title">
+        <section class="section-band code-band" id="codebase" aria-labelledby="codebase-title">
           <div class="section-heading">
-            <p class="eyebrow">Reusable website structure</p>
-            <h2 id="lexicon-pages-title">One full page per complete lexicon</h2>
-            <p>
-              The site will grow by lexicon pages. Each page should present the source
-              doctrine, active kernels, classification payload, CLI/API surface, human-review
-              boundary, and future work for one complete subject lexicon.
-            </p>
+            <p class="eyebrow">Codebase reality</p>
+            <h2 id="codebase-title">What the public repo is responsible for</h2>
           </div>
-
-          <div class="feature-grid">
-            <a class="feature-card feature-link" href="./neutrosophic-lexicon.html">
-              <h3>Neutrosophic lexicon</h3>
-              <p>First specialized lexicon page: T/I/F, sets, logic, probability, statistics, random variables, plithogeny, and routing.</p>
-            </a>
-            <article class="feature-card">
-              <h3>Biology taxonomy</h3>
-              <p>Future page for species memory, redescription trace, synonymy, conservation context, and review packets.</p>
+          <div class="terminal-grid">
+            <article>
+              <strong>synthia sources scan-root</strong>
+              <span>Inventory public-safe source artifacts.</span>
             </article>
-            <article class="feature-card">
-              <h3>PhyloCode</h3>
-              <p>Future page for clade naming, nomenclature boundaries, rank translation, and human authority constraints.</p>
+            <article>
+              <strong>synthia lexicon classify</strong>
+              <span>Classify text with domain, evidence, and uncertainty state.</span>
             </article>
-            <article class="feature-card">
-              <h3>Physics / FfeD math</h3>
-              <p>Future page for physical-system vocabulary, mathematical carriers, and cross-domain classification safety.</p>
+            <article>
+              <strong>synthia lexicon switch</strong>
+              <span>Move between lexicons without losing context.</span>
             </article>
-          </div>
-        </section>
-
-        <section class="section-band" id="codebase" aria-labelledby="codebase-title">
-          <div class="section-heading">
-            <p class="eyebrow">Codebase guide</p>
-            <h2 id="codebase-title">What is inside the repository</h2>
-          </div>
-
-          <div class="content-grid">
-            <article class="wide-card">
-              <h3>Core modules</h3>
-              <p>
-                The Python core includes lexicon nodes, bridges, source scanning, soul
-                generation boundaries, NSS math routing, neutrosophic kernels, taxonomy
-                memory, swarm simulation, RethinkDB support, and HippoRAG-style trace storage.
-              </p>
-            </article>
-            <article class="wide-card">
-              <h3>CLI surface</h3>
-              <p>
-                Commands cover `sources`, `soul`, `lexicon`, `nss`, `plithogenic`,
-                `taxonomy`, `swarm`, `hipporag`, and `codex` workflows. The full command
-                surface is kept in the repository tests and docs so the public site can stay readable.
-              </p>
-            </article>
-            <article class="wide-card">
-              <h3>Private/public boundary</h3>
-              <p>
-                Public code and safe docs live in this repository. Private source ledgers,
-                private correspondence summaries, implementation notes, and internal reports
-                belong beside it in `Synthia_organisation`.
-              </p>
-            </article>
-            <article class="wide-card">
-              <h3>Development</h3>
-              <p>
-                Run tests from the repository root with `python -m pytest`. No raw private
-                correspondence bodies, authentication caches, restricted manuscript bodies, or credential material
-                should be committed.
-              </p>
+            <article>
+              <strong>synthia nss route</strong>
+              <span>Route mathematical language through public NSS source families.</span>
             </article>
           </div>
         </section>
 
         <section class="boundary-note" id="boundary" aria-labelledby="boundary-title">
-          <p class="eyebrow">Public boundary</p>
-          <h2 id="boundary-title">Research model, not a production authority</h2>
+          <p class="eyebrow">Boundary</p>
+          <h2 id="boundary-title">A serious research instrument begins with disciplined claims</h2>
           <p>
-            Synthia can organize source-linked evidence and prepare human review packets.
-            It does not replace taxonomists, redescriptors, museum workers, field biologists,
-            journal editors, the ICZN, PhyloCode governance, conservation authorities, medical
-            review, or any formal scientific authority.
+            Synthia can model ambiguity, traceability, and taxonomic memory repair.
+            Formal nomenclatural authority remains human and code-governed. Scientific,
+            medical, conservation, and field decisions require expert validation.
           </p>
         </section>
       </main>
 
       <footer class="page-footer">
         <strong>SYNTHIA</strong>
-        <span>Educational research project for context-preserving lexicon intelligence.</span>
-        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">SeCuReDmE-main-dev/Synthia</a>
+        <span>Open educational research project for lexicon-aware classification.</span>
+        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">GitHub repository</a>
       </footer>
     </div>
   </body>

@@ -1,0 +1,10 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/xacm7978/synthia.securedme.ca/
+    - /bin/mkdir -p $DEPLOYPATH/assets
+    - /bin/cp web/landing/index.html $DEPLOYPATH
+    - /bin/cp web/landing/neutrosophic-lexicon.html $DEPLOYPATH
+    - /bin/cp web/landing/synthia-landing.css $DEPLOYPATH
+    - /bin/cp web/landing/assets/synthia-logo.png $DEPLOYPATH/assets/
+    - /bin/cp web/landing/assets/synthia-hero.png $DEPLOYPATH/assets/
