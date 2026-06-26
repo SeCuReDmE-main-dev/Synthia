@@ -4,8 +4,8 @@ Static public site package for `synthia.securedme.ca`.
 
 The landing page uses a resilient visual system:
 
-- `synthia-logo.png` is the primary visible identity asset.
-- `synthia-hero.png` is used as an optional CSS background. If the file is missing on cPanel, the page still renders as an intentional graphite/green research interface instead of showing a broken image icon.
+- The visible identity is CSS-rendered so the page stays polished even if image uploads fail.
+- `synthia-logo.png` and `synthia-hero.png` can still be uploaded as optional future assets, but the current public page does not depend on them to render.
 - No JavaScript, no API key, no server-side dependency, and no private evidence.
 
 Deploy the generated `dist/synthia-public/` package to the cPanel document root:
