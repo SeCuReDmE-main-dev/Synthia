@@ -96,6 +96,13 @@ from .risk_triage import (
     build_food_safety_demo_case,
     score_risk_triage_case,
 )
+from .scientific_governance import (
+    GovernanceEvidenceSource,
+    ScientificGovernanceCase,
+    ScientificGovernanceReviewer,
+    build_synthia_governance_demo_case,
+    score_scientific_governance_case,
+)
 from .taxonomy_memory import TaxonomicMemorySystem
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperation, SVNSOperator
 
@@ -167,6 +174,9 @@ __all__ = [
     "RiskCriterion",
     "RiskTriageCase",
     "RiskTriageReviewer",
+    "GovernanceEvidenceSource",
+    "ScientificGovernanceCase",
+    "ScientificGovernanceReviewer",
     "SingleValuedNeutrosophicSet",
     "SVNSOperation",
     "SVNSOperator",
@@ -179,10 +189,12 @@ __all__ = [
     "build_algorithmic_bioinformatics_demo_case",
     "build_food_safety_demo_case",
     "build_dna_similarity_demo_case",
+    "build_synthia_governance_demo_case",
     "build_tilapia_style_demo_packet",
     "build_tree_tobacco_demo_graph",
     "score_biology_graph_review",
     "score_algorithm_behavior_case",
     "score_molecular_review_case",
     "score_risk_triage_case",
+    "score_scientific_governance_case",
 ]

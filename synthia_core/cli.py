@@ -59,6 +59,7 @@ from .biology_graph import build_tree_tobacco_demo_graph, score_biology_graph_re
 from .molecular_evidence import build_dna_similarity_demo_case, score_molecular_review_case
 from .phylo_plithogenic import build_tilapia_style_demo_packet, score_phylo_plithogenic_packet
 from .risk_triage import build_food_safety_demo_case, score_risk_triage_case
+from .scientific_governance import build_synthia_governance_demo_case, score_scientific_governance_case
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
 from .safety import HIERARCHY
 from .sources import scan_root
@@ -368,6 +369,12 @@ def main(argv: list[str] | None = None) -> int:
     algorithm_behavior_score = algorithm_behavior_sub.add_parser("score")
     algorithm_behavior_score.add_argument("--case", required=True, help="JSON object or path")
     algorithm_behavior_sub.add_parser("demo")
+
+    scientific_governance = subparsers.add_parser("scientific-governance")
+    scientific_governance_sub = scientific_governance.add_subparsers(dest="command", required=True)
+    scientific_governance_score = scientific_governance_sub.add_parser("score")
+    scientific_governance_score.add_argument("--case", required=True, help="JSON object or path")
+    scientific_governance_sub.add_parser("demo")
 
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
@@ -761,6 +768,17 @@ def main(argv: list[str] | None = None) -> int:
             if not isinstance(algorithm_case, dict):
                 raise ValueError("--case must decode to a JSON object")
             _print_json(score_algorithm_behavior_case(algorithm_case))
+            return 0
+
+    if args.area == "scientific-governance":
+        if args.command == "demo":
+            _print_json(score_scientific_governance_case(build_synthia_governance_demo_case()))
+            return 0
+        if args.command == "score":
+            governance_case = _load_json_value(args.case)
+            if not isinstance(governance_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_scientific_governance_case(governance_case))
             return 0
 
     if args.area == "codex" and args.command == "status":
