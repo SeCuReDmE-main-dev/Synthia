@@ -60,6 +60,22 @@ from .plithogenic import (
 )
 from .plithogenic_logic import PlithogenicLogicalProposition, PlithogenicLogicVariable
 from .plithogenic_set import PlithogenicAttributeValue, PlithogenicSetProfile
+from .biology_graph import (
+    BiologyGraphEdge,
+    BiologyGraphNode,
+    BiologyGraphReviewLayer,
+    BiologyHyperEdge,
+    BiologySuperVertex,
+    build_tree_tobacco_demo_graph,
+    score_biology_graph_review,
+)
+from .molecular_evidence import (
+    MolecularEvidenceRecord,
+    MolecularEvidenceReviewer,
+    MolecularReviewCase,
+    build_dna_similarity_demo_case,
+    score_molecular_review_case,
+)
 from .phylo_plithogenic import (
     PhyloEvidenceDimension,
     PhyloPlithogenicReviewPacket,
@@ -98,6 +114,14 @@ __all__ = [
     "NSSMathRouter",
     "NSSMathIndexScorer",
     "NSSSourceFamily",
+    "BiologyGraphEdge",
+    "BiologyGraphNode",
+    "BiologyGraphReviewLayer",
+    "BiologyHyperEdge",
+    "BiologySuperVertex",
+    "MolecularEvidenceRecord",
+    "MolecularEvidenceReviewer",
+    "MolecularReviewCase",
     "MultiNeutrosophicFusion",
     "MultiNeutrosophicSource",
     "MultiTIFAssessment",
@@ -143,6 +167,10 @@ __all__ = [
     "TIFDependencyProfile",
     "TaxonomicMemorySystem",
     "build_food_safety_demo_case",
+    "build_dna_similarity_demo_case",
     "build_tilapia_style_demo_packet",
+    "build_tree_tobacco_demo_graph",
+    "score_biology_graph_review",
+    "score_molecular_review_case",
     "score_risk_triage_case",
 ]

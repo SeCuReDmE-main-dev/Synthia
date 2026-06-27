@@ -54,6 +54,8 @@ from .plithogenic_probability_statistics import (
     summarize_plithogenic_probability_event,
 )
 from .plithogenic_set import operate_plithogenic_sets, plithogenic_set_explain, score_plithogenic_set
+from .biology_graph import build_tree_tobacco_demo_graph, score_biology_graph_review
+from .molecular_evidence import build_dna_similarity_demo_case, score_molecular_review_case
 from .phylo_plithogenic import build_tilapia_style_demo_packet, score_phylo_plithogenic_packet
 from .risk_triage import build_food_safety_demo_case, score_risk_triage_case
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
@@ -347,6 +349,18 @@ def main(argv: list[str] | None = None) -> int:
     risk_triage_score = risk_triage_sub.add_parser("score")
     risk_triage_score.add_argument("--case", required=True, help="JSON object or path")
     risk_triage_sub.add_parser("demo")
+
+    biology_graph = subparsers.add_parser("biology-graph")
+    biology_graph_sub = biology_graph.add_subparsers(dest="command", required=True)
+    biology_graph_score = biology_graph_sub.add_parser("score")
+    biology_graph_score.add_argument("--graph", required=True, help="JSON object or path")
+    biology_graph_sub.add_parser("demo")
+
+    molecular_evidence = subparsers.add_parser("molecular-evidence")
+    molecular_evidence_sub = molecular_evidence.add_subparsers(dest="command", required=True)
+    molecular_evidence_score = molecular_evidence_sub.add_parser("score")
+    molecular_evidence_score.add_argument("--case", required=True, help="JSON object or path")
+    molecular_evidence_sub.add_parser("demo")
 
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
@@ -707,6 +721,28 @@ def main(argv: list[str] | None = None) -> int:
             if not isinstance(risk_case, dict):
                 raise ValueError("--case must decode to a JSON object")
             _print_json(score_risk_triage_case(risk_case))
+            return 0
+
+    if args.area == "biology-graph":
+        if args.command == "demo":
+            _print_json(score_biology_graph_review(build_tree_tobacco_demo_graph()))
+            return 0
+        if args.command == "score":
+            graph = _load_json_value(args.graph)
+            if not isinstance(graph, dict):
+                raise ValueError("--graph must decode to a JSON object")
+            _print_json(score_biology_graph_review(graph))
+            return 0
+
+    if args.area == "molecular-evidence":
+        if args.command == "demo":
+            _print_json(score_molecular_review_case(build_dna_similarity_demo_case()))
+            return 0
+        if args.command == "score":
+            molecular_case = _load_json_value(args.case)
+            if not isinstance(molecular_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_molecular_review_case(molecular_case))
             return 0
 
     if args.area == "codex" and args.command == "status":
