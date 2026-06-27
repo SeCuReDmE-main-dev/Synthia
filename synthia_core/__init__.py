@@ -60,6 +60,13 @@ from .plithogenic import (
 )
 from .plithogenic_logic import PlithogenicLogicalProposition, PlithogenicLogicVariable
 from .plithogenic_set import PlithogenicAttributeValue, PlithogenicSetProfile
+from .algorithm_behavior import (
+    AlgorithmBehaviorCase,
+    AlgorithmBehaviorReviewer,
+    AlgorithmParameterRecord,
+    build_algorithmic_bioinformatics_demo_case,
+    score_algorithm_behavior_case,
+)
 from .biology_graph import (
     BiologyGraphEdge,
     BiologyGraphNode,
@@ -114,6 +121,9 @@ __all__ = [
     "NSSMathRouter",
     "NSSMathIndexScorer",
     "NSSSourceFamily",
+    "AlgorithmBehaviorCase",
+    "AlgorithmBehaviorReviewer",
+    "AlgorithmParameterRecord",
     "BiologyGraphEdge",
     "BiologyGraphNode",
     "BiologyGraphReviewLayer",
@@ -166,11 +176,13 @@ __all__ = [
     "TIF",
     "TIFDependencyProfile",
     "TaxonomicMemorySystem",
+    "build_algorithmic_bioinformatics_demo_case",
     "build_food_safety_demo_case",
     "build_dna_similarity_demo_case",
     "build_tilapia_style_demo_packet",
     "build_tree_tobacco_demo_graph",
     "score_biology_graph_review",
+    "score_algorithm_behavior_case",
     "score_molecular_review_case",
     "score_risk_triage_case",
 ]

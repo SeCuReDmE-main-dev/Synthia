@@ -54,6 +54,7 @@ from .plithogenic_probability_statistics import (
     summarize_plithogenic_probability_event,
 )
 from .plithogenic_set import operate_plithogenic_sets, plithogenic_set_explain, score_plithogenic_set
+from .algorithm_behavior import build_algorithmic_bioinformatics_demo_case, score_algorithm_behavior_case
 from .biology_graph import build_tree_tobacco_demo_graph, score_biology_graph_review
 from .molecular_evidence import build_dna_similarity_demo_case, score_molecular_review_case
 from .phylo_plithogenic import build_tilapia_style_demo_packet, score_phylo_plithogenic_packet
@@ -361,6 +362,12 @@ def main(argv: list[str] | None = None) -> int:
     molecular_evidence_score = molecular_evidence_sub.add_parser("score")
     molecular_evidence_score.add_argument("--case", required=True, help="JSON object or path")
     molecular_evidence_sub.add_parser("demo")
+
+    algorithm_behavior = subparsers.add_parser("algorithm-behavior")
+    algorithm_behavior_sub = algorithm_behavior.add_subparsers(dest="command", required=True)
+    algorithm_behavior_score = algorithm_behavior_sub.add_parser("score")
+    algorithm_behavior_score.add_argument("--case", required=True, help="JSON object or path")
+    algorithm_behavior_sub.add_parser("demo")
 
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
@@ -743,6 +750,17 @@ def main(argv: list[str] | None = None) -> int:
             if not isinstance(molecular_case, dict):
                 raise ValueError("--case must decode to a JSON object")
             _print_json(score_molecular_review_case(molecular_case))
+            return 0
+
+    if args.area == "algorithm-behavior":
+        if args.command == "demo":
+            _print_json(score_algorithm_behavior_case(build_algorithmic_bioinformatics_demo_case()))
+            return 0
+        if args.command == "score":
+            algorithm_case = _load_json_value(args.case)
+            if not isinstance(algorithm_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_algorithm_behavior_case(algorithm_case))
             return 0
 
     if args.area == "codex" and args.command == "status":
