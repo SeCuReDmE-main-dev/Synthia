@@ -60,6 +60,19 @@ from .plithogenic import (
 )
 from .plithogenic_logic import PlithogenicLogicalProposition, PlithogenicLogicVariable
 from .plithogenic_set import PlithogenicAttributeValue, PlithogenicSetProfile
+from .phylo_plithogenic import (
+    PhyloEvidenceDimension,
+    PhyloPlithogenicReviewPacket,
+    PhyloPlithogenicReviewer,
+    build_tilapia_style_demo_packet,
+)
+from .risk_triage import (
+    RiskCriterion,
+    RiskTriageCase,
+    RiskTriageReviewer,
+    build_food_safety_demo_case,
+    score_risk_triage_case,
+)
 from .taxonomy_memory import TaxonomicMemorySystem
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperation, SVNSOperator
 
@@ -109,11 +122,17 @@ __all__ = [
     "NeutrosophicTruthValue",
     "PlithogenicIProfile",
     "PlithogenicAttributeValue",
+    "PhyloEvidenceDimension",
+    "PhyloPlithogenicReviewPacket",
+    "PhyloPlithogenicReviewer",
     "PlithogenicLogicalProposition",
     "PlithogenicLogicVariable",
     "PlithogenicMatrix",
     "PlithogenicSetProfile",
     "RandomVariableDatum",
+    "RiskCriterion",
+    "RiskTriageCase",
+    "RiskTriageReviewer",
     "SingleValuedNeutrosophicSet",
     "SVNSOperation",
     "SVNSOperator",
@@ -123,4 +142,7 @@ __all__ = [
     "TIF",
     "TIFDependencyProfile",
     "TaxonomicMemorySystem",
+    "build_food_safety_demo_case",
+    "build_tilapia_style_demo_packet",
+    "score_risk_triage_case",
 ]

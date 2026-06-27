@@ -8,7 +8,12 @@ Public site: <https://synthia.securedme.ca/>
 
 Repository: <https://github.com/SeCuReDmE-main-dev/Synthia>
 
-Author identifier: Jean-Sebastien Beaulieu, ORCID: <https://orcid.org/0009-0007-2904-0443>
+## Conception And Scientific Collaboration
+
+- Jean-Sebastien Beaulieu: lead builder for Synthia's software architecture, implementation, public repository, and ORCID identity: <https://orcid.org/0009-0007-2904-0443>.
+- Prof. Hector Fernando Aguilar: scientific co-conceptor for Synthia's taxonomy, systematics, PhyloCode/classification direction, redescription-memory framing, and expert-review boundary.
+
+This credit recognizes scientific conception and taxonomy direction. It does not transfer software authorship, formal nomenclatural authority, or autonomous scientific decision-making to Synthia.
 
 ## Public Invariant
 
@@ -18,13 +23,23 @@ I -> I_system^S -> H_lex -> G_lex -> I_lexicon
 
 This is Synthia's lexicon-classification chain. `H_lex` is lexicon entropy, `G_lex` is lexicon decision-gap uncertainty, and `I_lexicon` is the context-preserving indeterminacy state used for classification, filtration, switching, and review.
 
+## Plithogenic Biology And System Math
+
+Synthia separates pure engine math from system math. The pure engine math layer contains bounded neutrosophic and plithogenic operators: `T/I/F` values, contradiction load, probability load, dominant attribute values, rough boundary regions, and deterministic projections into the public chain. Those operators are useful by themselves, but biology changes their role. When the object is a species, a taxonomic memory record, a food-safety signal, a conservation concern, a public-health review packet, a geography/ecology context, or an expert disagreement, Synthia is no longer treating math as an isolated abstract engine. It is calling that math inside a living `I_system^S`.
+
+In this framing, plithogenic biology is `I -> I_system^S` in action. A biological object is not just an abstract vector with attributes; it is a source-linked, expert-reviewed, socially consequential system where the same mathematical values can have different meanings depending on context. A high contradiction load in a symbolic algebra exercise is one kind of system signal. A high contradiction load around a taxon, a milk batch, a habitat observation, or a disease-susceptibility review is another kind of system signal because it changes who must review the packet, what evidence must remain visible, and which authority boundary must be preserved. Synthia therefore keeps contradiction load, probability load, rough boundary region, `H_lex`, `G_lex`, and `I_lexicon` visible instead of collapsing them into a single confidence score.
+
+Phase 1 added phylo-plithogenic review packets: phylogenetic and taxonomic identity remains the anchor, while plithogenic contradiction describes review uncertainty around morphology, geography, ecology, disease susceptibility, and expert disagreement. Phase 2 adds uncertainty-aware societal risk triage: food safety, conservation, public health, environmental signals, and taxonomy review can be modeled as system-level review cases with rough regions and probability-aware contradiction. These are not autonomous decisions. They are structured memory and triage surfaces that help humans see what is known, what is indeterminate, what is contradictory, and why a specialist review remains required.
+
+This section is intentionally kept in the README before the public website is updated. It records the implementation doctrine: Synthia uses pure neutrosophic and plithogenic kernels as reusable mathematical engines, but the biology side activates them as system math under `I_system^S`. The project supports education, traceability, triage, and human review. It does not make formal taxonomic acts, food-safety declarations, public-health decisions, conservation orders, environmental hazard declarations, or autonomous scientific conclusions.
+
 ## Codebase
 
 The repository contains the local Python research core, tests, public documentation, and static website package for Synthia. The current codebase includes:
 
 - `I_lexicon` nodes, bridges, source evidence, and context-switch traces;
 - bounded `T/I/F`, neutrosophic kernels, and plithogenic contradiction profiles;
-- biology and taxonomy memory records, review packets, citation auditing, and AI-assistance disclosure boundaries;
+- biology and taxonomy memory records, phylo-plithogenic review packets, risk-triage cases, citation auditing, and AI-assistance disclosure boundaries;
 - simulation-first swarm field-scout records, digital pheromone maps, and safety gates;
 - optional RethinkDB memory surfaces for swarm state and HippoRAG-style graph traces;
 - a static public website under `web/landing/`.
@@ -33,7 +48,7 @@ The repository contains the local Python research core, tests, public documentat
 
 Synthia is not a production scientific authority, medical tool, environmental deployment system, drone-control platform, or formal nomenclatural authority. It is an educational research project for preserving lexicon context, uncertainty, source traceability, and human-review boundaries.
 
-External contributions are locked while the base architecture is actively developed.
+External code contributions are locked while the base architecture is actively developed. Scientific collaboration and source-review roles can be credited without opening the code contribution policy.
 
 ## Development
 

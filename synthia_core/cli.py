@@ -54,6 +54,8 @@ from .plithogenic_probability_statistics import (
     summarize_plithogenic_probability_event,
 )
 from .plithogenic_set import operate_plithogenic_sets, plithogenic_set_explain, score_plithogenic_set
+from .phylo_plithogenic import build_tilapia_style_demo_packet, score_phylo_plithogenic_packet
+from .risk_triage import build_food_safety_demo_case, score_risk_triage_case
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
 from .safety import HIERARCHY
 from .sources import scan_root
@@ -340,6 +342,12 @@ def main(argv: list[str] | None = None) -> int:
     nss_index_explain = nss_index_sub.add_parser("explain")
     nss_index_explain.add_argument("--text", required=True)
 
+    risk_triage = subparsers.add_parser("risk-triage")
+    risk_triage_sub = risk_triage.add_subparsers(dest="command", required=True)
+    risk_triage_score = risk_triage_sub.add_parser("score")
+    risk_triage_score.add_argument("--case", required=True, help="JSON object or path")
+    risk_triage_sub.add_parser("demo")
+
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
     codex_sub.add_parser("status")
@@ -349,6 +357,11 @@ def main(argv: list[str] | None = None) -> int:
     taxonomy = subparsers.add_parser("taxonomy")
     taxonomy_sub = taxonomy.add_subparsers(dest="command", required=True)
     taxonomy_sub.add_parser("aburria-packet")
+    phylo_plithogenic = taxonomy_sub.add_parser("phylo-plithogenic")
+    phylo_plithogenic_sub = phylo_plithogenic.add_subparsers(dest="phylo_plithogenic_command", required=True)
+    phylo_plithogenic_score = phylo_plithogenic_sub.add_parser("score")
+    phylo_plithogenic_score.add_argument("--packet", required=True, help="JSON object or path")
+    phylo_plithogenic_sub.add_parser("demo")
 
     hipporag = subparsers.add_parser("hipporag")
     hipporag_sub = hipporag.add_subparsers(dest="command", required=True)
@@ -685,6 +698,17 @@ def main(argv: list[str] | None = None) -> int:
             _print_json(article_index.classify_text(args.text))
             return 0
 
+    if args.area == "risk-triage":
+        if args.command == "demo":
+            _print_json(score_risk_triage_case(build_food_safety_demo_case()))
+            return 0
+        if args.command == "score":
+            risk_case = _load_json_value(args.case)
+            if not isinstance(risk_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_risk_triage_case(risk_case))
+            return 0
+
     if args.area == "codex" and args.command == "status":
         _print_json(codex_status().as_dict())
         return 0
@@ -699,6 +723,16 @@ def main(argv: list[str] | None = None) -> int:
 
         _print_json(TaxonomicReviewPacketBuilder().build(record))
         return 0
+    if args.area == "taxonomy" and args.command == "phylo-plithogenic":
+        if args.phylo_plithogenic_command == "demo":
+            _print_json(build_tilapia_style_demo_packet().score())
+            return 0
+        if args.phylo_plithogenic_command == "score":
+            packet = _load_json_value(args.packet)
+            if not isinstance(packet, dict):
+                raise ValueError("--packet must decode to a JSON object")
+            _print_json(score_phylo_plithogenic_packet(packet))
+            return 0
 
     if args.area == "hipporag":
         store = RethinkDBHippoRAGTraceStore(_rethinkdb_config_from_args(args))
