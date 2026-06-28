@@ -59,3 +59,5 @@ python -m pytest
 ```
 
 No raw private correspondence, authentication caches, restricted manuscript bodies, or credential material should be committed to this repository.
+
+![Synthia identity](.assets/Banner/ASCII%20banner/AScii%20banner(1).png)
