@@ -2,6 +2,8 @@
 
 > **Education access note.** Synthia is designed first for students, teachers, schools, and research collaborators who can pair the repo with an AI companion account and a cloud-document account strong enough for file review, Drive/Docs workflows, source mapping, and repeated classification work. A free Gmail or free AI account can still explore the project, but should not be expected to taxonomize or classify large institutional, company, or research corpora at the same depth as an education or professional workspace. Students and educators should verify current official access before the school year: [ChatGPT Education](https://openai.com/chatgpt/education/), [ChatGPT for Teachers](https://help.openai.com/en/articles/12844995-chatgpt-for-teachers), [Gemini for Students](https://gemini.google/students/), and [Gemini for Education](https://edu.google.com/intl/ALL_us/ai/gemini-for-education/). Offers, eligibility, free periods, and prices change by country, institution, and date.
 
+> **Official school governance.** The maintained classroom route for this repo is Codex/OpenAI or Antigravity/Gemini only. See [SCHOOL_TOOL_GOVERNANCE.md](SCHOOL_TOOL_GOVERNANCE.md) and [AGENTS.md](AGENTS.md) before changing code, docs, examples, or provider wiring.
+
 # Synthia
 
 Synthia is an educational research codebase for context-preserving lexicon intelligence, biology classification, source traceability, taxonomy memory, and uncertainty-aware classification.
