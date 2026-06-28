@@ -4,6 +4,8 @@
 
 > **Official school governance.** The maintained classroom route for this repo is Codex/OpenAI or Antigravity/Gemini only. See [SCHOOL_TOOL_GOVERNANCE.md](SCHOOL_TOOL_GOVERNANCE.md) and [AGENTS.md](AGENTS.md) before changing code, docs, examples, or provider wiring.
 
+> **Notice and disclaimer.** The existing project license remains active. See [NOTICE](NOTICE) and [DISCLAIMER](DISCLAIMER) for attribution, school-governance, and misuse-responsibility boundaries.
+
 # Synthia
 
 Synthia is an educational research codebase for context-preserving lexicon intelligence, biology classification, source traceability, taxonomy memory, and uncertainty-aware classification.
