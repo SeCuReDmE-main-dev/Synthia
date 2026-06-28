@@ -54,6 +54,13 @@ from .plithogenic_probability_statistics import (
     summarize_plithogenic_probability_event,
 )
 from .plithogenic_set import operate_plithogenic_sets, plithogenic_set_explain, score_plithogenic_set
+from .algorithm_behavior import build_algorithmic_bioinformatics_demo_case, score_algorithm_behavior_case
+from .biology_graph import build_tree_tobacco_demo_graph, score_biology_graph_review
+from .molecular_evidence import build_dna_similarity_demo_case, score_molecular_review_case
+from .phylo_plithogenic import build_tilapia_style_demo_packet, score_phylo_plithogenic_packet
+from .research_object_provenance import build_academic_platform_demo_case, score_research_object_provenance_case
+from .risk_triage import build_food_safety_demo_case, score_risk_triage_case
+from .scientific_governance import build_synthia_governance_demo_case, score_scientific_governance_case
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
 from .safety import HIERARCHY
 from .sources import scan_root
@@ -340,6 +347,42 @@ def main(argv: list[str] | None = None) -> int:
     nss_index_explain = nss_index_sub.add_parser("explain")
     nss_index_explain.add_argument("--text", required=True)
 
+    risk_triage = subparsers.add_parser("risk-triage")
+    risk_triage_sub = risk_triage.add_subparsers(dest="command", required=True)
+    risk_triage_score = risk_triage_sub.add_parser("score")
+    risk_triage_score.add_argument("--case", required=True, help="JSON object or path")
+    risk_triage_sub.add_parser("demo")
+
+    biology_graph = subparsers.add_parser("biology-graph")
+    biology_graph_sub = biology_graph.add_subparsers(dest="command", required=True)
+    biology_graph_score = biology_graph_sub.add_parser("score")
+    biology_graph_score.add_argument("--graph", required=True, help="JSON object or path")
+    biology_graph_sub.add_parser("demo")
+
+    molecular_evidence = subparsers.add_parser("molecular-evidence")
+    molecular_evidence_sub = molecular_evidence.add_subparsers(dest="command", required=True)
+    molecular_evidence_score = molecular_evidence_sub.add_parser("score")
+    molecular_evidence_score.add_argument("--case", required=True, help="JSON object or path")
+    molecular_evidence_sub.add_parser("demo")
+
+    algorithm_behavior = subparsers.add_parser("algorithm-behavior")
+    algorithm_behavior_sub = algorithm_behavior.add_subparsers(dest="command", required=True)
+    algorithm_behavior_score = algorithm_behavior_sub.add_parser("score")
+    algorithm_behavior_score.add_argument("--case", required=True, help="JSON object or path")
+    algorithm_behavior_sub.add_parser("demo")
+
+    scientific_governance = subparsers.add_parser("scientific-governance")
+    scientific_governance_sub = scientific_governance.add_subparsers(dest="command", required=True)
+    scientific_governance_score = scientific_governance_sub.add_parser("score")
+    scientific_governance_score.add_argument("--case", required=True, help="JSON object or path")
+    scientific_governance_sub.add_parser("demo")
+
+    research_object_provenance = subparsers.add_parser("research-object-provenance")
+    research_object_provenance_sub = research_object_provenance.add_subparsers(dest="command", required=True)
+    research_object_provenance_score = research_object_provenance_sub.add_parser("score")
+    research_object_provenance_score.add_argument("--case", required=True, help="JSON object or path")
+    research_object_provenance_sub.add_parser("demo")
+
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
     codex_sub.add_parser("status")
@@ -349,6 +392,11 @@ def main(argv: list[str] | None = None) -> int:
     taxonomy = subparsers.add_parser("taxonomy")
     taxonomy_sub = taxonomy.add_subparsers(dest="command", required=True)
     taxonomy_sub.add_parser("aburria-packet")
+    phylo_plithogenic = taxonomy_sub.add_parser("phylo-plithogenic")
+    phylo_plithogenic_sub = phylo_plithogenic.add_subparsers(dest="phylo_plithogenic_command", required=True)
+    phylo_plithogenic_score = phylo_plithogenic_sub.add_parser("score")
+    phylo_plithogenic_score.add_argument("--packet", required=True, help="JSON object or path")
+    phylo_plithogenic_sub.add_parser("demo")
 
     hipporag = subparsers.add_parser("hipporag")
     hipporag_sub = hipporag.add_subparsers(dest="command", required=True)
@@ -685,6 +733,72 @@ def main(argv: list[str] | None = None) -> int:
             _print_json(article_index.classify_text(args.text))
             return 0
 
+    if args.area == "risk-triage":
+        if args.command == "demo":
+            _print_json(score_risk_triage_case(build_food_safety_demo_case()))
+            return 0
+        if args.command == "score":
+            risk_case = _load_json_value(args.case)
+            if not isinstance(risk_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_risk_triage_case(risk_case))
+            return 0
+
+    if args.area == "biology-graph":
+        if args.command == "demo":
+            _print_json(score_biology_graph_review(build_tree_tobacco_demo_graph()))
+            return 0
+        if args.command == "score":
+            graph = _load_json_value(args.graph)
+            if not isinstance(graph, dict):
+                raise ValueError("--graph must decode to a JSON object")
+            _print_json(score_biology_graph_review(graph))
+            return 0
+
+    if args.area == "molecular-evidence":
+        if args.command == "demo":
+            _print_json(score_molecular_review_case(build_dna_similarity_demo_case()))
+            return 0
+        if args.command == "score":
+            molecular_case = _load_json_value(args.case)
+            if not isinstance(molecular_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_molecular_review_case(molecular_case))
+            return 0
+
+    if args.area == "algorithm-behavior":
+        if args.command == "demo":
+            _print_json(score_algorithm_behavior_case(build_algorithmic_bioinformatics_demo_case()))
+            return 0
+        if args.command == "score":
+            algorithm_case = _load_json_value(args.case)
+            if not isinstance(algorithm_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_algorithm_behavior_case(algorithm_case))
+            return 0
+
+    if args.area == "scientific-governance":
+        if args.command == "demo":
+            _print_json(score_scientific_governance_case(build_synthia_governance_demo_case()))
+            return 0
+        if args.command == "score":
+            governance_case = _load_json_value(args.case)
+            if not isinstance(governance_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_scientific_governance_case(governance_case))
+            return 0
+
+    if args.area == "research-object-provenance":
+        if args.command == "demo":
+            _print_json(score_research_object_provenance_case(build_academic_platform_demo_case()))
+            return 0
+        if args.command == "score":
+            provenance_case = _load_json_value(args.case)
+            if not isinstance(provenance_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_research_object_provenance_case(provenance_case))
+            return 0
+
     if args.area == "codex" and args.command == "status":
         _print_json(codex_status().as_dict())
         return 0
@@ -699,6 +813,16 @@ def main(argv: list[str] | None = None) -> int:
 
         _print_json(TaxonomicReviewPacketBuilder().build(record))
         return 0
+    if args.area == "taxonomy" and args.command == "phylo-plithogenic":
+        if args.phylo_plithogenic_command == "demo":
+            _print_json(build_tilapia_style_demo_packet().score())
+            return 0
+        if args.phylo_plithogenic_command == "score":
+            packet = _load_json_value(args.packet)
+            if not isinstance(packet, dict):
+                raise ValueError("--packet must decode to a JSON object")
+            _print_json(score_phylo_plithogenic_packet(packet))
+            return 0
 
     if args.area == "hipporag":
         store = RethinkDBHippoRAGTraceStore(_rethinkdb_config_from_args(args))

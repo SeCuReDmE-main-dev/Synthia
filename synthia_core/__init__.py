@@ -60,6 +60,56 @@ from .plithogenic import (
 )
 from .plithogenic_logic import PlithogenicLogicalProposition, PlithogenicLogicVariable
 from .plithogenic_set import PlithogenicAttributeValue, PlithogenicSetProfile
+from .algorithm_behavior import (
+    AlgorithmBehaviorCase,
+    AlgorithmBehaviorReviewer,
+    AlgorithmParameterRecord,
+    build_algorithmic_bioinformatics_demo_case,
+    score_algorithm_behavior_case,
+)
+from .biology_graph import (
+    BiologyGraphEdge,
+    BiologyGraphNode,
+    BiologyGraphReviewLayer,
+    BiologyHyperEdge,
+    BiologySuperVertex,
+    build_tree_tobacco_demo_graph,
+    score_biology_graph_review,
+)
+from .molecular_evidence import (
+    MolecularEvidenceRecord,
+    MolecularEvidenceReviewer,
+    MolecularReviewCase,
+    build_dna_similarity_demo_case,
+    score_molecular_review_case,
+)
+from .phylo_plithogenic import (
+    PhyloEvidenceDimension,
+    PhyloPlithogenicReviewPacket,
+    PhyloPlithogenicReviewer,
+    build_tilapia_style_demo_packet,
+)
+from .risk_triage import (
+    RiskCriterion,
+    RiskTriageCase,
+    RiskTriageReviewer,
+    build_food_safety_demo_case,
+    score_risk_triage_case,
+)
+from .research_object_provenance import (
+    ResearchObjectProvenanceCase,
+    ResearchObjectProvenanceReviewer,
+    ResearchSourceEvidence,
+    build_academic_platform_demo_case,
+    score_research_object_provenance_case,
+)
+from .scientific_governance import (
+    GovernanceEvidenceSource,
+    ScientificGovernanceCase,
+    ScientificGovernanceReviewer,
+    build_synthia_governance_demo_case,
+    score_scientific_governance_case,
+)
 from .taxonomy_memory import TaxonomicMemorySystem
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperation, SVNSOperator
 
@@ -85,6 +135,17 @@ __all__ = [
     "NSSMathRouter",
     "NSSMathIndexScorer",
     "NSSSourceFamily",
+    "AlgorithmBehaviorCase",
+    "AlgorithmBehaviorReviewer",
+    "AlgorithmParameterRecord",
+    "BiologyGraphEdge",
+    "BiologyGraphNode",
+    "BiologyGraphReviewLayer",
+    "BiologyHyperEdge",
+    "BiologySuperVertex",
+    "MolecularEvidenceRecord",
+    "MolecularEvidenceReviewer",
+    "MolecularReviewCase",
     "MultiNeutrosophicFusion",
     "MultiNeutrosophicSource",
     "MultiTIFAssessment",
@@ -109,11 +170,23 @@ __all__ = [
     "NeutrosophicTruthValue",
     "PlithogenicIProfile",
     "PlithogenicAttributeValue",
+    "PhyloEvidenceDimension",
+    "PhyloPlithogenicReviewPacket",
+    "PhyloPlithogenicReviewer",
     "PlithogenicLogicalProposition",
     "PlithogenicLogicVariable",
     "PlithogenicMatrix",
     "PlithogenicSetProfile",
     "RandomVariableDatum",
+    "RiskCriterion",
+    "RiskTriageCase",
+    "RiskTriageReviewer",
+    "ResearchObjectProvenanceCase",
+    "ResearchObjectProvenanceReviewer",
+    "ResearchSourceEvidence",
+    "GovernanceEvidenceSource",
+    "ScientificGovernanceCase",
+    "ScientificGovernanceReviewer",
     "SingleValuedNeutrosophicSet",
     "SVNSOperation",
     "SVNSOperator",
@@ -123,4 +196,17 @@ __all__ = [
     "TIF",
     "TIFDependencyProfile",
     "TaxonomicMemorySystem",
+    "build_algorithmic_bioinformatics_demo_case",
+    "build_academic_platform_demo_case",
+    "build_food_safety_demo_case",
+    "build_dna_similarity_demo_case",
+    "build_synthia_governance_demo_case",
+    "build_tilapia_style_demo_packet",
+    "build_tree_tobacco_demo_graph",
+    "score_biology_graph_review",
+    "score_algorithm_behavior_case",
+    "score_molecular_review_case",
+    "score_research_object_provenance_case",
+    "score_risk_triage_case",
+    "score_scientific_governance_case",
 ]
