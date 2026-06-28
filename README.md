@@ -9,6 +9,20 @@
 [![Branch](https://img.shields.io/badge/branch-main-0F766E)](https://github.com/SeCuReDmE-main-dev/Synthia/tree/main)
 <!-- SECUREDME-SUITE-BADGES:END -->
 
+<!-- SECUREDME-STARTUP-SUPPORT:START -->
+<p align="center">
+  <a href="https://e2b.dev/startups">
+    <img alt="Supported by E2B for Startups" src="https://img.shields.io/badge/Supported%20by-E2B%20for%20Startups-FF8800?style=for-the-badge" />
+  </a>
+  <a href="https://www.datadoghq.com/partner/datadog-for-startups/">
+    <img alt="Supported by Datadog for Startups" src="https://img.shields.io/badge/Supported%20by-Datadog%20for%20Startups-632CA6?style=for-the-badge&amp;logo=datadog&amp;logoColor=white" />
+  </a>
+</p>
+
+> **Startup support acknowledgement.** This SecuredMe school tool is part of the suite supported through E2B for Startups and Datadog for Startups. E2B is used as an optional isolated sandbox and audit lane; Datadog is used as an optional observability and review-support lane. No E2B or Datadog secret is stored in this README.
+<!-- SECUREDME-STARTUP-SUPPORT:END -->
+
+
 
 ## School Authentication And Secret Boundary
 This repository is one of the two large SecuredMe school systems where a local `.env` example may exist for backend development, simulator integration, or research infrastructure. Even here, official classroom authentication must prefer Codex/OpenAI or Antigravity/Gemini browser WebAuth, fingerprinted session approval, encrypted local records, and no raw token publication. Local secrets are for maintainer-controlled backend work only, not for student distribution.
@@ -82,6 +96,7 @@ python -m pytest
 ```
 ![Bannière](assets/Banner/ASCII%20banner/AScii%20banner(1).png)
 No raw private correspondence, authentication caches, restricted manuscript bodies, or credential material should be committed to this repository.
+
 
 
 
