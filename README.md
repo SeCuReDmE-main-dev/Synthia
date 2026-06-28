@@ -57,5 +57,5 @@ External code contributions are locked while the base architecture is actively d
 ```powershell
 python -m pytest
 ```
-
+![Bannière](assets/Banner/ASCII%20banner/AScii%20banner(1).png)
 No raw private correspondence, authentication caches, restricted manuscript bodies, or credential material should be committed to this repository.
