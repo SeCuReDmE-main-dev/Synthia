@@ -1,3 +1,5 @@
+> **Development status.** This school tool is currently tagged **pre-alpha / in development**. External PRs are not evaluated for merge until the maintained tool reaches a stable, fully functional 100% classroom release after the pre-alpha phase. Issues and forks remain allowed, but official PR review is paused until that stability gate is met.
+
 ![Bannière](assets/Banner/repo%20banner/final%20repo%20version.png)
 
 > **Education access note.** Synthia is designed first for students, teachers, schools, and research collaborators who can pair the repo with an AI companion account and a cloud-document account strong enough for file review, Drive/Docs workflows, source mapping, and repeated classification work. A free Gmail or free AI account can still explore the project, but should not be expected to taxonomize or classify large institutional, company, or research corpora at the same depth as an education or professional workspace. Students and educators should verify current official access before the school year: [ChatGPT Education](https://openai.com/chatgpt/education/), [ChatGPT for Teachers](https://help.openai.com/en/articles/12844995-chatgpt-for-teachers), [Gemini for Students](https://gemini.google/students/), and [Gemini for Education](https://edu.google.com/intl/ALL_us/ai/gemini-for-education/). Offers, eligibility, free periods, and prices change by country, institution, and date.
@@ -63,3 +65,5 @@ python -m pytest
 ```
 ![Bannière](assets/Banner/ASCII%20banner/AScii%20banner(1).png)
 No raw private correspondence, authentication caches, restricted manuscript bodies, or credential material should be committed to this repository.
+
+
