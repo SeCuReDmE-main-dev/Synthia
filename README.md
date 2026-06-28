@@ -2,6 +2,14 @@
 
 **Attribution:** Jean-Sebastien Beaulieu · [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443) · [SecuredMe](https://securedme.ca) · [Synthia](https://synthia.securedme.ca)
 
+<!-- SECUREDME-SUITE-BADGES:START -->
+[![Issues](https://img.shields.io/github/issues/SeCuReDmE-main-dev/Synthia?color=2F6F73)](https://github.com/SeCuReDmE-main-dev/Synthia/issues)
+[![Milestones](https://img.shields.io/badge/milestones-M0--M7-60A0A0)](https://github.com/SeCuReDmE-main-dev/Synthia/milestones)
+[![Project Board](https://img.shields.io/badge/project-kanban-A0C0C0)](https://github.com/users/SeCuReDmE-main-dev/projects/3)
+[![Branch](https://img.shields.io/badge/branch-main-0F766E)](https://github.com/SeCuReDmE-main-dev/Synthia/tree/main)
+<!-- SECUREDME-SUITE-BADGES:END -->
+
+
 ## School Authentication And Secret Boundary
 This repository is one of the two large SecuredMe school systems where a local `.env` example may exist for backend development, simulator integration, or research infrastructure. Even here, official classroom authentication must prefer Codex/OpenAI or Antigravity/Gemini browser WebAuth, fingerprinted session approval, encrypted local records, and no raw token publication. Local secrets are for maintainer-controlled backend work only, not for student distribution.
 
@@ -74,6 +82,7 @@ python -m pytest
 ```
 ![Bannière](assets/Banner/ASCII%20banner/AScii%20banner(1).png)
 No raw private correspondence, authentication caches, restricted manuscript bodies, or credential material should be committed to this repository.
+
 
 
 
