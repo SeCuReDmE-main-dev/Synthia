@@ -2,8 +2,10 @@
 deployment:
   tasks:
     - /bin/mkdir -p /home/xacm7978/synthia.securedme.ca/assets
+    - /bin/mkdir -p /home/xacm7978/synthia.securedme.ca/app
     - /bin/cp web/landing/index.html /home/xacm7978/synthia.securedme.ca/
     - /bin/cp web/landing/neutrosophic-lexicon.html /home/xacm7978/synthia.securedme.ca/
     - /bin/cp web/landing/synthia-landing.css /home/xacm7978/synthia.securedme.ca/
     - /bin/cp web/landing/assets/synthia-logo.png /home/xacm7978/synthia.securedme.ca/assets/
     - /bin/cp web/landing/assets/synthia-hero.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp -R frontend/dist/* /home/xacm7978/synthia.securedme.ca/app/
