@@ -58,6 +58,7 @@ from .algorithm_behavior import build_algorithmic_bioinformatics_demo_case, scor
 from .biology_graph import build_tree_tobacco_demo_graph, score_biology_graph_review
 from .molecular_evidence import build_dna_similarity_demo_case, score_molecular_review_case
 from .phylo_plithogenic import build_tilapia_style_demo_packet, score_phylo_plithogenic_packet
+from .research_object_provenance import build_academic_platform_demo_case, score_research_object_provenance_case
 from .risk_triage import build_food_safety_demo_case, score_risk_triage_case
 from .scientific_governance import build_synthia_governance_demo_case, score_scientific_governance_case
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
@@ -375,6 +376,12 @@ def main(argv: list[str] | None = None) -> int:
     scientific_governance_score = scientific_governance_sub.add_parser("score")
     scientific_governance_score.add_argument("--case", required=True, help="JSON object or path")
     scientific_governance_sub.add_parser("demo")
+
+    research_object_provenance = subparsers.add_parser("research-object-provenance")
+    research_object_provenance_sub = research_object_provenance.add_subparsers(dest="command", required=True)
+    research_object_provenance_score = research_object_provenance_sub.add_parser("score")
+    research_object_provenance_score.add_argument("--case", required=True, help="JSON object or path")
+    research_object_provenance_sub.add_parser("demo")
 
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
@@ -779,6 +786,17 @@ def main(argv: list[str] | None = None) -> int:
             if not isinstance(governance_case, dict):
                 raise ValueError("--case must decode to a JSON object")
             _print_json(score_scientific_governance_case(governance_case))
+            return 0
+
+    if args.area == "research-object-provenance":
+        if args.command == "demo":
+            _print_json(score_research_object_provenance_case(build_academic_platform_demo_case()))
+            return 0
+        if args.command == "score":
+            provenance_case = _load_json_value(args.case)
+            if not isinstance(provenance_case, dict):
+                raise ValueError("--case must decode to a JSON object")
+            _print_json(score_research_object_provenance_case(provenance_case))
             return 0
 
     if args.area == "codex" and args.command == "status":

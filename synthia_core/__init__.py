@@ -96,6 +96,13 @@ from .risk_triage import (
     build_food_safety_demo_case,
     score_risk_triage_case,
 )
+from .research_object_provenance import (
+    ResearchObjectProvenanceCase,
+    ResearchObjectProvenanceReviewer,
+    ResearchSourceEvidence,
+    build_academic_platform_demo_case,
+    score_research_object_provenance_case,
+)
 from .scientific_governance import (
     GovernanceEvidenceSource,
     ScientificGovernanceCase,
@@ -174,6 +181,9 @@ __all__ = [
     "RiskCriterion",
     "RiskTriageCase",
     "RiskTriageReviewer",
+    "ResearchObjectProvenanceCase",
+    "ResearchObjectProvenanceReviewer",
+    "ResearchSourceEvidence",
     "GovernanceEvidenceSource",
     "ScientificGovernanceCase",
     "ScientificGovernanceReviewer",
@@ -187,6 +197,7 @@ __all__ = [
     "TIFDependencyProfile",
     "TaxonomicMemorySystem",
     "build_algorithmic_bioinformatics_demo_case",
+    "build_academic_platform_demo_case",
     "build_food_safety_demo_case",
     "build_dna_similarity_demo_case",
     "build_synthia_governance_demo_case",
@@ -195,6 +206,7 @@ __all__ = [
     "score_biology_graph_review",
     "score_algorithm_behavior_case",
     "score_molecular_review_case",
+    "score_research_object_provenance_case",
     "score_risk_triage_case",
     "score_scientific_governance_case",
 ]
