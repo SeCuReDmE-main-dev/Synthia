@@ -21,6 +21,7 @@ Gemfile.lock
 ../Synthia_organisation/
 Synthia_organisation/
 private_evidence/
+Short term memory Synthia/
 *.env
 .env
 auth.json

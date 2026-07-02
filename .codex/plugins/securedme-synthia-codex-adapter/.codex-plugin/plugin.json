@@ -1,0 +1,37 @@
+{
+  "name": "securedme-synthia-codex-adapter",
+  "version": "0.1.0",
+  "description": "Synthia Education assistant adapter.",
+  "author": {
+    "name": "SecuredMe",
+    "url": "https://securedme.ca"
+  },
+  "homepage": "https://synthia.securedme.ca",
+  "license": "MIT",
+  "keywords": [
+    "securedme",
+    "education",
+    "webauth",
+    "token-governor"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Synthia Codex Adapter",
+    "shortDescription": "Synthia Education assistant adapter.",
+    "longDescription": "Repo-local Codex adapter for Synthia. It keeps the app in pre-alpha, uses browser-authenticated OpenAI/Codex workflows, forbids copied secrets, and prepares future Token Governor and MCP integration.",
+    "developerName": "SecuredMe",
+    "category": "Education",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Adapter"
+    ],
+    "websiteURL": "https://synthia.securedme.ca",
+    "defaultPrompt": [
+      "Open the Synthia adapter context.",
+      "Check WebAuth readiness without secrets.",
+      "Plan a Token Governor handoff."
+    ]
+  },
+  "repository": "https://github.com/SeCuReDmE-main-dev/Synthia"
+}

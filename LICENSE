@@ -1,22 +1,87 @@
-MIT License
+Secured Educational License 2.0
+Public name: SEL-2.0
+Local metadata reference: LicenseRef-SEL-2.0
 
-Copyright (c) 2024 Evolving-Lexicon-Synthia
-Author identifier: Jean-Sebastien Beaulieu, ORCID: https://orcid.org/0009-0007-2904-0443
+Copyright (c) 2026 Jean-Sebastien Beaulieu and SecuredMe.
+Jean-Sebastien Beaulieu ORCID: https://orcid.org/0009-0007-2904-0443
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This license governs software, documentation, examples, training material, and
+educational artifacts that expressly identify this license as Secured
+Educational License 2.0, SEL-2.0, or the local metadata reference
+LicenseRef-SEL-2.0.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Educational Open Use
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Permission is granted, free of charge, to use, copy, study, modify, merge,
+publish, distribute, sublicense, and share copies of the licensed material for
+education, research, classroom training, personal learning, supervised student
+projects, and public-interest experimentation, subject to the conditions below.
+
+2. Attribution
+
+Redistributions must preserve this license text, copyright notices, maintainer
+attribution, ORCID attribution when present, and project-level NOTICE and
+DISCLAIMER files when provided.
+
+3. Modification And Forks
+
+You may modify and fork the licensed material. Modified copies must not imply
+that they are the official maintained school version unless the changes have
+been accepted through the official project review process.
+
+Private modified copies, broken forks, unsafe rewrites, unsupported provider
+routes, and local adaptations are the responsibility of the person or
+organization maintaining those copies.
+
+4. School Support Boundary
+
+The official maintained school version is supported only when changes are made
+through reviewed project channels such as pull requests, maintainer-approved
+patches, or other documented review processes.
+
+5. Safety And Misuse
+
+The licensed material is not provided for attack, theft, fraud, impersonation,
+privacy invasion, bypass of security controls, unsafe surveillance, malware,
+criminal automation, or unsupervised safety-critical decisions.
+
+Misuse of the licensed material is solely the responsibility of the person or
+organization performing, directing, deploying, or permitting that misuse.
+
+6. No Authority Transfer
+
+Outputs from SEL-covered projects are review support only unless a qualified
+human authority independently validates and accepts them. The licensed material
+does not make formal scientific conclusions, safety declarations, legal
+findings, diagnoses, regulatory decisions, enforcement decisions, or autonomous
+accusations.
+
+7. Third-Party AI Boundary
+
+References to OpenAI, Codex, Google, Gemini, Antigravity, or other providers do
+not imply endorsement, warranty, responsibility, or liability by those
+providers.
+
+8. No Warranty
+
+THE LICENSED MATERIAL IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, ACCURACY, SAFETY,
+SECURITY, COMPLIANCE, AVAILABILITY, OR FITNESS FOR CLASSROOM, SCIENTIFIC,
+COMMERCIAL, REGULATORY, MEDICAL, LEGAL, OR PUBLIC-SAFETY USE.
+
+9. Limitation Of Liability
+
+IN NO EVENT SHALL THE AUTHORS, COPYRIGHT HOLDERS, CONTRIBUTORS, REVIEWERS,
+SCHOOLS, SECUREDME, JEAN-SEBASTIEN BEAULIEU, OPENAI, CODEX, GOOGLE, GEMINI,
+ANTIGRAVITY, OR RELATED PROVIDERS BE LIABLE FOR ANY CLAIM, DAMAGE, LOSS,
+MISUSE, BROKEN FORK, UNSAFE DEPLOYMENT, DATA LOSS, SECURITY INCIDENT,
+REGULATORY ACTION, OR OTHER LIABILITY ARISING FROM USE, MODIFICATION,
+DISTRIBUTION, OR MISUSE OF THE LICENSED MATERIAL.
+
+10. License Identifier Status
+
+SEL-2.0 is a custom SecuredMe license. It is not currently an OSI-approved
+license and is not currently listed in the SPDX License List. LicenseRef-SEL-2.0
+is a local metadata reference, not a claim of SPDX or OSI approval. When using
+SPDX-compatible metadata, include this full license text with the project.
