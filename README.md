@@ -76,6 +76,15 @@ teaching events. This profile keeps the chapter-3 carriers separate:
 simulation structure only; they are not detector evidence and they do not
 authorize downstream fractal computation.
 
+For chapter-4 style teaching events, the same schema can add
+`chapter4_profile`. This profile exposes `P_neutrino`, the `lex_neutrino`
+taxonomy, lexical metrics such as `H_lex`, `G_lex`, `I_lexicon`, and `dL_lex`,
+plus a `ProtectionPacket_neutrino` and `SynthiaGuard_neutrino`. The purpose is
+to separate admissible simulation language from metaphor, speculation, detector
+overclaim, and downstream computation. Recoverable metaphors can be admitted
+only as an `accepted_with_partition` payload; the excluded language does not
+continue to FNP-QNN.
+
 This layer keeps the public boundary explicit:
 
 - educational simulation;
@@ -96,6 +105,8 @@ python -m synthia_core.cli neutrino guardrail-check --input event.json --json
 
 The checked-in fixture `tests/fixtures/neutrino_chapter3_valid_event.json`
 shows the public-safe carrier shape for a toy muon-flavor event.
+The fixture `tests/fixtures/neutrino_chapter4_valid_event.json` shows the
+additive lexical taxonomy and protection shape.
 
 ## Plithogenic Biology And System Math
 

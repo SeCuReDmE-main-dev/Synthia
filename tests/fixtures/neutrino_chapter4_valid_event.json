@@ -1,0 +1,26 @@
+{
+  "event_id": "chapter4-public-safe-neutrino-001",
+  "claim_class": "simulation",
+  "interaction_channel": "weak_CC",
+  "created_flavor": "mu",
+  "flavor_basis": {
+    "e": 0.0,
+    "mu": 1.0,
+    "tau": 0.0
+  },
+  "mass_basis": {
+    "nu1": 0.17,
+    "nu2": 0.33,
+    "nu3": 0.5
+  },
+  "distance_km": 295,
+  "energy_gev": 0.6,
+  "secondary_products": [
+    "muon_like_track"
+  ],
+  "detector_signature": "toy muon-like indirect projection",
+  "source_truth": {
+    "phase1_reference": "public physics reference"
+  },
+  "notes": "chapter4 lex_neutrino public safe simulation"
+}
