@@ -21,6 +21,11 @@ DANI_SHEET_SOURCE_ID = "DANI_NOVAK_PHI_HIGHER_DIMENSIONS_SHEET_REDACTED"
 GENESIS_ECHOES_SOURCE_ID = "GENESIS_ECHOES_PAPER_I_DRIVE_DOC"
 PRIVATE_GMAIL_PROVENANCE_SOURCE_ID = "PRIVATE_DANI_NOVAK_GMAIL_PROVENANCE_REDACTED"
 LOCAL_FNP_QNN_RUNTIME_SOURCE_ID = "LOCAL_FNP_QNN_NOVAK_ANDERSON_RUNTIME"
+PHI_FRAMEWORK_RESEARCH_SOURCE_ID = "PHI_FRAMEWORK_RESEARCH_DRIVE_DOC"
+PHI_CALCULUS_CHEATSHEET_SOURCE_ID = "PHI_CALCULUS_CHEATSHEET_DRIVE_DOC"
+BRIDGE_CALCULUS_SOURCE_ID = "BRIDGE_CALCULUS_DRIVE_DOC"
+UNIFIED_FFED_CALCULI_SOURCE_ID = "UNIFIED_FFED_CALCULI_DRIVE_DOC"
+ANTI_ENTROPY_IMPERATIVE_SOURCE_ID = "ANTI_ENTROPY_IMPERATIVE_DRIVE_DOC"
 
 CLAIM_BOUNDARY = (
     "Synthia can govern source traceability for the implemented Novak-Anderson formulas and "
@@ -85,6 +90,61 @@ def build_novak_anderson_governance_case() -> ScientificGovernanceCase:
             notes="Interpretive Phi Framework bridge; not primary mathematical proof.",
         ),
         GovernanceEvidenceSource(
+            source_id=PHI_FRAMEWORK_RESEARCH_SOURCE_ID,
+            standard=GovernanceStandard.MODEL_CARD.value,
+            title="Phi Framework Research and Development",
+            url="https://docs.google.com/document/d/10DNzmxVqZCvMNBN4tIvQpbkXwCLIIqbCnsx5TJlqj7s/edit",
+            coverage_T=0.42,
+            coverage_I=0.52,
+            coverage_F=0.12,
+            weight=0.5,
+            notes="Deferred interpretive Phi Framework source; not primary theorem proof.",
+        ),
+        GovernanceEvidenceSource(
+            source_id=PHI_CALCULUS_CHEATSHEET_SOURCE_ID,
+            standard=GovernanceStandard.DATASET_SHEET.value,
+            title="Phi Calculus Cheatsheet Development",
+            url="https://docs.google.com/document/d/1sOi-vZhIZiyyOMPnu55S7eAuEKdI3lB8K4D5Z6zqJPw/edit",
+            coverage_T=0.38,
+            coverage_I=0.56,
+            coverage_F=0.14,
+            weight=0.5,
+            notes="Deferred phi calculus source for future framework expansion.",
+        ),
+        GovernanceEvidenceSource(
+            source_id=BRIDGE_CALCULUS_SOURCE_ID,
+            standard=GovernanceStandard.DATASET_SHEET.value,
+            title="Bridge Calculus: Elemental Transmutation",
+            url="https://docs.google.com/document/d/14hBgjKn8QTjZjQUx0s8DuCNM7h12Q7zVQcgFM2MjA7Q/edit",
+            coverage_T=0.34,
+            coverage_I=0.60,
+            coverage_F=0.16,
+            weight=0.4,
+            notes="Deferred bridge/elemental calculus source; not implemented in theorem-first module.",
+        ),
+        GovernanceEvidenceSource(
+            source_id=UNIFIED_FFED_CALCULI_SOURCE_ID,
+            standard=GovernanceStandard.AI_RISK_MANAGEMENT.value,
+            title="A Unified Framework of FfeD Calculi",
+            url="https://docs.google.com/document/d/1lH3OTdklWpRcT4QxZEPguzFsq1fwqUpG527W7emCY2g/edit",
+            coverage_T=0.34,
+            coverage_I=0.60,
+            coverage_F=0.16,
+            weight=0.4,
+            notes="Deferred Air/Fire/Water/Earth/Bridge calculus source.",
+        ),
+        GovernanceEvidenceSource(
+            source_id=ANTI_ENTROPY_IMPERATIVE_SOURCE_ID,
+            standard=GovernanceStandard.AI_RISK_MANAGEMENT.value,
+            title="The Anti-Entropy Imperative",
+            url="https://docs.google.com/document/d/11f4kORbVcy3OmIRbQ00nxS76sPdw4V3orc0jffI7tA0/edit",
+            coverage_T=0.30,
+            coverage_I=0.64,
+            coverage_F=0.18,
+            weight=0.4,
+            notes="Deferred anti-entropy source; no anti-entropy theorem implementation in this pass.",
+        ),
+        GovernanceEvidenceSource(
             source_id=PRIVATE_GMAIL_PROVENANCE_SOURCE_ID,
             standard=GovernanceStandard.AI_RISK_MANAGEMENT.value,
             title="Private Dani Novak provenance thread, redacted",
@@ -125,4 +185,3 @@ def score_novak_anderson_governance_case() -> dict[str, object]:
     from .scientific_governance import score_scientific_governance_case
 
     return score_scientific_governance_case(build_novak_anderson_governance_case())
-

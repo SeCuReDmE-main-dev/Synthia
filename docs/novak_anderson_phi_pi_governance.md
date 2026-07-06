@@ -13,6 +13,11 @@ source-linked review packet using the existing `scientific-governance` reviewer.
 | `DANI_NOVAK_PHI_HIGHER_DIMENSIONS_SHEET_REDACTED` | `https://docs.google.com/spreadsheets/d/1LICbMOdp689MwMvwToTQJkKf0SQNVKMNoRMKeRP1WFw/edit` | Redacted private-provenance teaching Sheet. |
 | `GENESIS_ECHOES_PAPER_I_DRIVE_DOC` | `https://docs.google.com/document/d/1kDqt3WML2ev0uBNH9OKseIb7XF5k6H9ScRzusJ47gf4/edit` | Interpretive Phi Framework document; not primary theorem proof. |
 | `PRIVATE_DANI_NOVAK_GMAIL_PROVENANCE_REDACTED` | `[private Gmail provenance redacted]` | Provenance confirmation only; no private body, message id, attachment id, or display URL is stored. |
+| `PHI_FRAMEWORK_RESEARCH_DRIVE_DOC` | `https://docs.google.com/document/d/10DNzmxVqZCvMNBN4tIvQpbkXwCLIIqbCnsx5TJlqj7s/edit` | Deferred interpretive Phi Framework source. |
+| `PHI_CALCULUS_CHEATSHEET_DRIVE_DOC` | `https://docs.google.com/document/d/1sOi-vZhIZiyyOMPnu55S7eAuEKdI3lB8K4D5Z6zqJPw/edit` | Deferred phi calculus source. |
+| `BRIDGE_CALCULUS_DRIVE_DOC` | `https://docs.google.com/document/d/14hBgjKn8QTjZjQUx0s8DuCNM7h12Q7zVQcgFM2MjA7Q/edit` | Deferred bridge calculus source. |
+| `UNIFIED_FFED_CALCULI_DRIVE_DOC` | `https://docs.google.com/document/d/1lH3OTdklWpRcT4QxZEPguzFsq1fwqUpG527W7emCY2g/edit` | Deferred elemental calculi source. |
+| `ANTI_ENTROPY_IMPERATIVE_DRIVE_DOC` | `https://docs.google.com/document/d/11f4kORbVcy3OmIRbQ00nxS76sPdw4V3orc0jffI7tA0/edit` | Deferred anti-entropy white-paper source. |
 
 ## CLI
 
@@ -33,4 +38,3 @@ The governed claim is narrow:
 - human review remains required;
 - Synthia does not certify cosmology, cryptography, medicine, consciousness,
   production security, or autonomous scientific truth.
-
