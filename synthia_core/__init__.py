@@ -83,6 +83,13 @@ from .molecular_evidence import (
     build_dna_similarity_demo_case,
     score_molecular_review_case,
 )
+from .neutrino_lexical_gate import (
+    DecisionStatus,
+    LexPacketNeutrino,
+    NeutrinoObservationInput,
+    RefusalPacket,
+    classify_neutrino_observation,
+)
 from .phylo_plithogenic import (
     PhyloEvidenceDimension,
     PhyloPlithogenicReviewPacket,
@@ -168,6 +175,10 @@ __all__ = [
     "NeutrosophicSetSource",
     "NeutrosophicStatistic",
     "NeutrosophicTruthValue",
+    "DecisionStatus",
+    "LexPacketNeutrino",
+    "NeutrinoObservationInput",
+    "RefusalPacket",
     "PlithogenicIProfile",
     "PlithogenicAttributeValue",
     "PhyloEvidenceDimension",
@@ -200,6 +211,7 @@ __all__ = [
     "build_academic_platform_demo_case",
     "build_food_safety_demo_case",
     "build_dna_similarity_demo_case",
+    "classify_neutrino_observation",
     "build_synthia_governance_demo_case",
     "build_tilapia_style_demo_packet",
     "build_tree_tobacco_demo_graph",
