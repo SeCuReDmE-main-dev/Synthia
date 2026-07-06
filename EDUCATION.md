@@ -40,6 +40,13 @@ This is still lexical, not physical proof. It contains:
 - `allowed_payload` and `excluded_payload` when a recoverable metaphor must be
   partitioned before FNP-QNN.
 
+For chapter-5 style exercises, the gate can also return
+`chapter5_intake_profile`. This is an intake request only. It prepares an
+`E_FNP_neutrino_request`, `C_FNP_request`, lexical `T/I/F` seed request, scale
+context request, and carrier request policy so FNP-QNN can validate the next
+step. Synthia does not compute or return `D_f`, `D_f_hat`, `dF`,
+`i_fractal`, or `i_fractal_candidate`.
+
 Use:
 
 ```powershell
