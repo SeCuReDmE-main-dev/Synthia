@@ -258,6 +258,111 @@ def test_gravity_detection_channel_claim_is_rejected():
     assert "gravity_detection_channel_claim" in payload["refusal_packet"]["reason_codes"]
 
 
+def test_chapter4_valid_event_returns_lex_neutrino_profile():
+    event = json.loads(Path("tests/fixtures/neutrino_chapter4_valid_event.json").read_text(encoding="utf-8"))
+
+    payload = classify_neutrino_observation(event)
+    packet = payload["LexPacket_neutrino"]
+    chapter4 = packet["chapter4_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert packet["decision"]["status"] == "accepted"
+    assert chapter4["profile_version"] == "chapter4.lex_neutrino_public_safe.v1"
+    assert "p_neutrino_profile" in chapter4
+    assert "lex_neutrino_profile" in chapter4
+    assert "lex_metrics" in chapter4
+    assert chapter4["lex_metrics"]["dL_lex"] == packet["dL_lex"]
+    assert 0.0 <= chapter4["lex_metrics"]["H_lex"] <= 1.0
+    assert 0.0 <= chapter4["lex_metrics"]["G_lex"] <= 1.0
+    assert chapter4["protection_profile"]["SynthiaGuard_neutrino"]["approved_for_fnp"] is True
+    assert not _json_has_key(payload, "dF")
+    assert not _json_has_key(payload, "D_f")
+    assert not _json_has_key(payload, "i_fractal")
+
+
+def test_chapter4_cantor_metaphor_is_partitioned_for_allowed_payload_only():
+    event = _valid_event()
+    event["notes"] = (
+        "Cantor gaps and quasicrystal phason flips are conceptual metaphor only "
+        "for the book image, not detector evidence."
+    )
+
+    payload = classify_neutrino_observation(event)
+    guard = payload["LexPacket_neutrino"]["chapter4_profile"]["protection_profile"]["SynthiaGuard_neutrino"]
+
+    assert payload["Adm_lex"] is True
+    assert payload["decision"]["status"] == "accepted_with_partition"
+    assert "metaphor_as_physics" in payload["refusal_packet"]["reason_codes"]
+    assert guard["approved_for_fnp"] is True
+    assert guard["approval_scope"] == "allowed_payload_only"
+    assert guard["allowed_payload"]
+    assert guard["excluded_payload"]["metaphor_payload"] == "conceptual_language_only"
+
+
+def test_chapter4_simulation_as_real_detection_is_rejected():
+    event = _valid_event()
+    event["notes"] = "the simulation detected real neutrino evidence"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "real_detection_claim" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter4_trace_as_neutrino_total_is_rejected():
+    event = _valid_event()
+    event["notes"] = "trace is neutrino total"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "trace_as_neutrino_total" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter4_substrate_proof_language_reruns_synthia():
+    event = _valid_event()
+    event["notes"] = "the fractal substrate proves the physical conclusion"
+
+    payload = classify_neutrino_observation(event)
+    guard = payload["LexPacket_neutrino"]["chapter4_profile"]["protection_profile"]["SynthiaGuard_neutrino"]
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "corrected"
+    assert "metaphor_as_physics" in payload["refusal_packet"]["reason_codes"]
+    assert "speculation_as_physical_conclusion" in payload["refusal_packet"]["reason_codes"]
+    assert guard["approved_for_fnp"] is False
+
+
+def test_chapter4_missing_source_for_physical_claim_is_suspended():
+    event = _valid_event()
+    event.pop("source_truth")
+    event["notes"] = "physical claim proves a detector conclusion"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "missing_source_for_physical_claim" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter4_cli_accepts_fixture(capsys):
+    assert main(
+        [
+            "neutrino",
+            "guardrail-check",
+            "--input",
+            "tests/fixtures/neutrino_chapter4_valid_event.json",
+            "--json",
+        ]
+    ) == 0
+    payload = json.loads(capsys.readouterr().out)
+
+    assert payload["Adm_lex"] is True
+    assert payload["LexPacket_neutrino"]["chapter4_profile"]["profile_version"] == "chapter4.lex_neutrino_public_safe.v1"
+
+
 def test_cli_guardrail_check_accepts_chapter3_fixture(capsys):
     input_path = Path("tests/fixtures/neutrino_chapter3_valid_event.json")
 

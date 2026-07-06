@@ -44,6 +44,9 @@ REFUSAL_CATEGORIES = (
     "secondary_response_as_primary_force",
     "new_force_from_nuclear_activity",
     "gravity_detection_channel_claim",
+    "metaphor_as_physics",
+    "speculation_as_physical_conclusion",
+    "missing_source_for_physical_claim",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -71,12 +74,33 @@ CORRECTION_CODES = {
     "choice_or_intention_language",
     "pmns_measured_claim",
     "phase_tension_as_new_physics",
+    "speculation_as_physical_conclusion",
 }
-SUSPENSION_CODES = {"missing_source_truth", "missing_interaction_channel", "invalid_energy_gev"}
+PARTITION_CODES = {"metaphor_as_physics"}
+SUSPENSION_CODES = {
+    "missing_source_truth",
+    "missing_interaction_channel",
+    "invalid_energy_gev",
+    "missing_source_for_physical_claim",
+}
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
 FLAVOR_KEYS = ("e", "mu", "tau")
 MASS_KEYS = ("nu_1", "nu_2", "nu_3")
+CHAPTER4_LEXICONS = (
+    "source_lex",
+    "flavor_lex",
+    "mass_lex",
+    "mix_lex",
+    "phase_lex",
+    "medium_lex",
+    "interaction_lex",
+    "secondary_lex",
+    "detector_lex",
+    "uncertainty_lex",
+    "metaphor_lex",
+    "overclaim_lex",
+)
 
 
 class DecisionStatus(str, Enum):
@@ -156,6 +180,7 @@ class LexPacketNeutrino:
     decision_status: DecisionStatus
     refusal_packet: RefusalPacket
     chapter3_profile: Mapping[str, object]
+    chapter4_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -173,6 +198,7 @@ class LexPacketNeutrino:
             "source_layer": SOURCE_LAYER,
             "boundary": BOUNDARY,
             "chapter3_profile": dict(self.chapter3_profile),
+            "chapter4_profile": dict(self.chapter4_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -185,7 +211,9 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
     reason_codes = tuple(_reason_codes(observation))
     status = _decision_status(reason_codes)
     adm_lex = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+    d_l_lex = _d_l_lex(reason_codes)
     chapter3_profile = _chapter3_profile(observation, reason_codes)
+    chapter4_profile = _chapter4_profile(observation, reason_codes, status, d_l_lex, chapter3_profile)
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -195,10 +223,11 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
     packet = LexPacketNeutrino(
         event_id=observation.event_id,
         Adm_lex=adm_lex,
-        dL_lex=_d_l_lex(reason_codes),
+        dL_lex=d_l_lex,
         decision_status=status,
         refusal_packet=refusal_packet,
         chapter3_profile=chapter3_profile,
+        chapter4_profile=chapter4_profile,
     ).as_dict()
     return {
         "success": True,
@@ -262,6 +291,20 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
 
     if not observation.source_truth:
         reasons.append("missing_source_truth")
+        if _contains_any(
+            text,
+            (
+                "physical claim",
+                "claim physique",
+                "proves",
+                "proof",
+                "prouve",
+                "demontre",
+                "validated physics",
+                "conclusion physique",
+            ),
+        ):
+            reasons.append("missing_source_for_physical_claim")
 
     if _invalid_declared_flavor(observation):
         reasons.append("unknown_flavor_as_truth")
@@ -370,6 +413,36 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
     ):
         reasons.append("candidate_confused_with_proof")
 
+    if _contains_any(
+        text,
+        (
+            "cantor",
+            "koch",
+            "quasicrystal",
+            "quasicristal",
+            "substrat fractal",
+            "fractal substrate",
+            "phason",
+            "phason flip",
+        ),
+    ):
+        reasons.append("metaphor_as_physics")
+
+    if _contains_any(
+        text,
+        (
+            "substrat fractal prouve",
+            "fractal substrate proves",
+            "proves the fractal substrate",
+            "quasicrystal substrate is proven",
+            "quasicristal prouve",
+            "physical proof of substrate",
+            "new physics proof",
+            "validated physical conclusion",
+        ),
+    ):
+        reasons.append("speculation_as_physical_conclusion")
+
     return [code for code in REFUSAL_CATEGORIES if code in set(reasons)]
 
 
@@ -377,6 +450,8 @@ def _decision_status(reason_codes: tuple[str, ...]) -> DecisionStatus:
     reason_set = set(reason_codes)
     if reason_set & CRITICAL_REJECTION_CODES:
         return DecisionStatus.REJECTED
+    if reason_set and reason_set <= PARTITION_CODES:
+        return DecisionStatus.ACCEPTED_WITH_PARTITION
     if reason_set & CORRECTION_CODES:
         return DecisionStatus.CORRECTED
     if reason_set & SUSPENSION_CODES:
@@ -486,6 +561,268 @@ def _chapter3_profile(observation: NeutrinoObservationInput, reason_codes: tuple
             "simulation_not_detection": True,
         },
     }
+
+
+def _chapter4_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    d_l_lex: float,
+    chapter3_profile: Mapping[str, object],
+) -> dict[str, object]:
+    lex_scores = _chapter4_lexicon_scores(observation, reason_codes)
+    lex_metrics = _chapter4_lex_metrics(lex_scores, reason_codes, d_l_lex)
+    protection_profile = _chapter4_protection_profile(observation, reason_codes, status, chapter3_profile, lex_metrics)
+    return {
+        "profile_version": "chapter4.lex_neutrino_public_safe.v1",
+        "p_neutrino_profile": _p_neutrino_profile(observation, reason_codes, lex_scores),
+        "lex_neutrino_profile": {
+            "profile_name": "lex_neutrino",
+            "lexicons": lex_scores,
+            "taxonomy_chain": "P_neutrino -> Synthia -> P_lex_neutrino -> H_lex -> G_lex -> I_lexicon -> dL_lex -> Adm_lex",
+            "lexicon_count": len(CHAPTER4_LEXICONS),
+        },
+        "lex_metrics": lex_metrics,
+        "protection_profile": protection_profile,
+        "chapter4_guardrail_summary": {
+            "reason_codes": list(reason_codes),
+            "schema_additive": True,
+            "synthia_only_lexical": True,
+            "no_downstream_fractal_fields": True,
+        },
+    }
+
+
+def _p_neutrino_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    lex_scores: Mapping[str, float],
+) -> dict[str, object]:
+    dominant_lexicon, dominant_value = _dominant_score(lex_scores)
+    contradiction_load = _contradiction_load(reason_codes)
+    uncertainty_load = _uncertainty_load(reason_codes)
+    truth_load = round(_clamp01(1.0 - max(contradiction_load, uncertainty_load)), 8)
+    return {
+        "A_neutrino": {
+            "source": "source_lex",
+            "flavor": "flavor_lex",
+            "mass": "mass_lex",
+            "mix": "mix_lex",
+            "phase": "phase_lex",
+            "medium": "medium_lex",
+            "interaction": "interaction_lex",
+            "secondary": "secondary_lex",
+            "detector": "detector_lex",
+            "uncertainty": "uncertainty_lex",
+            "metaphor": "metaphor_lex",
+            "overclaim": "overclaim_lex",
+        },
+        "values": {
+            "created_flavor": observation.created_flavor,
+            "interaction_channel": observation.interaction_channel or "unknown",
+            "detector_signature": observation.detector_signature or "unknown",
+            "secondary_products": list(observation.secondary_products),
+        },
+        "statuses": {
+            "source_status": "present" if observation.source_truth else "missing",
+            "claim_class": observation.claim_class,
+            "metaphor_status": "partition_required" if "metaphor_as_physics" in reason_codes else "none",
+            "admission_surface": "lexical_only",
+        },
+        "dominance": {
+            "dominant_lexicon": dominant_lexicon,
+            "dominant_value": dominant_value,
+        },
+        "contradictions": {
+            "reason_codes": list(reason_codes),
+            "contradiction_load": contradiction_load,
+        },
+        "weights": dict(lex_scores),
+        "T/I/F": {
+            "T": truth_load,
+            "I": uncertainty_load,
+            "F": contradiction_load,
+        },
+    }
+
+
+def _chapter4_lexicon_scores(observation: NeutrinoObservationInput, reason_codes: tuple[str, ...]) -> dict[str, float]:
+    scores = {key: 0.02 for key in CHAPTER4_LEXICONS}
+    scores["source_lex"] += 0.18 if observation.source_truth else 0.08
+    scores["flavor_lex"] += 0.18 if observation.created_flavor in VALID_FLAVORS else 0.04
+    scores["mass_lex"] += 0.16 if observation.mass_basis else 0.04
+    scores["mix_lex"] += 0.10 if observation.flavor_basis and observation.mass_basis else 0.03
+    scores["phase_lex"] += 0.14 if observation.distance_km is not None and observation.energy_gev is not None else 0.04
+    scores["medium_lex"] += 0.08 if _contains_any(observation.text, ("medium", "vacuum", "matiere", "matter", "msw")) else 0.03
+    scores["interaction_lex"] += 0.18 if observation.interaction_channel in VALID_INTERACTION_CHANNELS else 0.05
+    scores["secondary_lex"] += 0.12 if observation.secondary_products else 0.04
+    scores["detector_lex"] += 0.14 if observation.detector_signature else 0.04
+    scores["uncertainty_lex"] += 0.10 if reason_codes else 0.04
+    scores["metaphor_lex"] += 0.18 if "metaphor_as_physics" in reason_codes else 0.03
+    scores["overclaim_lex"] += 0.18 if set(reason_codes) & (CRITICAL_REJECTION_CODES | CORRECTION_CODES) else 0.03
+    return {key: round(_clamp01(value), 8) for key, value in scores.items()}
+
+
+def _chapter4_lex_metrics(
+    lex_scores: Mapping[str, float],
+    reason_codes: tuple[str, ...],
+    d_l_lex: float,
+) -> dict[str, object]:
+    normalized = _normalized_distribution(lex_scores)
+    sorted_values = sorted(normalized.values(), reverse=True)
+    top = sorted_values[0] if sorted_values else 0.0
+    second = sorted_values[1] if len(sorted_values) > 1 else 0.0
+    m_lex = round(_clamp01(top - second), 8)
+    g_lex = round(_clamp01(1.0 - m_lex), 8)
+    c_lex = _contradiction_load(reason_codes)
+    e_gap = _evidence_gap(reason_codes)
+    return {
+        "H_lex": _entropy01(normalized),
+        "M_lex": m_lex,
+        "G_lex": g_lex,
+        "C_lex": c_lex,
+        "E_gap": e_gap,
+        "I_lexicon": round(_clamp01(max(g_lex, c_lex, e_gap)), 8),
+        "dL_lex": round(_clamp01(d_l_lex), 8),
+        "distribution": normalized,
+        "metric_boundary": "lexical_load_only",
+    }
+
+
+def _chapter4_protection_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    chapter3_profile: Mapping[str, object],
+    lex_metrics: Mapping[str, object],
+) -> dict[str, object]:
+    hard_blocks = [code for code in reason_codes if code in CRITICAL_REJECTION_CODES]
+    excluded_payload = _excluded_payload(reason_codes, status)
+    approved_for_fnp = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+    allowed_payload = {}
+    if approved_for_fnp:
+        allowed_payload = {
+            "event_id": observation.event_id,
+            "claim_class": observation.claim_class,
+            "source_layer": SOURCE_LAYER,
+            "boundary": BOUNDARY,
+            "approved_scope": "allowed_payload_only"
+            if status is DecisionStatus.ACCEPTED_WITH_PARTITION
+            else "full_lexical_payload",
+            "chapter3_profile": dict(chapter3_profile),
+            "lex_metrics": {
+                "H_lex": lex_metrics.get("H_lex"),
+                "G_lex": lex_metrics.get("G_lex"),
+                "I_lexicon": lex_metrics.get("I_lexicon"),
+                "dL_lex": lex_metrics.get("dL_lex"),
+            },
+        }
+    return {
+        "ProtectionPacket_neutrino": {
+            "simulation_detection_guard": _guard_state(
+                reason_codes,
+                ("real_detection_claim", "simulation_trace_as_detection", "visible_neutrino_claim"),
+            ),
+            "flavor_mass_guard": _guard_state(
+                reason_codes,
+                ("flavor_mass_collapse", "mass_basis_equals_flavor_basis"),
+            ),
+            "secondary_primary_guard": _guard_state(
+                reason_codes,
+                ("secondary_response_as_primary_force", "new_force_from_nuclear_activity"),
+            ),
+            "metaphor_guard": _guard_state(reason_codes, ("metaphor_as_physics",)),
+            "speculation_claim_guard": _guard_state(reason_codes, ("speculation_as_physical_conclusion",)),
+            "source_trace_guard": _guard_state(
+                reason_codes,
+                ("missing_source_truth", "missing_source_for_physical_claim"),
+            ),
+            "hard_block_reason_codes": hard_blocks,
+        },
+        "SynthiaGuard_neutrino": {
+            "approved_for_fnp": approved_for_fnp,
+            "approval_scope": "allowed_payload_only"
+            if status is DecisionStatus.ACCEPTED_WITH_PARTITION
+            else ("none" if not approved_for_fnp else "full_lexical_payload"),
+            "allowed_payload": allowed_payload,
+            "excluded_payload": excluded_payload,
+        },
+    }
+
+
+def _excluded_payload(reason_codes: tuple[str, ...], status: DecisionStatus) -> dict[str, object]:
+    excluded: dict[str, object] = {}
+    if "metaphor_as_physics" in reason_codes:
+        excluded["metaphor_payload"] = "conceptual_language_only"
+    if "speculation_as_physical_conclusion" in reason_codes:
+        excluded["speculative_physics_claim"] = "requires_correction_before_fnp"
+    if status in {DecisionStatus.CORRECTED, DecisionStatus.SUSPENDED, DecisionStatus.REJECTED}:
+        excluded["blocked_reason_codes"] = list(reason_codes)
+    return excluded
+
+
+def _guard_state(reason_codes: tuple[str, ...], watched_codes: tuple[str, ...]) -> dict[str, object]:
+    matched = [code for code in watched_codes if code in reason_codes]
+    if any(code in CRITICAL_REJECTION_CODES for code in matched):
+        action = "block"
+    elif any(code in SUSPENSION_CODES for code in matched):
+        action = "hold"
+    elif any(code in CORRECTION_CODES for code in matched):
+        action = "correct"
+    elif matched:
+        action = "partition"
+    else:
+        action = "pass"
+    return {"action": action, "reason_codes": matched}
+
+
+def _normalized_distribution(scores: Mapping[str, float]) -> dict[str, float]:
+    total = sum(max(0.0, float(value)) for value in scores.values())
+    if total <= 0.0:
+        return {key: 0.0 for key in scores}
+    return {key: round(max(0.0, float(value)) / total, 8) for key, value in scores.items()}
+
+
+def _entropy01(distribution: Mapping[str, float]) -> float:
+    values = [float(value) for value in distribution.values() if float(value) > 0.0]
+    if not values or len(values) == 1:
+        return 0.0
+    entropy = -sum(value * math.log(value, 2) for value in values)
+    max_entropy = math.log(len(distribution), 2)
+    return round(_clamp01(entropy / max_entropy), 8)
+
+
+def _dominant_score(scores: Mapping[str, float]) -> tuple[str, float]:
+    if not scores:
+        return "none", 0.0
+    key = max(scores, key=lambda item: scores[item])
+    return key, round(float(scores[key]), 8)
+
+
+def _contradiction_load(reason_codes: tuple[str, ...]) -> float:
+    if not reason_codes:
+        return 0.0
+    load = 0.0
+    load += 0.55 * bool(set(reason_codes) & CRITICAL_REJECTION_CODES)
+    load += 0.35 * bool(set(reason_codes) & CORRECTION_CODES)
+    load += 0.15 * bool(set(reason_codes) & PARTITION_CODES)
+    return round(_clamp01(load), 8)
+
+
+def _uncertainty_load(reason_codes: tuple[str, ...]) -> float:
+    if not reason_codes:
+        return 0.12
+    load = 0.18
+    load += 0.40 * bool(set(reason_codes) & SUSPENSION_CODES)
+    load += 0.10 * bool(set(reason_codes) & PARTITION_CODES)
+    load += min(0.20, 0.02 * len(reason_codes))
+    return round(_clamp01(load), 8)
+
+
+def _evidence_gap(reason_codes: tuple[str, ...]) -> float:
+    if not (set(reason_codes) & SUSPENSION_CODES):
+        return 0.0
+    return round(_clamp01(0.30 + 0.08 * len(set(reason_codes) & SUSPENSION_CODES)), 8)
 
 
 def _normalize_interaction_channel(value: object) -> str:

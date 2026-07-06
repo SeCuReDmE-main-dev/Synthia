@@ -31,6 +31,15 @@ with separated carriers:
 - `I_secondary`: secondary detector products;
 - `I_detector`: indirect detector projection.
 
+For chapter-4 style exercises, the gate can also return `chapter4_profile`.
+This is still lexical, not physical proof. It contains:
+
+- `P_neutrino` and the `lex_neutrino` taxonomy;
+- `H_lex`, `G_lex`, `I_lexicon`, and `dL_lex` as lexical metrics;
+- `ProtectionPacket_neutrino` and `SynthiaGuard_neutrino`;
+- `allowed_payload` and `excluded_payload` when a recoverable metaphor must be
+  partitioned before FNP-QNN.
+
 Use:
 
 ```powershell
