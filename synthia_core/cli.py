@@ -57,6 +57,7 @@ from .plithogenic_set import operate_plithogenic_sets, plithogenic_set_explain, 
 from .algorithm_behavior import build_algorithmic_bioinformatics_demo_case, score_algorithm_behavior_case
 from .biology_graph import build_tree_tobacco_demo_graph, score_biology_graph_review
 from .molecular_evidence import build_dna_similarity_demo_case, score_molecular_review_case
+from .neutrino_lexical_gate import classify_neutrino_observation
 from .phylo_plithogenic import build_tilapia_style_demo_packet, score_phylo_plithogenic_packet
 from .research_object_provenance import build_academic_platform_demo_case, score_research_object_provenance_case
 from .risk_triage import build_food_safety_demo_case, score_risk_triage_case
@@ -382,6 +383,12 @@ def main(argv: list[str] | None = None) -> int:
     research_object_provenance_score = research_object_provenance_sub.add_parser("score")
     research_object_provenance_score.add_argument("--case", required=True, help="JSON object or path")
     research_object_provenance_sub.add_parser("demo")
+
+    neutrino = subparsers.add_parser("neutrino")
+    neutrino_sub = neutrino.add_subparsers(dest="command", required=True)
+    neutrino_guardrail = neutrino_sub.add_parser("guardrail-check")
+    neutrino_guardrail.add_argument("--input", required=True, help="JSON object or path")
+    neutrino_guardrail.add_argument("--json", action="store_true")
 
     codex = subparsers.add_parser("codex")
     codex_sub = codex.add_subparsers(dest="command", required=True)
@@ -798,6 +805,15 @@ def main(argv: list[str] | None = None) -> int:
                 raise ValueError("--case must decode to a JSON object")
             _print_json(score_research_object_provenance_case(provenance_case))
             return 0
+
+    if args.area == "neutrino":
+        if args.command == "guardrail-check":
+            payload = _load_json_value(args.input)
+            if not isinstance(payload, dict):
+                raise ValueError("--input must decode to a JSON object")
+            result = classify_neutrino_observation(payload)
+            _print_json(result)
+            return 0 if result["Adm_lex"] else 1
 
     if args.area == "codex" and args.command == "status":
         _print_json(codex_status().as_dict())

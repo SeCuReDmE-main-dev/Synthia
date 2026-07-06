@@ -62,6 +62,29 @@ I -> I_system^S -> H_lex -> G_lex -> I_lexicon
 
 This is Synthia's lexicon-classification chain. `H_lex` is lexicon entropy, `G_lex` is lexicon decision-gap uncertainty, and `I_lexicon` is the context-preserving indeterminacy state used for classification, filtration, switching, and review.
 
+## Neutrino Lexical Gate
+
+Synthia includes a public-safe neutrino lexical gate for educational simulation
+work. The gate classifies a neutrino-like event before any FNP-QNN computation
+is allowed. It emits `LexPacket_neutrino`, `Adm_lex`, and `dL_lex` as a lexical
+admission contract only.
+
+This layer keeps the public boundary explicit:
+
+- educational simulation;
+- simulation is not detection;
+- weak interaction primary guardrail;
+- Synthia classifies before FNP-QNN computes;
+- `dL_lex != dF`;
+- `I_lexicon != i_fractal`;
+- candidate is not proof.
+
+Run the public-safe check with:
+
+```powershell
+python -m synthia_core.cli neutrino guardrail-check --input event.json --json
+```
+
 ## Plithogenic Biology And System Math
 
 Synthia separates pure engine math from system math. The pure engine math layer contains bounded neutrosophic and plithogenic operators: `T/I/F` values, contradiction load, probability load, dominant attribute values, rough boundary regions, and deterministic projections into the public chain. Those operators are useful by themselves, but biology changes their role. When the object is a species, a taxonomic memory record, a food-safety signal, a conservation concern, a public-health review packet, a geography/ecology context, or an expert disagreement, Synthia is no longer treating math as an isolated abstract engine. It is calling that math inside a living `I_system^S`.
@@ -96,7 +119,6 @@ python -m pytest
 ```
 ![Bannière](assets/Banner/ASCII%20banner/AScii%20banner(1).png)
 No raw private correspondence, authentication caches, restricted manuscript bodies, or credential material should be committed to this repository.
-
 
 
 
