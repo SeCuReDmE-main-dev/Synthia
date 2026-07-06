@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from synthia_core.cli import main
 from synthia_core.neutrino_lexical_gate import classify_neutrino_observation
@@ -115,3 +116,155 @@ def test_cli_guardrail_check_returns_same_contract(tmp_path, capsys):
 
     assert payload["schema_version"] == "synthia.lex_neutrino.v1"
     assert payload["LexPacket_neutrino"]["Adm_lex"] is True
+
+
+def test_chapter3_valid_muon_flavor_mass_phase_event_is_profiled():
+    event = _valid_event()
+    event.update(
+        {
+            "created_flavor": "mu",
+            "flavor_basis": {"e": 0.0, "mu": 1.0, "tau": 0.0},
+            "mass_basis": {"nu1": 0.17, "nu2": 0.33, "nu3": 0.50},
+            "distance_km": 295,
+            "energy_gev": 0.6,
+            "secondary_products": ["muon_like_track", "proton_like_activity"],
+            "detector_signature": "toy muon-like indirect projection",
+        }
+    )
+
+    payload = classify_neutrino_observation(event)
+    chapter3 = payload["LexPacket_neutrino"]["chapter3_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter3["flavor_profile"]["I_flavor"]["created_flavor"] == "nu_mu"
+    assert chapter3["mass_profile"]["I_mass"]["mass_weights_status"] == "toy_simulation"
+    assert chapter3["phase_profile"]["I_phase"]["L_over_E"] == 491.66666667
+    assert chapter3["interaction_profile"]["I_interaction"]["channel"] == "weak_CC"
+    assert chapter3["detector_profile"]["I_detector"]["detector_projection_status"] == "indirect"
+    assert not _json_has_key(payload, "dF")
+
+
+def test_unknown_flavor_claim_as_truth_is_rejected():
+    event = _valid_event()
+    event["created_flavor"] = "sterile"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "unknown_flavor_as_truth" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_declared_unknown_flavor_is_profiled_without_inventing_truth():
+    event = _valid_event()
+    event["created_flavor"] = "sterile"
+    event["flavor_status"] = "unknown"
+
+    payload = classify_neutrino_observation(event)
+    chapter3 = payload["LexPacket_neutrino"]["chapter3_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter3["flavor_profile"]["I_flavor"]["created_flavor"] == "unknown"
+    assert "unknown_flavor_as_truth" not in payload["refusal_packet"]["reason_codes"]
+
+
+def test_flavor_mass_collapse_is_rejected():
+    event = _valid_event()
+    event["notes"] = "flavor_weak_state = mass_propagation_state"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "flavor_mass_collapse" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_equal_flavor_and_mass_basis_vectors_are_rejected():
+    event = _valid_event()
+    event["flavor_basis"] = {"e": 0.0, "mu": 1.0, "tau": 0.0}
+    event["mass_basis"] = {"nu1": 0.0, "nu2": 1.0, "nu3": 0.0}
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert "mass_basis_equals_flavor_basis" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_pmns_measured_and_phase_tension_proof_language_reruns_synthia():
+    event = _valid_event()
+    event["notes"] = "this is the measured PMNS and phase tension proves new physics"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "corrected"
+    assert "pmns_measured_claim" in payload["refusal_packet"]["reason_codes"]
+    assert "phase_tension_as_new_physics" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_invalid_energy_is_suspended():
+    event = _valid_event()
+    event["distance_km"] = 295
+    event["energy_gev"] = 0
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "invalid_energy_gev" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_weak_nc_is_admitted_without_direct_flavor_readout_claim():
+    event = _valid_event()
+    event["interaction_channel"] = "neutral_current"
+    event["detector_signature"] = "toy neutral-current indirect projection"
+
+    payload = classify_neutrino_observation(event)
+    chapter3 = payload["LexPacket_neutrino"]["chapter3_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter3["interaction_profile"]["I_interaction"]["channel"] == "weak_NC"
+
+
+def test_visible_neutrino_and_simulated_detection_claims_are_rejected():
+    event = _valid_event()
+    event["notes"] = "visible_neutrino = true and simulated trace is real detection"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert "visible_neutrino_claim" in payload["refusal_packet"]["reason_codes"]
+    assert "simulation_trace_as_detection" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_secondary_response_force_overclaims_are_rejected():
+    event = _valid_event()
+    event["notes"] = "hadronic trace proves strong force primary and nuclear activity proves new force"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert "secondary_response_as_primary_force" in payload["refusal_packet"]["reason_codes"]
+    assert "new_force_from_nuclear_activity" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_gravity_detection_channel_claim_is_rejected():
+    event = _valid_event()
+    event["notes"] = "gravity_detection_channel = true"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert "gravity_detection_channel_claim" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_cli_guardrail_check_accepts_chapter3_fixture(capsys):
+    input_path = Path("tests/fixtures/neutrino_chapter3_valid_event.json")
+
+    assert main(["neutrino", "guardrail-check", "--input", str(input_path), "--json"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+
+    chapter3 = payload["LexPacket_neutrino"]["chapter3_profile"]
+    assert payload["Adm_lex"] is True
+    assert chapter3["flavor_profile"]["I_flavor"]["created_flavor"] == "nu_mu"
+    assert chapter3["interaction_profile"]["I_interaction"]["channel"] == "weak_CC"

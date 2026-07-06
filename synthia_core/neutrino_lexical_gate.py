@@ -22,6 +22,7 @@ REFUSAL_CATEGORIES = (
     "real_detection_claim",
     "strong_primary_interaction_claim",
     "literal_mass_gain_loss_claim",
+    "literal_mass_change_claim",
     "decay_as_internal_flavor_mechanism",
     "fusion_as_internal_flavor_mechanism",
     "choice_or_intention_language",
@@ -31,6 +32,18 @@ REFUSAL_CATEGORIES = (
     "missing_interaction_channel",
     "detector_trace_confused_with_particle",
     "candidate_confused_with_proof",
+    "unknown_flavor_as_truth",
+    "flavor_mass_collapse",
+    "mass_basis_equals_flavor_basis",
+    "pmns_measured_claim",
+    "invalid_energy_gev",
+    "phase_tension_as_new_physics",
+    "visible_neutrino_claim",
+    "simulation_trace_as_detection",
+    "trace_as_neutrino_total",
+    "secondary_response_as_primary_force",
+    "new_force_from_nuclear_activity",
+    "gravity_detection_channel_claim",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -40,15 +53,30 @@ CRITICAL_REJECTION_CODES = {
     "I_lexicon_equals_i_fractal",
     "detector_trace_confused_with_particle",
     "candidate_confused_with_proof",
+    "unknown_flavor_as_truth",
+    "flavor_mass_collapse",
+    "mass_basis_equals_flavor_basis",
+    "visible_neutrino_claim",
+    "simulation_trace_as_detection",
+    "trace_as_neutrino_total",
+    "secondary_response_as_primary_force",
+    "new_force_from_nuclear_activity",
+    "gravity_detection_channel_claim",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
+    "literal_mass_change_claim",
     "decay_as_internal_flavor_mechanism",
     "fusion_as_internal_flavor_mechanism",
     "choice_or_intention_language",
+    "pmns_measured_claim",
+    "phase_tension_as_new_physics",
 }
-SUSPENSION_CODES = {"missing_source_truth", "missing_interaction_channel"}
+SUSPENSION_CODES = {"missing_source_truth", "missing_interaction_channel", "invalid_energy_gev"}
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
+VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
+FLAVOR_KEYS = ("e", "mu", "tau")
+MASS_KEYS = ("nu_1", "nu_2", "nu_3")
 
 
 class DecisionStatus(str, Enum):
@@ -84,6 +112,13 @@ class NeutrinoObservationInput:
     interaction_channel: str
     source_truth: Mapping[str, object]
     detector_signature: str
+    created_flavor: str
+    flavor_status: str
+    flavor_basis: Mapping[str, float]
+    mass_basis: Mapping[str, float]
+    distance_km: float | None
+    energy_gev: float | None
+    secondary_products: tuple[str, ...]
     text: str
     raw_payload: Mapping[str, Any]
 
@@ -101,6 +136,13 @@ class NeutrinoObservationInput:
             interaction_channel=_normalize_interaction_channel(payload.get("interaction_channel")),
             source_truth=source_truth if isinstance(source_truth, Mapping) else {},
             detector_signature=str(payload.get("detector_signature", "")).strip(),
+            created_flavor=_normalize_flavor(payload.get("created_flavor")),
+            flavor_status=str(payload.get("flavor_status", "")).strip().lower(),
+            flavor_basis=_normalize_flavor_basis(payload),
+            mass_basis=_normalize_mass_basis(payload),
+            distance_km=_optional_float(payload.get("distance_km")),
+            energy_gev=_optional_float(payload.get("energy_gev")),
+            secondary_products=tuple(_secondary_products(payload)),
             text=_payload_text(payload),
             raw_payload=payload,
         )
@@ -113,6 +155,7 @@ class LexPacketNeutrino:
     dL_lex: float
     decision_status: DecisionStatus
     refusal_packet: RefusalPacket
+    chapter3_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -129,6 +172,7 @@ class LexPacketNeutrino:
             "refusal_packet": self.refusal_packet.as_dict(),
             "source_layer": SOURCE_LAYER,
             "boundary": BOUNDARY,
+            "chapter3_profile": dict(self.chapter3_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -141,6 +185,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
     reason_codes = tuple(_reason_codes(observation))
     status = _decision_status(reason_codes)
     adm_lex = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+    chapter3_profile = _chapter3_profile(observation, reason_codes)
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -153,6 +198,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         dL_lex=_d_l_lex(reason_codes),
         decision_status=status,
         refusal_packet=refusal_packet,
+        chapter3_profile=chapter3_profile,
     ).as_dict()
     return {
         "success": True,
@@ -193,6 +239,8 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
 
     if _contains_any(text, ("mass gain", "mass loss", "gain mass", "lose mass", "gains mass", "loses mass")):
         reasons.append("literal_mass_gain_loss_claim")
+    if _contains_any(text, ("change mass", "changes mass", "changing mass", "mass changes", "masse change")):
+        reasons.append("literal_mass_change_claim")
     if "decay" in text:
         reasons.append("decay_as_internal_flavor_mechanism")
     if "fusion" in text:
@@ -215,11 +263,106 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
     if not observation.source_truth:
         reasons.append("missing_source_truth")
 
+    if _invalid_declared_flavor(observation):
+        reasons.append("unknown_flavor_as_truth")
+
+    if _contains_any(
+        text,
+        (
+            "flavor is mass",
+            "flavour is mass",
+            "saveur est la masse",
+            "flavor_weak_state = mass_propagation_state",
+            "flavor_weak_state equals mass_propagation_state",
+        ),
+    ):
+        reasons.append("flavor_mass_collapse")
+
+    if _basis_vectors_equal(observation.flavor_basis, observation.mass_basis) or _contains_any(
+        text,
+        ("flavor_basis = mass_basis", "flavor_basis equals mass_basis", "flavor_basis==mass_basis"),
+    ):
+        reasons.append("mass_basis_equals_flavor_basis")
+
+    if _contains_any(
+        text,
+        ("measured pmns", "true pmns", "real pmns", "pmns measured", "matrice pmns mesuree"),
+    ):
+        reasons.append("pmns_measured_claim")
+
+    if observation.energy_gev is not None and observation.energy_gev <= 0.0:
+        reasons.append("invalid_energy_gev")
+
+    if _contains_any(
+        text,
+        (
+            "phase tension proves",
+            "phase_tension proves",
+            "phase tension is proof",
+            "phase_tension = proof",
+            "tension de phase prouve",
+        ),
+    ):
+        reasons.append("phase_tension_as_new_physics")
+
     if _contains_any(
         text,
         ("detector trace is the neutrino", "trace equals neutrino", "secondary particle is the neutrino"),
     ):
         reasons.append("detector_trace_confused_with_particle")
+
+    if _contains_any(
+        text,
+        ("visible_neutrino = true", "neutrino seen directly", "neutrino_seen_directly", "visible neutrino"),
+    ):
+        reasons.append("visible_neutrino_claim")
+
+    if _contains_any(
+        text,
+        (
+            "simulation trace is detection",
+            "simulated trace is real detection",
+            "simulation de trace = detection",
+        ),
+    ):
+        reasons.append("simulation_trace_as_detection")
+
+    if _contains_any(
+        text,
+        ("trace is neutrino total", "trace_as_neutrino_total", "i_detector = i_neutrino"),
+    ):
+        reasons.append("trace_as_neutrino_total")
+
+    if _contains_any(
+        text,
+        (
+            "secondary response is primary force",
+            "secondary_response = primary_force",
+            "hadronic trace proves strong force primary",
+            "gerbe hadronique prouve force forte",
+        ),
+    ):
+        reasons.append("secondary_response_as_primary_force")
+
+    if _contains_any(
+        text,
+        (
+            "nuclear activity proves new force",
+            "new force from nuclear activity",
+            "activite nucleaire nouvelle force",
+        ),
+    ):
+        reasons.append("new_force_from_nuclear_activity")
+
+    if _contains_any(
+        text,
+        (
+            "gravity detection channel",
+            "gravity_detection_channel = true",
+            "gravite canal de detection",
+        ),
+    ):
+        reasons.append("gravity_detection_channel_claim")
 
     if _contains_any(
         text,
@@ -272,6 +415,79 @@ def _d_l_lex(reason_codes: tuple[str, ...]) -> float:
     return round(_clamp01(load), 8)
 
 
+def _chapter3_profile(observation: NeutrinoObservationInput, reason_codes: tuple[str, ...]) -> dict[str, object]:
+    l_over_e = None
+    if observation.distance_km is not None and observation.energy_gev is not None and observation.energy_gev > 0.0:
+        l_over_e = round(observation.distance_km / observation.energy_gev, 8)
+    created_flavor = observation.created_flavor if observation.created_flavor in VALID_FLAVORS else "unknown"
+    flavor_status = "unknown" if created_flavor == "unknown" else "declared"
+    mass_status = "unknown" if not observation.mass_basis else "toy_simulation"
+    detector_projection_status = _detector_projection_status(observation)
+    return {
+        "profile_version": "chapter3.neutrino_public_safe.v1",
+        "physical_minimum_profile": {
+            "particle_family": "neutral_lepton",
+            "claim_class": observation.claim_class,
+            "boundary": BOUNDARY,
+            "direct_detection_claim": False,
+        },
+        "flavor_profile": {
+            "I_flavor": {
+                "created_flavor": created_flavor,
+                "flavor_basis": dict(observation.flavor_basis),
+                "flavor_status": flavor_status,
+                "allowed_flavors": ["nu_e", "nu_mu", "nu_tau"],
+                "guardrail": "flavor_weak_state != mass_propagation_state",
+            }
+        },
+        "mass_profile": {
+            "I_mass": {
+                "mass_basis": dict(observation.mass_basis),
+                "mass_status": mass_status,
+                "mass_weights_status": "toy_simulation" if observation.mass_basis else "unknown",
+                "guardrail": "mass_propagation_state != flavor_weak_state",
+            }
+        },
+        "phase_profile": {
+            "I_phase": {
+                "distance_km": observation.distance_km,
+                "energy_gev": observation.energy_gev,
+                "L_over_E": l_over_e,
+                "phase_evolution_status": "available" if l_over_e is not None else "not_available",
+                "guardrail": "phase_evolution != literal_mass_change",
+            }
+        },
+        "interaction_profile": {
+            "I_interaction": {
+                "channel": observation.interaction_channel or "unknown",
+                "primary_interaction": "weak" if observation.interaction_channel in VALID_INTERACTION_CHANNELS else "unknown",
+                "allowed_channels": sorted(VALID_INTERACTION_CHANNELS),
+                "guardrail": "weak_CC != strong_interaction",
+            }
+        },
+        "secondary_profile": {
+            "I_secondary": {
+                "products": list(observation.secondary_products),
+                "secondary_status": "declared" if observation.secondary_products else "unknown",
+                "guardrail": "secondary_response != primary_neutrino_force",
+            }
+        },
+        "detector_profile": {
+            "I_detector": {
+                "projection": observation.detector_signature or "unknown",
+                "detector_projection_status": detector_projection_status,
+                "visibility_status": "indirect" if detector_projection_status != "none" else "none",
+                "guardrail": "I_detector != I_neutrino",
+            }
+        },
+        "chapter3_guardrail_summary": {
+            "reason_codes": list(reason_codes),
+            "no_downstream_fractal_fields": True,
+            "simulation_not_detection": True,
+        },
+    }
+
+
 def _normalize_interaction_channel(value: object) -> str:
     raw = str(value or "").strip()
     lowered = raw.lower().replace("-", "_").replace(" ", "_")
@@ -280,6 +496,125 @@ def _normalize_interaction_channel(value: object) -> str:
     if lowered in {"weak_nc", "neutral_current", "weak_neutral_current"}:
         return "weak_NC"
     return raw
+
+
+def _normalize_flavor(value: object) -> str:
+    raw = str(value or "").strip().lower().replace("-", "_").replace(" ", "_")
+    if raw in {"", "unknown", "unk", "symbolic"}:
+        return "unknown"
+    if raw in {"e", "electron", "electron_neutrino", "nu_e", "ν_e"}:
+        return "nu_e"
+    if raw in {"mu", "muon", "muon_neutrino", "nu_mu", "ν_mu"}:
+        return "nu_mu"
+    if raw in {"tau", "tau_neutrino", "nu_tau", "ν_tau"}:
+        return "nu_tau"
+    return raw
+
+
+def _invalid_declared_flavor(observation: NeutrinoObservationInput) -> bool:
+    if observation.created_flavor in VALID_FLAVORS:
+        return False
+    return observation.flavor_status not in {"unknown", "symbolic", "suspended"}
+
+
+def _normalize_flavor_basis(payload: Mapping[str, Any]) -> dict[str, float]:
+    basis = payload.get("flavor_basis")
+    if isinstance(basis, Mapping):
+        return _normalize_basis(basis, FLAVOR_KEYS, _flavor_basis_key)
+    created = _normalize_flavor(payload.get("created_flavor"))
+    if created == "nu_e":
+        return {"e": 1.0, "mu": 0.0, "tau": 0.0}
+    if created == "nu_mu":
+        return {"e": 0.0, "mu": 1.0, "tau": 0.0}
+    if created == "nu_tau":
+        return {"e": 0.0, "mu": 0.0, "tau": 1.0}
+    return {}
+
+
+def _normalize_mass_basis(payload: Mapping[str, Any]) -> dict[str, float]:
+    basis = payload.get("mass_basis")
+    if isinstance(basis, Mapping):
+        return _normalize_basis(basis, MASS_KEYS, _mass_basis_key)
+    return {}
+
+
+def _normalize_basis(
+    basis: Mapping[str, object],
+    expected_keys: tuple[str, ...],
+    key_normalizer: Any,
+) -> dict[str, float]:
+    values = {key: 0.0 for key in expected_keys}
+    for raw_key, raw_value in basis.items():
+        key = key_normalizer(raw_key)
+        if key in values:
+            values[key] += max(0.0, _optional_float(raw_value) or 0.0)
+    total = sum(values.values())
+    if total <= 0.0:
+        return {}
+    return {key: round(value / total, 8) for key, value in values.items()}
+
+
+def _flavor_basis_key(value: object) -> str:
+    raw = str(value).strip().lower().replace("-", "_").replace(" ", "_")
+    if raw in {"e", "nu_e", "electron", "electron_neutrino"}:
+        return "e"
+    if raw in {"mu", "nu_mu", "muon", "muon_neutrino"}:
+        return "mu"
+    if raw in {"tau", "nu_tau", "tau_neutrino"}:
+        return "tau"
+    return raw
+
+
+def _mass_basis_key(value: object) -> str:
+    raw = str(value).strip().lower().replace("-", "_").replace(" ", "_")
+    if raw in {"1", "nu1", "nu_1", "m1", "m_1"}:
+        return "nu_1"
+    if raw in {"2", "nu2", "nu_2", "m2", "m_2"}:
+        return "nu_2"
+    if raw in {"3", "nu3", "nu_3", "m3", "m_3"}:
+        return "nu_3"
+    return raw
+
+
+def _basis_vectors_equal(left: Mapping[str, float], right: Mapping[str, float]) -> bool:
+    if not left or not right:
+        return False
+    left_values = list(left.values())
+    right_values = list(right.values())
+    if len(left_values) != len(right_values):
+        return False
+    return all(abs(float(a) - float(b)) < 1e-12 for a, b in zip(left_values, right_values))
+
+
+def _secondary_products(payload: Mapping[str, Any]) -> list[str]:
+    value = payload.get("secondary_products", payload.get("I_secondary", []))
+    if isinstance(value, str):
+        return [_normalize_token(value)]
+    if isinstance(value, list):
+        return [_normalize_token(item) for item in value if str(item).strip()]
+    return []
+
+
+def _detector_projection_status(observation: NeutrinoObservationInput) -> str:
+    if not observation.detector_signature:
+        return "unknown"
+    if _contains_any(observation.detector_signature.lower(), ("none", "no_direct_trace")):
+        return "none"
+    return "indirect"
+
+
+def _normalize_token(value: object) -> str:
+    return str(value).strip().lower().replace(" ", "_").replace("-", "_")
+
+
+def _optional_float(value: object) -> float | None:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(number):
+        return None
+    return number
 
 
 def _payload_text(payload: Mapping[str, Any]) -> str:

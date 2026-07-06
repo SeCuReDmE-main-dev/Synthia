@@ -21,6 +21,16 @@ It returns:
 The gate is deliberately lexical. It does not compute FNP-QNN friction and does
 not produce `D_f`, `dF`, or `i_fractal`.
 
+For neutrino teaching examples, the gate can also return a `chapter3_profile`
+with separated carriers:
+
+- `I_flavor`: flavor weak-state language;
+- `I_mass`: mass propagation-state language;
+- `I_phase`: distance/energy phase-evolution context;
+- `I_interaction`: `weak_CC` or `weak_NC`;
+- `I_secondary`: secondary detector products;
+- `I_detector`: indirect detector projection.
+
 Use:
 
 ```powershell
@@ -33,7 +43,9 @@ The maintained educational boundary is:
 
 - educational simulation;
 - simulation is not detection;
+- flavor state is not mass propagation state;
 - weak interaction primary guardrail;
+- secondary detector response is not a primary strong-force interaction;
 - Synthia classifies before FNP-QNN computes;
 - `dL_lex != dF`;
 - `I_lexicon != i_fractal`;
