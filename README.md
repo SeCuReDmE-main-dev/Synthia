@@ -69,11 +69,20 @@ work. The gate classifies a neutrino-like event before any FNP-QNN computation
 is allowed. It emits `LexPacket_neutrino`, `Adm_lex`, and `dL_lex` as a lexical
 admission contract only.
 
+The gate also emits an additive `chapter3_profile` for public-safe neutrino
+teaching events. This profile keeps the chapter-3 carriers separate:
+`I_flavor`, `I_mass`, `I_phase`, `I_interaction`, `I_secondary`, and
+`I_detector`. These fields describe lexical admission and educational
+simulation structure only; they are not detector evidence and they do not
+authorize downstream fractal computation.
+
 This layer keeps the public boundary explicit:
 
 - educational simulation;
 - simulation is not detection;
+- flavor state is not mass propagation state;
 - weak interaction primary guardrail;
+- secondary detector response is not a primary strong-force interaction;
 - Synthia classifies before FNP-QNN computes;
 - `dL_lex != dF`;
 - `I_lexicon != i_fractal`;
@@ -84,6 +93,9 @@ Run the public-safe check with:
 ```powershell
 python -m synthia_core.cli neutrino guardrail-check --input event.json --json
 ```
+
+The checked-in fixture `tests/fixtures/neutrino_chapter3_valid_event.json`
+shows the public-safe carrier shape for a toy muon-flavor event.
 
 ## Plithogenic Biology And System Math
 
@@ -119,7 +131,6 @@ python -m pytest
 ```
 ![Bannière](assets/Banner/ASCII%20banner/AScii%20banner(1).png)
 No raw private correspondence, authentication caches, restricted manuscript bodies, or credential material should be committed to this repository.
-
 
 
 
