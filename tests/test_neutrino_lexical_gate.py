@@ -373,3 +373,82 @@ def test_cli_guardrail_check_accepts_chapter3_fixture(capsys):
     assert payload["Adm_lex"] is True
     assert chapter3["flavor_profile"]["I_flavor"]["created_flavor"] == "nu_mu"
     assert chapter3["interaction_profile"]["I_interaction"]["channel"] == "weak_CC"
+
+
+def _chapter5_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter5_valid_event.json").read_text(encoding="utf-8"))
+
+
+def test_chapter5_valid_event_returns_fnp_intake_profile():
+    payload = classify_neutrino_observation(_chapter5_event())
+    packet = payload["LexPacket_neutrino"]
+    chapter5 = packet["chapter5_intake_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter5["profile_version"] == "chapter5.fnp_intake_public_safe.v1"
+    assert chapter5["E_FNP_neutrino_request"]["allowed_payload_status"] == "present"
+    assert chapter5["carrier_request_policy"]["requested_family"] == "phase_carrier"
+    assert chapter5["guard_state"]["approved_for_fnp_intake"] is True
+    assert chapter5["Adm_FNP_required"] is True
+    assert not _json_has_key(payload, "D_f")
+    assert not _json_has_key(payload, "D_f_hat")
+    assert not _json_has_key(payload, "dF")
+    assert not _json_has_key(payload, "i_fractal")
+    assert not _json_has_key(payload, "i_fractal_candidate")
+
+
+def test_chapter5_missing_allowed_payload_is_suspended():
+    event = _chapter5_event()
+    event.pop("source_truth")
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "missing_allowed_payload_for_chapter5" in payload["refusal_packet"]["reason_codes"]
+    assert payload["LexPacket_neutrino"]["chapter5_intake_profile"]["guard_state"]["approved_for_fnp_intake"] is False
+
+
+def test_chapter5_dl_lex_used_as_fractal_carrier_is_rejected():
+    event = _chapter5_event()
+    event["notes"] = "dL_lex = D_f"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "dL_lex_used_as_D_f" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter5_bounded_carrier_as_indeterminacy_is_rejected():
+    event = _chapter5_event()
+    event["notes"] = "D_f_hat = I and D_f_hat = i_fractal"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "D_f_hat_as_I_claim" in payload["refusal_packet"]["reason_codes"]
+    assert "D_f_hat_as_i_fractal_claim" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter5_invalid_carrier_family_is_suspended():
+    event = _chapter5_event()
+    event["carrier_request"]["carrier_family"] = "blackhole_vortex_carrier"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "invalid_carrier_family" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter5_synthia_normalization_claim_is_rejected():
+    event = _chapter5_event()
+    event["notes"] = "Synthia normalizes and calculates D_f_hat"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "normalization_claim_in_synthia" in payload["refusal_packet"]["reason_codes"]

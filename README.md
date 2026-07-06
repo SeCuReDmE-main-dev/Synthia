@@ -107,6 +107,11 @@ The checked-in fixture `tests/fixtures/neutrino_chapter3_valid_event.json`
 shows the public-safe carrier shape for a toy muon-flavor event.
 The fixture `tests/fixtures/neutrino_chapter4_valid_event.json` shows the
 additive lexical taxonomy and protection shape.
+The fixture `tests/fixtures/neutrino_chapter5_valid_event.json` shows the
+additive chapter-5 FNP intake request. This profile prepares
+`E_FNP_neutrino_request`, `C_FNP_request`, a lexical `T/I/F` seed request, a
+scale context request, and a carrier request policy for FNP-QNN. Synthia still
+does not normalize or compute any downstream fractal carrier value.
 
 ## Plithogenic Biology And System Math
 

@@ -47,6 +47,16 @@ REFUSAL_CATEGORIES = (
     "metaphor_as_physics",
     "speculation_as_physical_conclusion",
     "missing_source_for_physical_claim",
+    "missing_allowed_payload_for_chapter5",
+    "blocked_payload_used_for_carrier",
+    "dL_lex_used_as_D_f",
+    "D_f_hat_as_I_claim",
+    "D_f_hat_as_dF_claim",
+    "D_f_hat_as_i_fractal_claim",
+    "missing_scale_context",
+    "missing_carrier_request",
+    "invalid_carrier_family",
+    "normalization_claim_in_synthia",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -65,6 +75,12 @@ CRITICAL_REJECTION_CODES = {
     "secondary_response_as_primary_force",
     "new_force_from_nuclear_activity",
     "gravity_detection_channel_claim",
+    "blocked_payload_used_for_carrier",
+    "dL_lex_used_as_D_f",
+    "D_f_hat_as_I_claim",
+    "D_f_hat_as_dF_claim",
+    "D_f_hat_as_i_fractal_claim",
+    "normalization_claim_in_synthia",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
@@ -82,6 +98,10 @@ SUSPENSION_CODES = {
     "missing_interaction_channel",
     "invalid_energy_gev",
     "missing_source_for_physical_claim",
+    "missing_allowed_payload_for_chapter5",
+    "missing_scale_context",
+    "missing_carrier_request",
+    "invalid_carrier_family",
 }
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
@@ -100,6 +120,15 @@ CHAPTER4_LEXICONS = (
     "uncertainty_lex",
     "metaphor_lex",
     "overclaim_lex",
+)
+CHAPTER5_CARRIER_FAMILIES = (
+    "phase_carrier",
+    "detector_projection_carrier",
+    "secondary_trace_carrier",
+    "plithogenic_contradiction_carrier",
+    "multi_attribute_tension_carrier",
+    "scale_transition_carrier",
+    "null_carrier",
 )
 
 
@@ -181,6 +210,7 @@ class LexPacketNeutrino:
     refusal_packet: RefusalPacket
     chapter3_profile: Mapping[str, object]
     chapter4_profile: Mapping[str, object]
+    chapter5_intake_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -199,6 +229,7 @@ class LexPacketNeutrino:
             "boundary": BOUNDARY,
             "chapter3_profile": dict(self.chapter3_profile),
             "chapter4_profile": dict(self.chapter4_profile),
+            "chapter5_intake_profile": dict(self.chapter5_intake_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -214,6 +245,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
     d_l_lex = _d_l_lex(reason_codes)
     chapter3_profile = _chapter3_profile(observation, reason_codes)
     chapter4_profile = _chapter4_profile(observation, reason_codes, status, d_l_lex, chapter3_profile)
+    chapter5_intake_profile = _chapter5_intake_profile(observation, reason_codes, status, chapter3_profile, chapter4_profile)
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -228,6 +260,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         refusal_packet=refusal_packet,
         chapter3_profile=chapter3_profile,
         chapter4_profile=chapter4_profile,
+        chapter5_intake_profile=chapter5_intake_profile,
     ).as_dict()
     return {
         "success": True,
@@ -443,6 +476,63 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
     ):
         reasons.append("speculation_as_physical_conclusion")
 
+    if _chapter5_requested(observation):
+        carrier_request = observation.raw_payload.get("carrier_request")
+        scale_context = observation.raw_payload.get("scale_context")
+        family = _carrier_family(carrier_request)
+        if not isinstance(carrier_request, Mapping):
+            reasons.append("missing_carrier_request")
+        elif family not in CHAPTER5_CARRIER_FAMILIES:
+            reasons.append("invalid_carrier_family")
+        if not isinstance(scale_context, Mapping):
+            reasons.append("missing_scale_context")
+        if _contains_any(text, ("excluded_payload used for carrier", "use excluded_payload for carrier", "blocked payload used")):
+            reasons.append("blocked_payload_used_for_carrier")
+
+    if _contains_any(
+        text,
+        (
+            "dl_lex = d_f",
+            "dl_lex equals d_f",
+            "dl_lex used as d_f",
+            "dl_lex is d_f",
+            "dl_lex = df carrier",
+        ),
+    ):
+        reasons.append("dL_lex_used_as_D_f")
+
+    if _contains_any(text, ("d_f_hat = i", "d_f_hat equals i", "d_f_hat is i", "df_hat = i")):
+        reasons.append("D_f_hat_as_I_claim")
+    if _contains_any(text, ("d_f_hat = df", "d_f_hat equals df", "d_f_hat is df", "df_hat = df")):
+        reasons.append("D_f_hat_as_dF_claim")
+    if _contains_any(
+        text,
+        (
+            "d_f_hat = i_fractal",
+            "d_f_hat equals i_fractal",
+            "d_f_hat is i_fractal",
+            "df_hat = i_fractal",
+        ),
+    ):
+        reasons.append("D_f_hat_as_i_fractal_claim")
+
+    if _contains_any(
+        text,
+        (
+            "synthia normalizes",
+            "synthia calculates d_f_hat",
+            "synthia computes d_f_hat",
+            "normalization in synthia",
+            "synthia normalization",
+        ),
+    ):
+        reasons.append("normalization_claim_in_synthia")
+
+    if _chapter5_requested(observation) and set(reasons) & (
+        CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES
+    ):
+        reasons.append("missing_allowed_payload_for_chapter5")
+
     return [code for code in REFUSAL_CATEGORIES if code in set(reasons)]
 
 
@@ -589,6 +679,87 @@ def _chapter4_profile(
             "schema_additive": True,
             "synthia_only_lexical": True,
             "no_downstream_fractal_fields": True,
+        },
+    }
+
+
+def _chapter5_intake_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    chapter3_profile: Mapping[str, object],
+    chapter4_profile: Mapping[str, object],
+) -> dict[str, object]:
+    guard = _nested_mapping(chapter4_profile, "protection_profile", "SynthiaGuard_neutrino")
+    protection_packet = _nested_mapping(chapter4_profile, "protection_profile", "ProtectionPacket_neutrino")
+    lex_metrics = _nested_mapping(chapter4_profile, "lex_metrics")
+    p_profile = _nested_mapping(chapter4_profile, "p_neutrino_profile")
+    allowed_payload = guard.get("allowed_payload") if isinstance(guard.get("allowed_payload"), Mapping) else {}
+    excluded_payload = guard.get("excluded_payload") if isinstance(guard.get("excluded_payload"), Mapping) else {}
+    scale_context = observation.raw_payload.get("scale_context")
+    scale_context = scale_context if isinstance(scale_context, Mapping) else {}
+    carrier_request = observation.raw_payload.get("carrier_request")
+    carrier_family = _carrier_family(carrier_request)
+    guard_state = _chapter5_guard_state(reason_codes, status, allowed_payload, carrier_family)
+    return {
+        "profile_version": "chapter5.fnp_intake_public_safe.v1",
+        "E_FNP_neutrino_request": {
+            "event_id": observation.event_id,
+            "source_trace_status": "present" if observation.source_truth else "missing",
+            "simulation_status": observation.claim_class,
+            "allowed_payload_status": "present" if allowed_payload else "missing",
+            "excluded_payload_status": "present" if excluded_payload else "none",
+            "input_object_boundary": "lexically_admitted_event_request_only",
+        },
+        "C_FNP_request": {
+            "S": "neutrino_public_safe_simulation_chamber",
+            "Omega": "chapter5_fnp_intake",
+            "A": "allowed_payload_only",
+            "R": "public_guardrail_relations",
+            "M": "deterministic_local_mapping_required",
+            "Theta": "chapter5_5_1_to_5_4",
+            "Adm": "requires_fnp_validation",
+        },
+        "TIF_seed_request": {
+            "source": "chapter4_p_neutrino_profile",
+            "T/I/F": dict(p_profile.get("T/I/F", {})) if isinstance(p_profile.get("T/I/F"), Mapping) else {},
+            "lexical_metrics": {
+                "H_lex": lex_metrics.get("H_lex"),
+                "G_lex": lex_metrics.get("G_lex"),
+                "I_lexicon": lex_metrics.get("I_lexicon"),
+                "dL_lex": lex_metrics.get("dL_lex"),
+            },
+            "seed_boundary": "lexical_seed_not_fractal_friction",
+        },
+        "scale_context_request": {
+            "status": "present" if scale_context else "missing",
+            "domain": str(scale_context.get("domain", "unspecified")) if scale_context else "unspecified",
+            "scale": str(scale_context.get("scale", "unspecified")) if scale_context else "unspecified",
+            "measurement_method": str(scale_context.get("measurement_method", "unspecified")) if scale_context else "unspecified",
+        },
+        "carrier_request_policy": {
+            "requested_family": carrier_family or "unspecified",
+            "allowed_families": list(CHAPTER5_CARRIER_FAMILIES),
+            "status": "valid" if carrier_family in CHAPTER5_CARRIER_FAMILIES else "missing_or_invalid",
+            "fnp_must_supply_numeric_carrier_values": True,
+        },
+        "guard_state": {
+            **guard_state,
+            "chapter4_protection_actions": {
+                key: value.get("action")
+                for key, value in protection_packet.items()
+                if isinstance(value, Mapping) and "action" in value
+            },
+        },
+        "Adm_FNP_required": True,
+        "boundary": {
+            "synthia_role": "lexical_intake_only",
+            "no_fractal_computation": True,
+            "invariants": [
+                "dL_lex != downstream fractal carrier",
+                "bounded carrier != downstream friction",
+                "bounded carrier != fractal indeterminacy candidate",
+            ],
         },
     }
 
@@ -774,6 +945,58 @@ def _guard_state(reason_codes: tuple[str, ...], watched_codes: tuple[str, ...]) 
     else:
         action = "pass"
     return {"action": action, "reason_codes": matched}
+
+
+def _chapter5_guard_state(
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    allowed_payload: Mapping[str, object],
+    carrier_family: str,
+) -> dict[str, object]:
+    reason_set = set(reason_codes)
+    can_request = (
+        status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+        and bool(allowed_payload)
+        and carrier_family in CHAPTER5_CARRIER_FAMILIES
+        and not reason_set & (CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES)
+    )
+    if can_request:
+        action = "request_fnp_validation"
+    elif status is DecisionStatus.REJECTED:
+        action = "block"
+    elif status is DecisionStatus.CORRECTED:
+        action = "correct"
+    else:
+        action = "hold"
+    return {
+        "action": action,
+        "approved_for_fnp_intake": can_request,
+        "reason_codes": list(reason_codes),
+    }
+
+
+def _chapter5_requested(observation: NeutrinoObservationInput) -> bool:
+    raw = observation.raw_payload
+    if raw.get("chapter5_enabled") is True:
+        return True
+    if isinstance(raw.get("carrier_request"), Mapping):
+        return True
+    return _contains_any(observation.text, ("chapter5", "chapter 5", "e_fnp_neutrino", "carrier_request"))
+
+
+def _carrier_family(carrier_request: object) -> str:
+    if not isinstance(carrier_request, Mapping):
+        return ""
+    return _normalize_token(carrier_request.get("carrier_family", carrier_request.get("family", "")))
+
+
+def _nested_mapping(payload: Mapping[str, object], *path: str) -> Mapping[str, object]:
+    current: object = payload
+    for key in path:
+        if not isinstance(current, Mapping):
+            return {}
+        current = current.get(key)
+    return current if isinstance(current, Mapping) else {}
 
 
 def _normalized_distribution(scores: Mapping[str, float]) -> dict[str, float]:
