@@ -61,6 +61,7 @@ from .neutrino_lexical_gate import classify_neutrino_observation
 from .phylo_plithogenic import build_tilapia_style_demo_packet, score_phylo_plithogenic_packet
 from .research_object_provenance import build_academic_platform_demo_case, score_research_object_provenance_case
 from .risk_triage import build_food_safety_demo_case, score_risk_triage_case
+from .novak_anderson_phi_pi import build_novak_anderson_governance_case
 from .scientific_governance import build_synthia_governance_demo_case, score_scientific_governance_case
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperator
 from .safety import HIERARCHY
@@ -377,6 +378,7 @@ def main(argv: list[str] | None = None) -> int:
     scientific_governance_score = scientific_governance_sub.add_parser("score")
     scientific_governance_score.add_argument("--case", required=True, help="JSON object or path")
     scientific_governance_sub.add_parser("demo")
+    scientific_governance_sub.add_parser("novak-anderson")
 
     research_object_provenance = subparsers.add_parser("research-object-provenance")
     research_object_provenance_sub = research_object_provenance.add_subparsers(dest="command", required=True)
@@ -787,6 +789,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.area == "scientific-governance":
         if args.command == "demo":
             _print_json(score_scientific_governance_case(build_synthia_governance_demo_case()))
+            return 0
+        if args.command == "novak-anderson":
+            _print_json(score_scientific_governance_case(build_novak_anderson_governance_case()))
             return 0
         if args.command == "score":
             governance_case = _load_json_value(args.case)

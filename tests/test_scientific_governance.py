@@ -15,6 +15,13 @@ from synthia_core.scientific_governance import (
     build_synthia_governance_demo_case,
     score_scientific_governance_case,
 )
+from synthia_core.novak_anderson_phi_pi import (
+    ANDERSON_NOVAK_FIBONACCI_VECTOR_SOURCE_ID,
+    ANDERSON_NOVAK_PHI_PI_SOURCE_ID,
+    DANI_SHEET_SOURCE_ID,
+    PRIVATE_GMAIL_PROVENANCE_SOURCE_ID,
+    build_novak_anderson_governance_case,
+)
 
 
 def test_parser_preserves_source_ids_formal_values_and_bounds():
@@ -212,3 +219,43 @@ def test_cli_scientific_governance_score_and_demo(capsys):
     assert main(["scientific-governance", "demo"]) == 0
     payload = json.loads(capsys.readouterr().out)
     assert NIST_AI_RMF_SOURCE_ID in payload["source_ids"]
+
+
+def test_novak_anderson_governance_case_is_source_linked_and_bounded():
+    payload = score_scientific_governance_case(build_novak_anderson_governance_case())
+
+    assert payload["case_label"] == "Novak-Anderson phi/pi theorem governance case"
+    assert ANDERSON_NOVAK_PHI_PI_SOURCE_ID in payload["source_ids"]
+    assert ANDERSON_NOVAK_FIBONACCI_VECTOR_SOURCE_ID in payload["source_ids"]
+    assert DANI_SHEET_SOURCE_ID in payload["source_ids"]
+    assert PRIVATE_GMAIL_PROVENANCE_SOURCE_ID in payload["source_ids"]
+    assert payload["human_review_required"] is True
+    assert payload["validation_status"] == ValidationStatus.SOURCE_LINKED.value
+    assert "no scientific certification" in payload["authority_boundary"]
+    assert "does not certify cosmology" in payload["reviewer_notes"]
+
+
+def test_novak_anderson_governance_case_redacts_private_gmail_content():
+    payload = score_scientific_governance_case(build_novak_anderson_governance_case())
+    serialized = json.dumps(payload, sort_keys=True)
+
+    forbidden_terms = (
+        "1991219afdf1c342",
+        "19911e91c5e7a11b",
+        "mail.google.com",
+        "raw_private_gmail_body",
+        "private_message_id",
+        "attachment_id",
+    )
+    for term in forbidden_terms:
+        assert term not in serialized
+    assert "[private Gmail provenance redacted]" in serialized
+
+
+def test_cli_scientific_governance_novak_anderson(capsys):
+    assert main(["scientific-governance", "novak-anderson"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+
+    assert payload["case_label"] == "Novak-Anderson phi/pi theorem governance case"
+    assert ANDERSON_NOVAK_PHI_PI_SOURCE_ID in payload["source_ids"]
+    assert payload["human_review_required"] is True

@@ -117,6 +117,7 @@ from .scientific_governance import (
     build_synthia_governance_demo_case,
     score_scientific_governance_case,
 )
+from .novak_anderson_phi_pi import build_novak_anderson_governance_case, score_novak_anderson_governance_case
 from .taxonomy_memory import TaxonomicMemorySystem
 from .single_valued_neutrosophic import SingleValuedNeutrosophicSet, SVNSOperation, SVNSOperator
 
@@ -212,6 +213,7 @@ __all__ = [
     "build_food_safety_demo_case",
     "build_dna_similarity_demo_case",
     "classify_neutrino_observation",
+    "build_novak_anderson_governance_case",
     "build_synthia_governance_demo_case",
     "build_tilapia_style_demo_packet",
     "build_tree_tobacco_demo_graph",
@@ -220,5 +222,6 @@ __all__ = [
     "score_molecular_review_case",
     "score_research_object_provenance_case",
     "score_risk_triage_case",
+    "score_novak_anderson_governance_case",
     "score_scientific_governance_case",
 ]
