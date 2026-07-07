@@ -458,6 +458,10 @@ def _chapter6_event():
     return json.loads(Path("tests/fixtures/neutrino_chapter6_valid_event.json").read_text(encoding="utf-8"))
 
 
+def _chapter7_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter7_valid_event.json").read_text(encoding="utf-8"))
+
+
 def test_chapter6_valid_event_returns_complete_i_neutrino_vector():
     payload = classify_neutrino_observation(_chapter6_event())
     packet = payload["LexPacket_neutrino"]
@@ -540,3 +544,52 @@ def test_chapter6_uncertainty_cannot_collapse_to_zero():
     assert payload["Adm_lex"] is False
     assert payload["decision"]["status"] == "rejected"
     assert "uncertainty_collapsed_to_zero" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter7_valid_event_returns_transition_profile_without_fnp_fields():
+    payload = classify_neutrino_observation(_chapter7_event())
+    packet = payload["LexPacket_neutrino"]
+    chapter7 = packet["chapter7_transition_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert packet["dL_lex"] == 0.31927681
+    assert chapter7["profile_version"] == "chapter7.synthia_transition_public_safe.v1"
+    assert chapter7["I_neutrino_definition"] == "I_neutrino := I_neutrino_vec"
+    assert chapter7["passage_test"]["I_neutrino_vec_status"] == "assembled"
+    assert chapter7["passage_test"]["L_over_E"] == 491.66666667
+    assert chapter7["passage_test"]["ready_for_Synthia"] is True
+    assert chapter7["passage_test"]["ready_for_FNP"] == "false_before_Synthia"
+    assert chapter7["synthia_reading"]["selected_observation_lexicon"] == "phase_evolution"
+    assert chapter7["synthia_reading"]["secondary_observation_lexicon"] == "weak_interaction"
+    assert chapter7["synthia_reading"]["dL_lex"] == 0.31927681
+    assert chapter7["synthia_reading"]["approved_for_fnp"] is True
+    assert chapter7["chapter7_gate"]["ready_for_FNP"] == "true_after_Synthia"
+    assert not _json_has_key(payload, "D_f")
+    assert not _json_has_key(payload, "D_f_hat")
+    assert not _json_has_key(payload, "dF")
+    assert not _json_has_key(payload, "i_fractal")
+    assert not _json_has_key(payload, "i_fractal_candidate")
+
+
+def test_chapter7_physical_proof_and_candidate_claims_are_rejected():
+    event = _chapter7_event()
+    event["notes"] = "L_over_E_as_physical_proof and i_fractal_candidate proves final truth"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "l_over_e_as_physical_proof" in payload["refusal_packet"]["reason_codes"]
+    assert "i_fractal_candidate_as_proof" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter7_ready_for_fnp_before_synthia_is_rejected_with_chapter7_code():
+    event = _chapter7_event()
+    event["ready_for_FNP"] = True
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "ready_for_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
+    assert "chapter7_ready_for_fnp_without_synthia" in payload["refusal_packet"]["reason_codes"]
