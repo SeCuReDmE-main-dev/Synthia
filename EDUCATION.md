@@ -61,6 +61,13 @@ reading that can approve the packet for FNP. This profile is still lexical:
 `dL_lex` is not `dF`, `I_lexicon` is not `i_fractal`, and Synthia does not
 return `D_f`, `D_f_hat`, `dF`, `i_fractal`, or `i_fractal_candidate`.
 
+For chapter-8 style exercises, the gate can also return
+`chapter8_run_profile`. This turns the first run into an explicit status:
+`admissible_under_guardrails`, `suspended`, or `rejected`.
+`permission_to_continue` is not proof, `simulation` is not detection, and a
+`suspended` or `rejected` run must not be converted into a numeric shortcut.
+The profile is still lexical/admission-only and does not compute FNP friction.
+
 Use:
 
 ```powershell

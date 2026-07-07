@@ -462,6 +462,10 @@ def _chapter7_event():
     return json.loads(Path("tests/fixtures/neutrino_chapter7_valid_event.json").read_text(encoding="utf-8"))
 
 
+def _chapter8_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter8_valid_event.json").read_text(encoding="utf-8"))
+
+
 def test_chapter6_valid_event_returns_complete_i_neutrino_vector():
     payload = classify_neutrino_observation(_chapter6_event())
     packet = payload["LexPacket_neutrino"]
@@ -593,3 +597,77 @@ def test_chapter7_ready_for_fnp_before_synthia_is_rejected_with_chapter7_code():
     assert payload["decision"]["status"] == "rejected"
     assert "ready_for_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
     assert "chapter7_ready_for_fnp_without_synthia" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter8_valid_event_returns_first_run_profile_without_fnp_fields():
+    payload = classify_neutrino_observation(_chapter8_event())
+    packet = payload["LexPacket_neutrino"]
+    chapter8 = packet["chapter8_run_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter8["profile_version"] == "chapter8.first_run_public_safe.v1"
+    assert chapter8["run_input"]["I_neutrino_vec_status"] == "assembled"
+    assert chapter8["run_input"]["ready_for_Synthia"] is True
+    assert chapter8["run_input"]["ready_for_FNP"] == "false_before_Synthia"
+    assert chapter8["synthia_gate"]["Adm_lex"] is True
+    assert chapter8["synthia_gate"]["approved_for_fnp"] is True
+    assert chapter8["synthia_gate"]["ready_for_FNP"] == "true_after_Synthia"
+    assert chapter8["run_decision"]["run_status"] == "admissible_under_guardrails"
+    assert chapter8["run_permission"]["permission_to_continue"] is True
+    assert chapter8["run_permission"]["allowed_next_step"] == "FNP_QNN_readout"
+    assert chapter8["run_permission"]["can_continue_to_chapter9"] is True
+    assert not _json_has_key(payload, "D_f")
+    assert not _json_has_key(payload, "D_f_hat")
+    assert not _json_has_key(payload, "dF")
+    assert not _json_has_key(payload, "i_fractal")
+    assert not _json_has_key(payload, "i_fractal_candidate")
+
+
+def test_chapter8_ready_for_fnp_before_synthia_is_rejected():
+    event = _chapter8_event()
+    event["ready_for_FNP"] = True
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "ready_for_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
+    assert "chapter8_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
+    assert payload["LexPacket_neutrino"]["chapter8_run_profile"]["run_decision"]["run_status"] == "rejected"
+
+
+def test_chapter8_permission_and_candidate_proof_claims_are_rejected():
+    event = _chapter8_event()
+    event["notes"] = "permission_to_continue is proof and chapter8 candidate as proof"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "chapter8_permission_as_proof" in payload["refusal_packet"]["reason_codes"]
+    assert "chapter8_candidate_as_proof" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter8_missing_simulation_status_is_suspended():
+    event = _chapter8_event()
+    event.pop("source_truth")
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "missing_source_truth" in payload["refusal_packet"]["reason_codes"]
+    assert "chapter8_simulation_status_missing" in payload["refusal_packet"]["reason_codes"]
+    assert payload["LexPacket_neutrino"]["chapter8_run_profile"]["run_decision"]["run_status"] == "suspended"
+
+
+def test_chapter8_suspended_or_rejected_as_numeric_shortcut_is_rejected():
+    event = _chapter8_event()
+    event["notes"] = "suspended = 0 and rejected as noise"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "chapter8_suspended_as_zero" in payload["refusal_packet"]["reason_codes"]
+    assert "chapter8_rejected_as_noise" in payload["refusal_packet"]["reason_codes"]
