@@ -54,6 +54,13 @@ For chapter-6 style exercises, the gate can also return
 is a public-safe chamber object for lexical review. It is not `dL_lex`, not
 downstream FNP friction, not a detector signature, and not proof of detection.
 
+For chapter-7 style exercises, the gate can also return
+`chapter7_transition_profile`. This keeps `I_neutrino := I_neutrino_vec` as the
+primary definition, records the toy passage state, and exposes the Synthia
+reading that can approve the packet for FNP. This profile is still lexical:
+`dL_lex` is not `dF`, `I_lexicon` is not `i_fractal`, and Synthia does not
+return `D_f`, `D_f_hat`, `dF`, `i_fractal`, or `i_fractal_candidate`.
+
 Use:
 
 ```powershell

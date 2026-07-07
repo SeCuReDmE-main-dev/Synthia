@@ -67,6 +67,12 @@ REFUSAL_CATEGORIES = (
     "guardrail_check_missing",
     "vector_claim_as_physical_detection",
     "vector_claim_as_physical_proof",
+    "missing_chapter7_vector_profile",
+    "l_over_e_as_physical_proof",
+    "chapter7_ready_for_fnp_without_synthia",
+    "i_neutrino_load_as_primary_object",
+    "i_fractal_candidate_as_proof",
+    "chapter7_result_claim_as_detection",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -98,6 +104,11 @@ CRITICAL_REJECTION_CODES = {
     "ready_for_fnp_before_synthia",
     "vector_claim_as_physical_detection",
     "vector_claim_as_physical_proof",
+    "l_over_e_as_physical_proof",
+    "chapter7_ready_for_fnp_without_synthia",
+    "i_neutrino_load_as_primary_object",
+    "i_fractal_candidate_as_proof",
+    "chapter7_result_claim_as_detection",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
@@ -122,6 +133,7 @@ SUSPENSION_CODES = {
     "missing_i_neutrino_vector_carrier",
     "i_uncertainty_missing",
     "guardrail_check_missing",
+    "missing_chapter7_vector_profile",
 }
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
@@ -245,6 +257,7 @@ class LexPacketNeutrino:
     chapter4_profile: Mapping[str, object]
     chapter5_intake_profile: Mapping[str, object]
     chapter6_vector_profile: Mapping[str, object]
+    chapter7_transition_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -265,6 +278,7 @@ class LexPacketNeutrino:
             "chapter4_profile": dict(self.chapter4_profile),
             "chapter5_intake_profile": dict(self.chapter5_intake_profile),
             "chapter6_vector_profile": dict(self.chapter6_vector_profile),
+            "chapter7_transition_profile": dict(self.chapter7_transition_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -277,7 +291,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
     reason_codes = tuple(_reason_codes(observation))
     status = _decision_status(reason_codes)
     adm_lex = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
-    d_l_lex = _d_l_lex(reason_codes)
+    d_l_lex = _d_l_lex(observation, reason_codes)
     chapter3_profile = _chapter3_profile(observation, reason_codes)
     chapter4_profile = _chapter4_profile(observation, reason_codes, status, d_l_lex, chapter3_profile)
     chapter5_intake_profile = _chapter5_intake_profile(observation, reason_codes, status, chapter3_profile, chapter4_profile)
@@ -289,6 +303,14 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter3_profile,
         chapter4_profile,
         chapter5_intake_profile,
+    )
+    chapter7_transition_profile = _chapter7_transition_profile(
+        observation,
+        reason_codes,
+        status,
+        d_l_lex,
+        chapter4_profile,
+        chapter6_vector_profile,
     )
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
@@ -306,6 +328,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter4_profile=chapter4_profile,
         chapter5_intake_profile=chapter5_intake_profile,
         chapter6_vector_profile=chapter6_vector_profile,
+        chapter7_transition_profile=chapter7_transition_profile,
     ).as_dict()
     return {
         "success": True,
@@ -624,6 +647,57 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
     ):
         reasons.append("vector_claim_as_physical_proof")
 
+    if _chapter7_requested(observation):
+        if not _nested_mapping(_chapter6_vector_profile_preview(observation), "I_neutrino_vec"):
+            reasons.append("missing_chapter7_vector_profile")
+        if ready_for_fnp is True or _contains_any(
+            text,
+            (
+                "ready_for_fnp = true before synthia",
+                "ready_for_fnp=true before synthia",
+                "chapter7 ready for fnp without synthia",
+            ),
+        ):
+            reasons.append("chapter7_ready_for_fnp_without_synthia")
+    if _contains_any(
+        text,
+        (
+            "l_over_e_as_physical_proof",
+            "l/e proves fractality",
+            "l_over_e proves physical proof",
+            "l_over_e = proof",
+        ),
+    ):
+        reasons.append("l_over_e_as_physical_proof")
+    if _contains_any(
+        text,
+        (
+            "i_neutrino_load = i_neutrino",
+            "i_neutrino_load as primary object",
+            "i_neutrino_load is the primary object",
+        ),
+    ):
+        reasons.append("i_neutrino_load_as_primary_object")
+    if _contains_any(
+        text,
+        (
+            "i_fractal_candidate proves",
+            "i_fractal_candidate is proof",
+            "candidate_as_proof",
+            "candidate is physical proof",
+        ),
+    ):
+        reasons.append("i_fractal_candidate_as_proof")
+    if _contains_any(
+        text,
+        (
+            "chapter7 result is detection",
+            "chapter7_result_claim_as_detection",
+            "chapter 7 detected neutrino",
+        ),
+    ):
+        reasons.append("chapter7_result_claim_as_detection")
+
     if _chapter5_requested(observation) and set(reasons) & (
         CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES
     ):
@@ -665,8 +739,11 @@ def _human_message(status: DecisionStatus) -> str:
     }[status]
 
 
-def _d_l_lex(reason_codes: tuple[str, ...]) -> float:
+def _d_l_lex(observation: NeutrinoObservationInput, reason_codes: tuple[str, ...]) -> float:
     if not reason_codes:
+        chapter7_d_l_lex = _chapter7_metric(observation, "dL_lex")
+        if _chapter7_requested(observation) and chapter7_d_l_lex is not None:
+            return round(_clamp01(chapter7_d_l_lex), 8)
         return 0.12
     load = 0.12
     load += 0.45 * bool(set(reason_codes) & CRITICAL_REJECTION_CODES)
@@ -1035,6 +1112,85 @@ def _chapter6_guardrail_check(
     }
 
 
+def _chapter7_transition_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    d_l_lex: float,
+    chapter4_profile: Mapping[str, object],
+    chapter6_vector_profile: Mapping[str, object],
+) -> dict[str, object]:
+    vector = _nested_mapping(chapter6_vector_profile, "I_neutrino_vec")
+    carriers = _nested_mapping(vector, "carriers")
+    phase = _nested_mapping(carriers, "I_phase")
+    guardrail = _nested_mapping(chapter6_vector_profile, "GuardrailCheck")
+    synthia_reading = _chapter7_synthia_reading(observation, d_l_lex, chapter4_profile)
+    admitted = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+    return {
+        "profile_version": "chapter7.synthia_transition_public_safe.v1",
+        "I_neutrino_definition": "I_neutrino := I_neutrino_vec",
+        "passage_test": {
+            "I_neutrino_vec_status": vector.get("vector_status", "unknown"),
+            "L_over_E": phase.get("L_over_E"),
+            "ready_for_Synthia": guardrail.get("ready_for_Synthia") is True,
+            "ready_for_FNP": "false_before_Synthia",
+            "passage_boundary": "assembled_vector_before_fnp_friction",
+        },
+        "synthia_reading": synthia_reading,
+        "chapter7_gate": {
+            "ready_for_FNP": "true_after_Synthia" if admitted else "false",
+            "approved_for_fnp": admitted and synthia_reading["approved_for_fnp"] is True,
+            "reason_codes": list(reason_codes),
+            "next_required_gate": "FNP chapter7 readout",
+        },
+        "transition_invariants": [
+            "I_neutrino_vec != dL_lex",
+            "I_neutrino_vec != downstream friction",
+            "dL_lex != downstream friction",
+            "I_lexicon != downstream fractal admission",
+            "candidate is not proof",
+            "simulation is not detection",
+        ],
+        "boundary": {
+            "synthia_role": "lexical_transition_only",
+            "no_fractal_computation": True,
+            "no_real_detection_claim": True,
+        },
+    }
+
+
+def _chapter7_synthia_reading(
+    observation: NeutrinoObservationInput,
+    d_l_lex: float,
+    chapter4_profile: Mapping[str, object],
+) -> dict[str, object]:
+    supplied = observation.raw_payload.get("chapter7_synthia_reading")
+    supplied = supplied if isinstance(supplied, Mapping) else {}
+    lex_metrics = _nested_mapping(chapter4_profile, "lex_metrics")
+    return {
+        "selected_observation_lexicon": str(
+            supplied.get("selected_observation_lexicon", "phase_evolution")
+        ),
+        "secondary_observation_lexicon": str(
+            supplied.get("secondary_observation_lexicon", "weak_interaction")
+        ),
+        "H_lex": _chapter7_float(supplied, "H_lex", lex_metrics.get("H_lex", 0.0)),
+        "G_lex": _chapter7_float(supplied, "G_lex", lex_metrics.get("G_lex", 0.0)),
+        "I_lexicon": _chapter7_float(supplied, "I_lexicon", lex_metrics.get("I_lexicon", 0.0)),
+        "C_lex": _chapter7_float(supplied, "C_lex", lex_metrics.get("C_lex", 0.0)),
+        "E_gap": _chapter7_float(supplied, "E_gap", lex_metrics.get("E_gap", 0.0)),
+        "dL_lex": round(_clamp01(d_l_lex), 8),
+        "classification_status": str(supplied.get("classification_status", "stable")),
+        "approved_for_fnp": bool(supplied.get("approved_for_fnp", True)),
+        "reading_boundary": "dL_lex is lexical transition load only",
+    }
+
+
+def _chapter7_float(supplied: Mapping[str, object], key: str, default: object) -> float:
+    value = _optional_float(supplied.get(key, default))
+    return round(_clamp01(value if value is not None else 0.0), 8)
+
+
 def _p_neutrino_profile(
     observation: NeutrinoObservationInput,
     reason_codes: tuple[str, ...],
@@ -1253,6 +1409,31 @@ def _chapter5_requested(observation: NeutrinoObservationInput) -> bool:
     if isinstance(raw.get("carrier_request"), Mapping):
         return True
     return _contains_any(observation.text, ("chapter5", "chapter 5", "e_fnp_neutrino", "carrier_request"))
+
+
+def _chapter7_requested(observation: NeutrinoObservationInput) -> bool:
+    raw = observation.raw_payload
+    if raw.get("chapter7_enabled") is True:
+        return True
+    if isinstance(raw.get("chapter7_synthia_reading"), Mapping):
+        return True
+    return _contains_any(observation.text, ("chapter7", "chapter 7", "chapter7_transition_profile"))
+
+
+def _chapter7_metric(observation: NeutrinoObservationInput, key: str) -> float | None:
+    supplied = observation.raw_payload.get("chapter7_synthia_reading")
+    if not isinstance(supplied, Mapping):
+        return None
+    return _optional_float(supplied.get(key))
+
+
+def _chapter6_vector_profile_preview(observation: NeutrinoObservationInput) -> Mapping[str, object]:
+    supplied = _supplied_chapter6_vector(observation.raw_payload)
+    if supplied is not None:
+        return {"I_neutrino_vec": supplied}
+    if observation.claim_class == "simulation" and observation.interaction_channel in VALID_INTERACTION_CHANNELS:
+        return {"I_neutrino_vec": {"vector_status": "will_be_assembled"}}
+    return {}
 
 
 def _supplied_chapter6_vector(payload: Mapping[str, Any]) -> Mapping[str, object] | None:
