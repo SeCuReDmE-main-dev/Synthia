@@ -1,0 +1,43 @@
+{
+  "event_id": "chapter6-public-safe-neutrino-001",
+  "claim_class": "simulation",
+  "interaction_channel": "weak_CC",
+  "created_flavor": "mu",
+  "flavor_basis": {
+    "e": 0.0,
+    "mu": 1.0,
+    "tau": 0.0
+  },
+  "mass_basis": {
+    "nu1": 0.17,
+    "nu2": 0.33,
+    "nu3": 0.5
+  },
+  "mixing_model": "PMNS_like_toy",
+  "mixing_status": "toy_simulation",
+  "distance_km": 295,
+  "energy_gev": 0.6,
+  "medium_type": "vacuum",
+  "density_status": "not_applicable",
+  "matter_effect_status": "ignored_in_phase1",
+  "MSW_status": "not_used",
+  "secondary_products": [
+    "muon_like_track"
+  ],
+  "detector_signature": "toy muon-like indirect projection",
+  "source_type": "toy_simulation",
+  "source_status": "simulation_input",
+  "source_truth": {
+    "phase1_reference": "public physics reference"
+  },
+  "chapter5_enabled": true,
+  "scale_context": {
+    "domain": "toy_neutrino_event",
+    "scale": "local_chamber",
+    "measurement_method": "public_safe_carrier_request"
+  },
+  "carrier_request": {
+    "carrier_family": "phase_carrier"
+  },
+  "notes": "chapter6 I_neutrino_vec assembly for public safe simulation"
+}

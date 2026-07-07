@@ -57,6 +57,16 @@ REFUSAL_CATEGORIES = (
     "missing_carrier_request",
     "invalid_carrier_family",
     "normalization_claim_in_synthia",
+    "missing_i_neutrino_vector_carrier",
+    "i_neutrino_vec_equals_dL_lex",
+    "i_neutrino_vec_equals_dF",
+    "i_neutrino_vec_equals_detector_signature",
+    "i_uncertainty_missing",
+    "uncertainty_collapsed_to_zero",
+    "ready_for_fnp_before_synthia",
+    "guardrail_check_missing",
+    "vector_claim_as_physical_detection",
+    "vector_claim_as_physical_proof",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -81,6 +91,13 @@ CRITICAL_REJECTION_CODES = {
     "D_f_hat_as_dF_claim",
     "D_f_hat_as_i_fractal_claim",
     "normalization_claim_in_synthia",
+    "i_neutrino_vec_equals_dL_lex",
+    "i_neutrino_vec_equals_dF",
+    "i_neutrino_vec_equals_detector_signature",
+    "uncertainty_collapsed_to_zero",
+    "ready_for_fnp_before_synthia",
+    "vector_claim_as_physical_detection",
+    "vector_claim_as_physical_proof",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
@@ -102,6 +119,9 @@ SUSPENSION_CODES = {
     "missing_scale_context",
     "missing_carrier_request",
     "invalid_carrier_family",
+    "missing_i_neutrino_vector_carrier",
+    "i_uncertainty_missing",
+    "guardrail_check_missing",
 }
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
@@ -130,6 +150,19 @@ CHAPTER5_CARRIER_FAMILIES = (
     "scale_transition_carrier",
     "null_carrier",
 )
+CHAPTER6_REQUIRED_CARRIERS = (
+    "I_source",
+    "I_flavor",
+    "I_mass",
+    "I_mix",
+    "I_phase",
+    "I_medium",
+    "I_interaction",
+    "I_secondary",
+    "I_detector",
+    "I_uncertainty",
+)
+CHAPTER6_FORBIDDEN_PROFILE_KEYS = {"D_f", "D_f_hat", "dF", "i_fractal", "i_fractal_candidate"}
 
 
 class DecisionStatus(str, Enum):
@@ -211,6 +244,7 @@ class LexPacketNeutrino:
     chapter3_profile: Mapping[str, object]
     chapter4_profile: Mapping[str, object]
     chapter5_intake_profile: Mapping[str, object]
+    chapter6_vector_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -230,6 +264,7 @@ class LexPacketNeutrino:
             "chapter3_profile": dict(self.chapter3_profile),
             "chapter4_profile": dict(self.chapter4_profile),
             "chapter5_intake_profile": dict(self.chapter5_intake_profile),
+            "chapter6_vector_profile": dict(self.chapter6_vector_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -246,6 +281,15 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
     chapter3_profile = _chapter3_profile(observation, reason_codes)
     chapter4_profile = _chapter4_profile(observation, reason_codes, status, d_l_lex, chapter3_profile)
     chapter5_intake_profile = _chapter5_intake_profile(observation, reason_codes, status, chapter3_profile, chapter4_profile)
+    chapter6_vector_profile = _chapter6_vector_profile(
+        observation,
+        reason_codes,
+        status,
+        d_l_lex,
+        chapter3_profile,
+        chapter4_profile,
+        chapter5_intake_profile,
+    )
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -261,6 +305,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter3_profile=chapter3_profile,
         chapter4_profile=chapter4_profile,
         chapter5_intake_profile=chapter5_intake_profile,
+        chapter6_vector_profile=chapter6_vector_profile,
     ).as_dict()
     return {
         "success": True,
@@ -528,6 +573,57 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
     ):
         reasons.append("normalization_claim_in_synthia")
 
+    supplied_vector = _supplied_chapter6_vector(observation.raw_payload)
+    if supplied_vector is not None:
+        missing_carriers = _missing_chapter6_carriers(supplied_vector)
+        if missing_carriers:
+            reasons.append("missing_i_neutrino_vector_carrier")
+        if "I_uncertainty" in missing_carriers:
+            reasons.append("i_uncertainty_missing")
+    supplied_chapter6 = observation.raw_payload.get("chapter6_vector_profile")
+    if isinstance(supplied_chapter6, Mapping) and not isinstance(supplied_chapter6.get("GuardrailCheck"), Mapping):
+        reasons.append("guardrail_check_missing")
+
+    ready_for_fnp = observation.raw_payload.get("ready_for_FNP")
+    if ready_for_fnp is True or _contains_any(text, ("ready_for_fnp = true", "ready_for_fnp=true")):
+        reasons.append("ready_for_fnp_before_synthia")
+    if _contains_any(
+        text,
+        (
+            "i_neutrino_vec = dl_lex",
+            "i_neutrino_vec equals dl_lex",
+            "i_neutrino_vec==dl_lex",
+        ),
+    ):
+        reasons.append("i_neutrino_vec_equals_dL_lex")
+    if _contains_any(
+        text,
+        (
+            "i_neutrino_vec = df",
+            "i_neutrino_vec equals df",
+            "i_neutrino_vec==df",
+        ),
+    ):
+        reasons.append("i_neutrino_vec_equals_dF")
+    if _contains_any(
+        text,
+        (
+            "i_neutrino_vec = detector_signature",
+            "i_neutrino_vec equals detector_signature",
+            "i_neutrino_vec = detector signature",
+        ),
+    ):
+        reasons.append("i_neutrino_vec_equals_detector_signature")
+    if _contains_any(text, ("i_uncertainty = 0", "i_uncertainty collapsed to zero", "uncertainty collapsed to zero")):
+        reasons.append("uncertainty_collapsed_to_zero")
+    if _contains_any(text, ("i_neutrino_vec proves detection", "vector proves detection", "vecteur prouve detection")):
+        reasons.append("vector_claim_as_physical_detection")
+    if _contains_any(
+        text,
+        ("i_neutrino_vec proves physical proof", "vector proves physics", "vecteur prouve physique"),
+    ):
+        reasons.append("vector_claim_as_physical_proof")
+
     if _chapter5_requested(observation) and set(reasons) & (
         CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES
     ):
@@ -764,6 +860,181 @@ def _chapter5_intake_profile(
     }
 
 
+def _chapter6_vector_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    d_l_lex: float,
+    chapter3_profile: Mapping[str, object],
+    chapter4_profile: Mapping[str, object],
+    chapter5_intake_profile: Mapping[str, object],
+) -> dict[str, object]:
+    source_truth = dict(observation.source_truth)
+    source_type = str(observation.raw_payload.get("source_type", "")).strip() or (
+        "toy_simulation" if observation.claim_class == "simulation" else "unknown"
+    )
+    source_status = str(observation.raw_payload.get("source_status", "")).strip() or (
+        "simulation_input" if observation.claim_class == "simulation" else "unknown"
+    )
+    p_profile = _nested_mapping(chapter4_profile, "p_neutrino_profile")
+    tif_profile = dict(p_profile.get("T/I/F", {})) if isinstance(p_profile.get("T/I/F"), Mapping) else {}
+    lexical_metrics = _nested_mapping(chapter4_profile, "lex_metrics")
+    chapter5_guard = _nested_mapping(chapter5_intake_profile, "guard_state")
+    source_profile = {
+        "source_type": source_type,
+        "source_status": source_status,
+        "evidence_level": str(observation.raw_payload.get("evidence_level", "simulation_reference")),
+        "provenance": str(observation.raw_payload.get("provenance", "source_truth" if source_truth else "missing")),
+        "source_truth_status": "present" if source_truth else "missing",
+        "boundary": str(observation.raw_payload.get("boundary", "no_real_detection_claim")),
+    }
+    carriers = {
+        "I_source": source_profile,
+        "I_flavor": dict(_nested_mapping(chapter3_profile, "flavor_profile", "I_flavor")),
+        "I_mass": dict(_nested_mapping(chapter3_profile, "mass_profile", "I_mass")),
+        "I_mix": _chapter6_mix_carrier(observation),
+        "I_phase": dict(_nested_mapping(chapter3_profile, "phase_profile", "I_phase")),
+        "I_medium": _chapter6_medium_carrier(observation),
+        "I_interaction": dict(_nested_mapping(chapter3_profile, "interaction_profile", "I_interaction")),
+        "I_secondary": dict(_nested_mapping(chapter3_profile, "secondary_profile", "I_secondary")),
+        "I_detector": dict(_nested_mapping(chapter3_profile, "detector_profile", "I_detector")),
+        "I_uncertainty": _chapter6_uncertainty_carrier(
+            observation,
+            reason_codes,
+            status,
+            tif_profile,
+            lexical_metrics,
+            chapter5_guard,
+        ),
+    }
+    missing_carriers = [name for name in CHAPTER6_REQUIRED_CARRIERS if not carriers.get(name)]
+    guardrail_check = _chapter6_guardrail_check(observation, reason_codes, carriers, d_l_lex)
+    return {
+        "profile_version": "chapter6.i_neutrino_vector_public_safe.v1",
+        "vector_definition": "I_neutrino = I_neutrino_vec within chamber frame only",
+        "I_neutrino_vec": {
+            "carrier_order": list(CHAPTER6_REQUIRED_CARRIERS),
+            "carriers": carriers,
+            "missing_carriers": missing_carriers,
+            "vector_status": "assembled" if not missing_carriers else "incomplete",
+        },
+        "GuardrailCheck": guardrail_check,
+        "readiness": {
+            "ready_for_Synthia": guardrail_check["ready_for_Synthia"],
+            "ready_for_FNP": guardrail_check["ready_for_FNP"],
+            "next_required_gate": "Synthia lexical admission before FNP friction",
+        },
+        "projection_policy": {
+            "lexical_projection": "dL_lex = Pi_lex(I_neutrino_vec)",
+            "friction_policy": "FNP friction only after admission",
+            "lexical_load_value": round(_clamp01(d_l_lex), 8),
+        },
+        "vector_invariants": [
+            "I_neutrino_vec != dL_lex",
+            "I_neutrino_vec != downstream friction",
+            "I_neutrino_vec != detector_signature",
+            "dL_lex != downstream friction",
+            "I_lexicon != downstream fractal admission",
+            "simulation != real_detection",
+        ],
+        "boundary": {
+            "synthia_role": "assemble_and_classify_vector_only",
+            "no_fractal_computation": True,
+            "no_real_detection_claim": True,
+            "chamber_frame_only": True,
+        },
+    }
+
+
+def _chapter6_mix_carrier(observation: NeutrinoObservationInput) -> dict[str, object]:
+    mixing_matrix = observation.raw_payload.get("mixing_matrix_or_weights", observation.raw_payload.get("mixing_matrix"))
+    return {
+        "mixing_model": str(observation.raw_payload.get("mixing_model", "PMNS_like_toy")),
+        "mixing_matrix_or_weights": mixing_matrix if isinstance(mixing_matrix, Mapping) else "symbolic",
+        "mixing_status": str(observation.raw_payload.get("mixing_status", "toy_simulation")),
+        "mixing_source": str(observation.raw_payload.get("mixing_source", "local_payload")),
+        "mixing_guardrail": "PMNS_like_toy != experimental_PMNS_fit",
+    }
+
+
+def _chapter6_medium_carrier(observation: NeutrinoObservationInput) -> dict[str, object]:
+    medium_type = str(
+        observation.raw_payload.get("medium_type", observation.raw_payload.get("medium", "vacuum"))
+    ).strip() or "vacuum"
+    density_status = str(observation.raw_payload.get("density_status", "not_applicable")).strip() or "not_applicable"
+    matter_status = str(observation.raw_payload.get("matter_effect_status", "ignored_in_phase1")).strip()
+    msw_status = str(observation.raw_payload.get("MSW_status", observation.raw_payload.get("msw_status", "not_used"))).strip()
+    if medium_type.lower() != "vacuum" and density_status == "not_applicable":
+        density_status = "unknown"
+    return {
+        "medium_type": _normalize_token(medium_type),
+        "density_status": _normalize_token(density_status),
+        "matter_effect_status": _normalize_token(matter_status or "ignored_in_phase1"),
+        "MSW_status": _normalize_token(msw_status or "not_used"),
+        "medium_source": str(observation.raw_payload.get("medium_source", "local_payload")),
+        "medium_guardrail": "matter_effect_named != matter_effect_computed",
+    }
+
+
+def _chapter6_uncertainty_carrier(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    tif_profile: Mapping[str, object],
+    lexical_metrics: Mapping[str, object],
+    chapter5_guard: Mapping[str, object],
+) -> dict[str, object]:
+    return {
+        "TIF_profile": dict(tif_profile),
+        "source_gap": "none" if observation.source_truth else "missing_source_truth",
+        "model_gap": "phase1_toy",
+        "detector_gap": "high_for_real_detection" if observation.detector_signature else "missing_detector_projection",
+        "simulation_gap": "declared" if observation.claim_class == "simulation" else "invalid_claim_class",
+        "lexical_gap": {
+            "status": status.value,
+            "I_lexicon": lexical_metrics.get("I_lexicon"),
+            "lexical_load": lexical_metrics.get("dL_lex"),
+        },
+        "plithogenic_contradiction": {
+            "reason_codes": list(reason_codes),
+            "contradiction_count": len(reason_codes),
+        },
+        "FNP_pending_status": "no_FNP_before_admission",
+        "unknown_fields": _chapter6_unknown_fields(observation),
+        "guardrail_residuals": list(reason_codes)
+        or ["no_real_detection_claim", "no_strong_primary_claim", "no_literal_mass_change_claim"],
+        "chapter5_intake_state": dict(chapter5_guard),
+    }
+
+
+def _chapter6_guardrail_check(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    carriers: Mapping[str, object],
+    d_l_lex: float,
+) -> dict[str, object]:
+    reason_set = set(reason_codes)
+    return {
+        "source_declared": bool(observation.source_truth),
+        "simulation_status_declared": observation.claim_class == "simulation",
+        "no_real_detection_claim": "real_detection_claim" not in reason_set,
+        "flavor_mass_separated": not bool(reason_set & {"flavor_mass_collapse", "mass_basis_equals_flavor_basis"}),
+        "mass_weights_marked_toy": _nested_mapping(carriers, "I_mass").get("mass_weights_status") == "toy_simulation",
+        "weak_channel_declared": observation.interaction_channel in VALID_INTERACTION_CHANNELS,
+        "strong_primary_claim": "strong_primary_interaction_claim" in reason_set,
+        "detector_trace_not_object": not bool(
+            reason_set & {"detector_trace_confused_with_particle", "trace_as_neutrino_total"}
+        ),
+        "phase_not_choice": "choice_or_intention_language" not in reason_set,
+        "dL_lex_not_downstream_friction": not bool(
+            reason_set & {"dL_lex_equals_dF", "dL_lex_used_as_D_f"}
+        ),
+        "lexical_load": round(_clamp01(d_l_lex), 8),
+        "ready_for_Synthia": True,
+        "ready_for_FNP": "false_before_Synthia",
+    }
+
+
 def _p_neutrino_profile(
     observation: NeutrinoObservationInput,
     reason_codes: tuple[str, ...],
@@ -982,6 +1253,46 @@ def _chapter5_requested(observation: NeutrinoObservationInput) -> bool:
     if isinstance(raw.get("carrier_request"), Mapping):
         return True
     return _contains_any(observation.text, ("chapter5", "chapter 5", "e_fnp_neutrino", "carrier_request"))
+
+
+def _supplied_chapter6_vector(payload: Mapping[str, Any]) -> Mapping[str, object] | None:
+    direct = payload.get("I_neutrino_vec")
+    if isinstance(direct, Mapping):
+        return direct
+    profile = payload.get("chapter6_vector_profile")
+    if isinstance(profile, Mapping):
+        vector = profile.get("I_neutrino_vec")
+        if isinstance(vector, Mapping):
+            return vector
+    return None
+
+
+def _missing_chapter6_carriers(vector: Mapping[str, object]) -> list[str]:
+    carriers = vector.get("carriers")
+    if isinstance(carriers, Mapping):
+        return [name for name in CHAPTER6_REQUIRED_CARRIERS if name not in carriers or not carriers.get(name)]
+    return [name for name in CHAPTER6_REQUIRED_CARRIERS if name not in vector or not vector.get(name)]
+
+
+def _chapter6_unknown_fields(observation: NeutrinoObservationInput) -> list[str]:
+    unknown: list[str] = []
+    if not observation.source_truth:
+        unknown.append("I_source.source_truth")
+    if observation.created_flavor == "unknown":
+        unknown.append("I_flavor.created_flavor")
+    if not observation.mass_basis:
+        unknown.append("I_mass.mass_basis")
+    if observation.distance_km is None:
+        unknown.append("I_phase.distance")
+    if observation.energy_gev is None:
+        unknown.append("I_phase.energy")
+    if not observation.interaction_channel:
+        unknown.append("I_interaction.channel")
+    if not observation.secondary_products:
+        unknown.append("I_secondary.products")
+    if not observation.detector_signature:
+        unknown.append("I_detector.projection")
+    return unknown
 
 
 def _carrier_family(carrier_request: object) -> str:
