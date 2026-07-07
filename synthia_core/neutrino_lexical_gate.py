@@ -73,6 +73,16 @@ REFUSAL_CATEGORIES = (
     "i_neutrino_load_as_primary_object",
     "i_fractal_candidate_as_proof",
     "chapter7_result_claim_as_detection",
+    "chapter8_missing_run_vector",
+    "chapter8_fnp_before_synthia",
+    "chapter8_permission_as_proof",
+    "chapter8_admissible_as_detection",
+    "chapter8_suspended_as_zero",
+    "chapter8_rejected_as_noise",
+    "chapter8_unbounded_next_step",
+    "chapter8_candidate_as_proof",
+    "chapter8_simulation_status_missing",
+    "chapter8_invalid_run_status",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -109,6 +119,13 @@ CRITICAL_REJECTION_CODES = {
     "i_neutrino_load_as_primary_object",
     "i_fractal_candidate_as_proof",
     "chapter7_result_claim_as_detection",
+    "chapter8_fnp_before_synthia",
+    "chapter8_permission_as_proof",
+    "chapter8_admissible_as_detection",
+    "chapter8_suspended_as_zero",
+    "chapter8_rejected_as_noise",
+    "chapter8_unbounded_next_step",
+    "chapter8_candidate_as_proof",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
@@ -134,6 +151,9 @@ SUSPENSION_CODES = {
     "i_uncertainty_missing",
     "guardrail_check_missing",
     "missing_chapter7_vector_profile",
+    "chapter8_missing_run_vector",
+    "chapter8_simulation_status_missing",
+    "chapter8_invalid_run_status",
 }
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
@@ -258,6 +278,7 @@ class LexPacketNeutrino:
     chapter5_intake_profile: Mapping[str, object]
     chapter6_vector_profile: Mapping[str, object]
     chapter7_transition_profile: Mapping[str, object]
+    chapter8_run_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -279,6 +300,7 @@ class LexPacketNeutrino:
             "chapter5_intake_profile": dict(self.chapter5_intake_profile),
             "chapter6_vector_profile": dict(self.chapter6_vector_profile),
             "chapter7_transition_profile": dict(self.chapter7_transition_profile),
+            "chapter8_run_profile": dict(self.chapter8_run_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -312,6 +334,14 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter4_profile,
         chapter6_vector_profile,
     )
+    chapter8_run_profile = _chapter8_run_profile(
+        observation,
+        reason_codes,
+        status,
+        d_l_lex,
+        chapter6_vector_profile,
+        chapter7_transition_profile,
+    )
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -329,6 +359,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter5_intake_profile=chapter5_intake_profile,
         chapter6_vector_profile=chapter6_vector_profile,
         chapter7_transition_profile=chapter7_transition_profile,
+        chapter8_run_profile=chapter8_run_profile,
     ).as_dict()
     return {
         "success": True,
@@ -697,6 +728,78 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
         ),
     ):
         reasons.append("chapter7_result_claim_as_detection")
+
+    if _chapter8_requested(observation):
+        preview = _chapter6_vector_profile_preview(observation)
+        if not _nested_mapping(preview, "I_neutrino_vec"):
+            reasons.append("chapter8_missing_run_vector")
+        if ready_for_fnp is True or _contains_any(
+            text,
+            (
+                "chapter8 fnp before synthia",
+                "chapter 8 fnp before synthia",
+                "first run skips synthia",
+                "run bypasses synthia",
+                "ready_for_fnp before synthia",
+            ),
+        ):
+            reasons.append("chapter8_fnp_before_synthia")
+        if _contains_any(
+            text,
+            (
+                "permission_to_continue is proof",
+                "permission to continue is proof",
+                "permission_to_continue = proof",
+                "first run proves",
+            ),
+        ):
+            reasons.append("chapter8_permission_as_proof")
+        if _contains_any(
+            text,
+            (
+                "admissible means detection",
+                "admissible_as_detection",
+                "admissible_under_guardrails proves detection",
+                "run_status is real detection",
+            ),
+        ):
+            reasons.append("chapter8_admissible_as_detection")
+        if _contains_any(text, ("suspended = 0", "suspended as zero", "suspendu = 0", "suspendu as zero")):
+            reasons.append("chapter8_suspended_as_zero")
+        if _contains_any(text, ("rejected as noise", "rejected = noise", "rejete = bruit", "rejet as noise")):
+            reasons.append("chapter8_rejected_as_noise")
+        if _contains_any(
+            text,
+            (
+                "unbounded_next_step",
+                "unbounded next step",
+                "permission without guardrails",
+                "continue without guardrails",
+            ),
+        ):
+            reasons.append("chapter8_unbounded_next_step")
+        if _contains_any(
+            text,
+            (
+                "chapter8 candidate as proof",
+                "chapter 8 candidate as proof",
+                "candidate_as_proof",
+                "candidate is proof",
+            ),
+        ):
+            reasons.append("chapter8_candidate_as_proof")
+        if not observation.source_truth and _contains_any(
+            text,
+            ("chapter8", "chapter 8", "first run", "run_status"),
+        ):
+            reasons.append("chapter8_simulation_status_missing")
+        supplied_status = _normalize_token(observation.raw_payload.get("run_status", ""))
+        if supplied_status and supplied_status not in {
+            "admissible_under_guardrails",
+            "suspended",
+            "rejected",
+        }:
+            reasons.append("chapter8_invalid_run_status")
 
     if _chapter5_requested(observation) and set(reasons) & (
         CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES
@@ -1191,6 +1294,108 @@ def _chapter7_float(supplied: Mapping[str, object], key: str, default: object) -
     return round(_clamp01(value if value is not None else 0.0), 8)
 
 
+def _chapter8_run_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    d_l_lex: float,
+    chapter6_vector_profile: Mapping[str, object],
+    chapter7_transition_profile: Mapping[str, object],
+) -> dict[str, object]:
+    vector = _nested_mapping(chapter6_vector_profile, "I_neutrino_vec")
+    guardrail = _nested_mapping(chapter6_vector_profile, "GuardrailCheck")
+    passage = _nested_mapping(chapter7_transition_profile, "passage_test")
+    reading = _nested_mapping(chapter7_transition_profile, "synthia_reading")
+    gate = _nested_mapping(chapter7_transition_profile, "chapter7_gate")
+    run_status = _chapter8_run_status(reason_codes, status, gate)
+    permission = run_status == "admissible_under_guardrails"
+    return {
+        "profile_version": "chapter8.first_run_public_safe.v1",
+        "run_input": {
+            "I_neutrino_vec_status": vector.get("vector_status", "unknown"),
+            "L_over_E": passage.get("L_over_E"),
+            "ready_for_Synthia": guardrail.get("ready_for_Synthia") is True,
+            "ready_for_FNP": "false_before_Synthia",
+            "source_status": _nested_mapping(vector, "carriers", "I_source").get("source_status", "unknown"),
+            "simulation_status": "declared" if observation.claim_class == "simulation" else "invalid",
+            "boundary": BOUNDARY,
+        },
+        "synthia_gate": {
+            "Adm_lex": status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION},
+            "approved_for_fnp": gate.get("approved_for_fnp") is True,
+            "ready_for_FNP": gate.get("ready_for_FNP", "false"),
+            "selected_observation_lexicon": reading.get("selected_observation_lexicon"),
+            "secondary_observation_lexicon": reading.get("secondary_observation_lexicon"),
+            "dL_lex": round(_clamp01(d_l_lex), 8),
+            "classification_status": reading.get("classification_status", status.value),
+        },
+        "run_decision": {
+            "run_status": run_status,
+            "decision_basis": _chapter8_decision_basis(run_status),
+            "missing_requirements": _chapter8_missing_requirements(reason_codes),
+            "refusal_codes": _chapter8_refusal_codes(reason_codes),
+            "source_decision_status": status.value,
+        },
+        "run_permission": {
+            "permission_to_continue": permission,
+            "allowed_next_step": "FNP_QNN_readout" if permission else _chapter8_blocked_next_step(run_status),
+            "can_continue_to_chapter9": permission,
+            "forbidden_upgrades": [
+                "permission_to_continue_as_proof",
+                "admissible_as_detection",
+                "simulation_as_real_detection",
+                "candidate_as_proof",
+                "FNP_before_Synthia",
+            ],
+            "claim_boundary": "educational simulation; permission is not proof; simulation is not detection",
+        },
+        "invariants": [
+            "I_neutrino_vec remains the chamber object",
+            "dL_lex remains lexical load",
+            "FNP computes only after Synthia admission",
+            "suspended is not zero",
+            "rejected is not noise",
+            "candidate is not proof",
+        ],
+    }
+
+
+def _chapter8_run_status(
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    gate: Mapping[str, object],
+) -> str:
+    reason_set = set(reason_codes)
+    if reason_set & CRITICAL_REJECTION_CODES:
+        return "rejected"
+    approved = gate.get("approved_for_fnp") is True and gate.get("ready_for_FNP") == "true_after_Synthia"
+    if status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION} and approved:
+        return "admissible_under_guardrails"
+    return "suspended"
+
+
+def _chapter8_decision_basis(run_status: str) -> str:
+    return {
+        "admissible_under_guardrails": "Synthia admitted the lexical gate and preserved the first-run boundaries.",
+        "suspended": "Missing or incomplete context prevents first-run continuation.",
+        "rejected": "A critical guardrail was triggered; the run cannot continue.",
+    }.get(run_status, "unknown first-run status")
+
+
+def _chapter8_missing_requirements(reason_codes: tuple[str, ...]) -> list[str]:
+    return [code for code in reason_codes if code in SUSPENSION_CODES]
+
+
+def _chapter8_refusal_codes(reason_codes: tuple[str, ...]) -> list[str]:
+    return [code for code in reason_codes if code in CRITICAL_REJECTION_CODES]
+
+
+def _chapter8_blocked_next_step(run_status: str) -> str:
+    if run_status == "rejected":
+        return "stop_and_repair_claim"
+    return "repair_payload"
+
+
 def _p_neutrino_profile(
     observation: NeutrinoObservationInput,
     reason_codes: tuple[str, ...],
@@ -1418,6 +1623,15 @@ def _chapter7_requested(observation: NeutrinoObservationInput) -> bool:
     if isinstance(raw.get("chapter7_synthia_reading"), Mapping):
         return True
     return _contains_any(observation.text, ("chapter7", "chapter 7", "chapter7_transition_profile"))
+
+
+def _chapter8_requested(observation: NeutrinoObservationInput) -> bool:
+    raw = observation.raw_payload
+    if raw.get("chapter8_enabled") is True:
+        return True
+    if isinstance(raw.get("chapter8_run_request"), Mapping):
+        return True
+    return _contains_any(observation.text, ("chapter8", "chapter 8", "first run", "run_status"))
 
 
 def _chapter7_metric(observation: NeutrinoObservationInput, key: str) -> float | None:

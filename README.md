@@ -130,6 +130,13 @@ additive chapter-7 transition shape. Synthia preserves the definition
 does not emit `D_f`, `D_f_hat`, `dF`, `i_fractal`, or
 `i_fractal_candidate`.
 
+The fixture `tests/fixtures/neutrino_chapter8_valid_event.json` shows the
+additive first-run gate. Synthia emits `chapter8_run_profile` with a triadic
+run status: `admissible_under_guardrails`, `suspended`, or `rejected`.
+`permission_to_continue` is a bounded method permission only; it is not proof,
+not detection, and not a bypass around Synthia. Synthia still does not emit
+`D_f`, `D_f_hat`, `dF`, `i_fractal`, or `i_fractal_candidate`.
+
 ## Plithogenic Biology And System Math
 
 Synthia separates pure engine math from system math. The pure engine math layer contains bounded neutrosophic and plithogenic operators: `T/I/F` values, contradiction load, probability load, dominant attribute values, rough boundary regions, and deterministic projections into the public chain. Those operators are useful by themselves, but biology changes their role. When the object is a species, a taxonomic memory record, a food-safety signal, a conservation concern, a public-health review packet, a geography/ecology context, or an expert disagreement, Synthia is no longer treating math as an isolated abstract engine. It is calling that math inside a living `I_system^S`.
