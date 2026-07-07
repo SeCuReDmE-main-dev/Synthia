@@ -47,6 +47,13 @@ context request, and carrier request policy so FNP-QNN can validate the next
 step. Synthia does not compute or return `D_f`, `D_f_hat`, `dF`,
 `i_fractal`, or `i_fractal_candidate`.
 
+For chapter-6 style exercises, the gate can also return
+`chapter6_vector_profile`. This assembles `I_neutrino_vec` with ten carriers:
+`I_source`, `I_flavor`, `I_mass`, `I_mix`, `I_phase`, `I_medium`,
+`I_interaction`, `I_secondary`, `I_detector`, and `I_uncertainty`. The vector
+is a public-safe chamber object for lexical review. It is not `dL_lex`, not
+downstream FNP friction, not a detector signature, and not proof of detection.
+
 Use:
 
 ```powershell

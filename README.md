@@ -113,6 +113,14 @@ additive chapter-5 FNP intake request. This profile prepares
 scale context request, and a carrier request policy for FNP-QNN. Synthia still
 does not normalize or compute any downstream fractal carrier value.
 
+The fixture `tests/fixtures/neutrino_chapter6_valid_event.json` shows the
+additive chapter-6 vector shape. Synthia assembles `I_neutrino_vec` as ten
+declared carriers: `I_source`, `I_flavor`, `I_mass`, `I_mix`, `I_phase`,
+`I_medium`, `I_interaction`, `I_secondary`, `I_detector`, and
+`I_uncertainty`. This vector is an educational simulation object for lexical
+review. `I_neutrino_vec` is not `dL_lex`, not downstream FNP friction, not a
+detector signature, and not proof of a real neutrino detection.
+
 ## Plithogenic Biology And System Math
 
 Synthia separates pure engine math from system math. The pure engine math layer contains bounded neutrosophic and plithogenic operators: `T/I/F` values, contradiction load, probability load, dominant attribute values, rough boundary regions, and deterministic projections into the public chain. Those operators are useful by themselves, but biology changes their role. When the object is a species, a taxonomic memory record, a food-safety signal, a conservation concern, a public-health review packet, a geography/ecology context, or an expert disagreement, Synthia is no longer treating math as an isolated abstract engine. It is calling that math inside a living `I_system^S`.

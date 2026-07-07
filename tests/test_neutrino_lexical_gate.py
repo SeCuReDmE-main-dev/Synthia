@@ -452,3 +452,91 @@ def test_chapter5_synthia_normalization_claim_is_rejected():
     assert payload["Adm_lex"] is False
     assert payload["decision"]["status"] == "rejected"
     assert "normalization_claim_in_synthia" in payload["refusal_packet"]["reason_codes"]
+
+
+def _chapter6_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter6_valid_event.json").read_text(encoding="utf-8"))
+
+
+def test_chapter6_valid_event_returns_complete_i_neutrino_vector():
+    payload = classify_neutrino_observation(_chapter6_event())
+    packet = payload["LexPacket_neutrino"]
+    chapter6 = packet["chapter6_vector_profile"]
+    vector = chapter6["I_neutrino_vec"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter6["profile_version"] == "chapter6.i_neutrino_vector_public_safe.v1"
+    assert vector["carrier_order"] == [
+        "I_source",
+        "I_flavor",
+        "I_mass",
+        "I_mix",
+        "I_phase",
+        "I_medium",
+        "I_interaction",
+        "I_secondary",
+        "I_detector",
+        "I_uncertainty",
+    ]
+    assert set(vector["carriers"]) == set(vector["carrier_order"])
+    assert vector["missing_carriers"] == []
+    assert vector["carriers"]["I_uncertainty"]["FNP_pending_status"] == "no_FNP_before_admission"
+    assert chapter6["GuardrailCheck"]["ready_for_Synthia"] is True
+    assert chapter6["GuardrailCheck"]["ready_for_FNP"] == "false_before_Synthia"
+    assert not _json_has_key(payload, "D_f")
+    assert not _json_has_key(payload, "D_f_hat")
+    assert not _json_has_key(payload, "dF")
+    assert not _json_has_key(payload, "i_fractal")
+    assert not _json_has_key(payload, "i_fractal_candidate")
+
+
+def test_chapter6_supplied_vector_missing_carrier_is_suspended():
+    event = _chapter6_event()
+    event["I_neutrino_vec"] = {
+        "carriers": {
+            "I_source": {"source_type": "toy_simulation"},
+            "I_flavor": {"created_flavor": "nu_mu"},
+        }
+    }
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "missing_i_neutrino_vector_carrier" in payload["refusal_packet"]["reason_codes"]
+    assert "i_uncertainty_missing" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter6_vector_collapse_claims_are_rejected():
+    event = _chapter6_event()
+    event["notes"] = "I_neutrino_vec = dL_lex and I_neutrino_vec = dF and I_neutrino_vec = detector_signature"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "i_neutrino_vec_equals_dL_lex" in payload["refusal_packet"]["reason_codes"]
+    assert "i_neutrino_vec_equals_dF" in payload["refusal_packet"]["reason_codes"]
+    assert "i_neutrino_vec_equals_detector_signature" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter6_ready_for_fnp_before_synthia_is_rejected():
+    event = _chapter6_event()
+    event["ready_for_FNP"] = True
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "ready_for_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter6_uncertainty_cannot_collapse_to_zero():
+    event = _chapter6_event()
+    event["notes"] = "I_uncertainty = 0"
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "uncertainty_collapsed_to_zero" in payload["refusal_packet"]["reason_codes"]
