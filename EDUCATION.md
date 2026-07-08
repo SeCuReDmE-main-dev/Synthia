@@ -76,6 +76,15 @@ container; it is not T2K reproduction, not a CP measurement, not detector
 evidence, and not physical proof. Synthia still performs only lexical and
 source-choice admission and does not return downstream FNP fractal fields.
 
+For chapter-10 style exercises, the gate can also return
+`chapter10_chamber_profile`. This declares `Chamber_10`,
+`EventContainer_10`, `SimulatedNeutrinoEvent_10`, and `RunContract_10` for the
+next controlled passage. The chamber is not a detector, a valid container is
+not proof, a simulated event is not detection, T2K-like is not T2K
+reproduction, and a path comparison is not a CP measurement. Synthia still
+performs lexical/container admission only and does not return downstream FNP
+fractal fields.
+
 Use:
 
 ```powershell

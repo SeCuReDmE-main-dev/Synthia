@@ -93,6 +93,19 @@ REFUSAL_CATEGORIES = (
     "chapter9_background_missing_as_zero",
     "chapter9_source_stack_as_proof",
     "chapter9_unbounded_experiment_choice",
+    "chapter10_missing_source_registry",
+    "chapter10_missing_container_contract",
+    "chapter10_missing_simulated_event",
+    "chapter10_missing_run_contract",
+    "chapter10_fnp_before_synthia",
+    "chapter10_chamber_as_detector",
+    "chapter10_container_as_proof",
+    "chapter10_event_as_detection",
+    "chapter10_t2k_reproduction_claim",
+    "chapter10_cp_measurement_claim",
+    "chapter10_background_missing_as_zero",
+    "chapter10_prepared_tension_as_df",
+    "chapter10_unbounded_manipulation",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -144,6 +157,15 @@ CRITICAL_REJECTION_CODES = {
     "chapter9_background_missing_as_zero",
     "chapter9_source_stack_as_proof",
     "chapter9_unbounded_experiment_choice",
+    "chapter10_fnp_before_synthia",
+    "chapter10_chamber_as_detector",
+    "chapter10_container_as_proof",
+    "chapter10_event_as_detection",
+    "chapter10_t2k_reproduction_claim",
+    "chapter10_cp_measurement_claim",
+    "chapter10_background_missing_as_zero",
+    "chapter10_prepared_tension_as_df",
+    "chapter10_unbounded_manipulation",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
@@ -174,6 +196,10 @@ SUSPENSION_CODES = {
     "chapter8_invalid_run_status",
     "chapter9_missing_source_registry",
     "chapter9_missing_central_experiment",
+    "chapter10_missing_source_registry",
+    "chapter10_missing_container_contract",
+    "chapter10_missing_simulated_event",
+    "chapter10_missing_run_contract",
 }
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
@@ -217,6 +243,10 @@ CHAPTER6_REQUIRED_CARRIERS = (
 CHAPTER6_FORBIDDEN_PROFILE_KEYS = {"D_f", "D_f_hat", "dF", "i_fractal", "i_fractal_candidate"}
 CHAPTER9_REQUIRED_SOURCE_IDS = ("SB60-002", "CH9-T2K-OSC-001", "SB60-052")
 CHAPTER9_EXPERIMENT_ID = "chapter11_t2k_like_flavor_antiflavor_phase_projection"
+CHAPTER10_REQUIRED_SOURCE_IDS = ("CH10-GEANT4-001", "CH10-SCHEMA-001")
+CHAPTER10_CONTAINER_SCHEMA_VERSION = "chamber.event_container.v1"
+CHAPTER10_EVENT_SCHEMA_VERSION = "chamber.simulated_neutrino_event.v1"
+CHAPTER10_RUN_CONTRACT_VERSION = "chamber.run_contract.v1"
 
 
 class DecisionStatus(str, Enum):
@@ -302,6 +332,7 @@ class LexPacketNeutrino:
     chapter7_transition_profile: Mapping[str, object]
     chapter8_run_profile: Mapping[str, object]
     chapter9_source_choice_profile: Mapping[str, object]
+    chapter10_chamber_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -325,6 +356,7 @@ class LexPacketNeutrino:
             "chapter7_transition_profile": dict(self.chapter7_transition_profile),
             "chapter8_run_profile": dict(self.chapter8_run_profile),
             "chapter9_source_choice_profile": dict(self.chapter9_source_choice_profile),
+            "chapter10_chamber_profile": dict(self.chapter10_chamber_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -372,6 +404,12 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         status,
         chapter8_run_profile,
     )
+    chapter10_chamber_profile = _chapter10_chamber_profile(
+        observation,
+        reason_codes,
+        status,
+        chapter9_source_choice_profile,
+    )
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -391,6 +429,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter7_transition_profile=chapter7_transition_profile,
         chapter8_run_profile=chapter8_run_profile,
         chapter9_source_choice_profile=chapter9_source_choice_profile,
+        chapter10_chamber_profile=chapter10_chamber_profile,
     ).as_dict()
     return {
         "success": True,
@@ -922,6 +961,108 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
             ),
         ):
             reasons.append("chapter9_source_stack_as_proof")
+
+    if _chapter10_requested(observation):
+        source_ids = set(_chapter10_source_ids(observation.raw_payload))
+        if not set(CHAPTER10_REQUIRED_SOURCE_IDS) <= source_ids:
+            reasons.append("chapter10_missing_source_registry")
+        if not _chapter10_container(observation.raw_payload):
+            reasons.append("chapter10_missing_container_contract")
+        if not _chapter10_event(observation.raw_payload):
+            reasons.append("chapter10_missing_simulated_event")
+        if not _chapter10_run_contract(observation.raw_payload):
+            reasons.append("chapter10_missing_run_contract")
+        if ready_for_fnp is True or _contains_any(
+            text,
+            (
+                "chapter10 fnp before synthia",
+                "chapter 10 fnp before synthia",
+                "run contract skips synthia",
+                "chapter10 direct fnp",
+                "event_to_fnp_direct",
+            ),
+        ):
+            reasons.append("chapter10_fnp_before_synthia")
+        if _contains_any(
+            text,
+            (
+                "chamber is detector",
+                "chamber = detector",
+                "chambre = detecteur",
+                "chamber detects neutrinos",
+            ),
+        ):
+            reasons.append("chapter10_chamber_as_detector")
+        if _contains_any(
+            text,
+            (
+                "container valid is proof",
+                "container_valid = physical_proof",
+                "schema valid is physical truth",
+                "container proves",
+            ),
+        ):
+            reasons.append("chapter10_container_as_proof")
+        if _contains_any(
+            text,
+            (
+                "simulated event is detection",
+                "simulatedneutrinoevent_10 = real_neutrino_event",
+                "event is real detection",
+                "detected neutrino event",
+            ),
+        ):
+            reasons.append("chapter10_event_as_detection")
+        if _contains_any(
+            text,
+            (
+                "t2k reproduced",
+                "t2k reproduction claim",
+                "t2k_like = t2k",
+                "not_t2k_reproduction = false",
+            ),
+        ):
+            reasons.append("chapter10_t2k_reproduction_claim")
+        if _contains_any(
+            text,
+            (
+                "cp measurement claim",
+                "cp violation measured",
+                "path_comparison = cp_measurement",
+                "measures cp violation",
+            ),
+        ):
+            reasons.append("chapter10_cp_measurement_claim")
+        if _contains_any(
+            text,
+            (
+                "background missing equals zero",
+                "background_missing = background_zero",
+                "background_model_missing = background_zero",
+                "missing background is zero",
+            ),
+        ):
+            reasons.append("chapter10_background_missing_as_zero")
+        if _contains_any(
+            text,
+            (
+                "prepared_tension_slot = df",
+                "prepared tension is df",
+                "prepared tension slot is dF".lower(),
+                "chapter10 computes df",
+            ),
+        ):
+            reasons.append("chapter10_prepared_tension_as_df")
+        if _contains_any(
+            text,
+            (
+                "unbounded manipulation",
+                "manipulation without guardrails",
+                "compare all neutrino physics",
+                "chapter10 physical claim allowed",
+            ),
+        ):
+            reasons.append("chapter10_unbounded_manipulation")
 
     if _chapter5_requested(observation) and set(reasons) & (
         CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES
@@ -1629,6 +1770,220 @@ def _chapter9_source_choice_profile(
     }
 
 
+def _chapter10_chamber_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    chapter9_source_choice_profile: Mapping[str, object],
+) -> dict[str, object]:
+    requested = _chapter10_requested(observation)
+    source_ids = _chapter10_source_ids(observation.raw_payload)
+    source_set = set(source_ids)
+    source_ready = set(CHAPTER10_REQUIRED_SOURCE_IDS) <= source_set
+    container = _chapter10_container(observation.raw_payload)
+    event = _chapter10_event(observation.raw_payload)
+    run_contract = _chapter10_run_contract(observation.raw_payload)
+    chapter9_ready = (
+        _nested_mapping(chapter9_source_choice_profile, "central_experiment").get("ready_for_container") is True
+        and _nested_mapping(chapter9_source_choice_profile, "synthia_gate").get("approved_for_container_validation")
+        is True
+    )
+    admitted = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+    critical_block = bool(set(reason_codes) & CRITICAL_REJECTION_CODES)
+    suspended = bool(set(reason_codes) & SUSPENSION_CODES)
+    run_prepared = requested and admitted and source_ready and bool(container) and bool(event) and bool(run_contract) and chapter9_ready
+    if not requested:
+        profile_status = "not_requested"
+    elif critical_block:
+        profile_status = "rejected"
+    elif suspended or not run_prepared:
+        profile_status = "suspended"
+    else:
+        profile_status = "run_prepared_for_chapter11"
+
+    return {
+        "profile_version": "chapter10.chamber_container_public_safe.v1",
+        "chapter10_status": profile_status,
+        "source_visibility": {
+            "source_visible": requested,
+            "registry_status": "present" if source_ready else "missing_required_source",
+            "required_source_ids": list(CHAPTER10_REQUIRED_SOURCE_IDS),
+            "provided_source_ids": source_ids,
+            "source_role": "simulation_architecture_and_container_contract_not_proof",
+        },
+        "Chamber_10": {
+            "chamber_status": "declared" if requested else "not_requested",
+            "chamber_role": "admission_separation_and_bounded_calculation",
+            "not_detector": True,
+            "layers": [
+                "source_layer",
+                "geometry_layer",
+                "medium_layer",
+                "particle_event_layer",
+                "propagation_layer",
+                "interaction_layer",
+                "detector_projection_layer",
+                "uncertainty_layer",
+                "lexical_gate_layer",
+                "friction_gate_layer",
+            ],
+            "guardrail": "chamber != detector",
+        },
+        "EventContainer_10": _chapter10_container_profile(container),
+        "SimulatedNeutrinoEvent_10": _chapter10_event_profile(event, observation),
+        "RunContract_10": _chapter10_run_contract_profile(run_contract),
+        "chapter9_dependency": {
+            "chapter9_status": chapter9_source_choice_profile.get("chapter9_status", "unknown"),
+            "central_experiment_id": _nested_mapping(chapter9_source_choice_profile, "central_experiment").get(
+                "experiment_id", CHAPTER9_EXPERIMENT_ID
+            ),
+            "ready_for_container": chapter9_ready,
+            "dependency_boundary": "chapter9_choice_is_not_experiment_execution",
+        },
+        "SynthiaGate_10": {
+            "Adm_lex": admitted,
+            "approved_for_container_validation": run_prepared,
+            "ready_for_FNP": "true_after_Synthia_for_run_contract_validation" if run_prepared else "false",
+            "reason_codes": list(reason_codes),
+            "next_required_gate": "FNP chapter10 run contract validation" if run_prepared else "repair_chapter10_payload",
+        },
+        "RunPrepared_10": {
+            "chamber_ready": run_prepared,
+            "container_ready": bool(container) and source_ready,
+            "event_ready": bool(event),
+            "path_pair_ready": _chapter10_path_pair_ready(event),
+            "equality_controls_declared": bool(_nested_mapping(run_contract, "equality_controls")),
+            "variable_controls_declared": bool(_nested_mapping(run_contract, "variable_controls")),
+            "Synthia_required": True,
+            "FNP_after_Synthia_only": True,
+            "chapter11_execution_ready": run_prepared,
+            "physical_claim_allowed": False,
+        },
+        "forbidden_upgrades": [
+            "chamber_as_detector",
+            "container_valid_as_physical_proof",
+            "simulated_event_as_detection",
+            "T2K_like_as_T2K_reproduction",
+            "path_comparison_as_CP_measurement",
+            "background_missing_as_zero",
+            "prepared_tension_slot_as_dF",
+            "FNP_before_Synthia",
+        ],
+        "boundary": {
+            "synthia_role": "chapter10 chamber_container_event_run_contract_gate_only",
+            "no_fractal_computation": True,
+            "no_real_detection_claim": True,
+            "chapter11_next": "execute_first_passage_under_declared_contract",
+        },
+    }
+
+
+def _chapter10_container_profile(container: Mapping[str, object]) -> dict[str, object]:
+    if not container:
+        return {"container_status": "missing"}
+    required_fields = [
+        "schema_version",
+        "container_id",
+        "source_packet",
+        "experiment_packet",
+        "path_packets",
+        "simulation_boundary",
+        "detector_projection_policy",
+        "uncertainty_policy",
+        "guard_state",
+        "admission_route",
+    ]
+    missing = [field for field in required_fields if not container.get(field)]
+    return {
+        "schema_version": str(container.get("schema_version", CHAPTER10_CONTAINER_SCHEMA_VERSION)),
+        "container_id": str(container.get("container_id", "chapter10_t2k_like_container_001")),
+        "container_status": "declared" if not missing else "incomplete",
+        "required_fields_present": not missing,
+        "missing_required_fields": missing,
+        "simulation_boundary": str(container.get("simulation_boundary", "educational_simulation")),
+        "detector_projection_policy": str(
+            container.get("detector_projection_policy", "simulated_projection_only")
+        ),
+        "background_model_status": str(container.get("background_model_status", "missing_or_simplified")),
+        "admission_route": str(container.get("admission_route", "container_to_synthia_to_fnp")),
+        "container_boundary": "container_valid != physical_proof",
+    }
+
+
+def _chapter10_event_profile(
+    event: Mapping[str, object],
+    observation: NeutrinoObservationInput,
+) -> dict[str, object]:
+    if not event:
+        return {"event_status": "missing"}
+    path_packets = event.get("path_packets")
+    paths = path_packets if isinstance(path_packets, list) else []
+    return {
+        "schema_version": str(event.get("schema_version", CHAPTER10_EVENT_SCHEMA_VERSION)),
+        "event_id": str(event.get("event_id", observation.event_id)),
+        "event_status": str(event.get("event_status", "educational_simulation")),
+        "detection_status": str(event.get("detection_status", "no_real_detection_claim")),
+        "reproduction_status": str(event.get("reproduction_status", "not_T2K_reproduction")),
+        "measurement_status": str(event.get("measurement_status", "no_CP_measurement_claim")),
+        "path_packets": paths,
+        "L_over_E_context": {
+            "distance_km": observation.distance_km,
+            "energy_gev": observation.energy_gev,
+            "L_over_E": _l_over_e(observation),
+            "guardrail": "L_over_E != proof",
+        },
+        "interaction_policy": {
+            "allowed_channels": ["weak_CC", "weak_NC"],
+            "primary_interaction": "weak",
+            "strong_primary_allowed": False,
+        },
+        "detector_projection_policy": {
+            "projection_status": "simulated_projection_only",
+            "visibility_status": "indirect",
+            "detector_data_status": "none",
+        },
+        "background_model_status": dict(_nested_mapping(event, "background_model_status"))
+        if _nested_mapping(event, "background_model_status")
+        else {"status": "missing_or_simplified", "background_zero_claim": False},
+        "event_boundary": "SimulatedNeutrinoEvent_10 != real_neutrino_event",
+    }
+
+
+def _chapter10_run_contract_profile(run_contract: Mapping[str, object]) -> dict[str, object]:
+    if not run_contract:
+        return {"run_contract_status": "missing"}
+    equality_controls = _nested_mapping(run_contract, "equality_controls")
+    variable_controls = _nested_mapping(run_contract, "variable_controls")
+    return {
+        "schema_version": str(run_contract.get("schema_version", CHAPTER10_RUN_CONTRACT_VERSION)),
+        "run_id": str(run_contract.get("run_id", "chapter10_pre_run_contract_001")),
+        "run_status": str(run_contract.get("run_status", "preparation_only")),
+        "run_contract_status": "declared",
+        "path_pair_status": str(run_contract.get("path_pair_status", "prepared_not_interpreted")),
+        "equality_controls": dict(equality_controls),
+        "variable_controls": dict(variable_controls),
+        "prepared_tension_slots": list(run_contract.get("prepared_tension_slots", []))
+        if isinstance(run_contract.get("prepared_tension_slots"), list)
+        else [],
+        "output_boundary": str(run_contract.get("output_boundary", "no_result_before_chapter11")),
+        "contract_boundary": "prepared_tension_slot != dF",
+    }
+
+
+def _chapter10_path_pair_ready(event: Mapping[str, object]) -> bool:
+    path_packets = event.get("path_packets") if isinstance(event, Mapping) else None
+    if not isinstance(path_packets, list) or len(path_packets) < 2:
+        return False
+    text = _payload_text({"paths": path_packets})
+    return all(token in text for token in ("path_a", "path_b", "nu_mu", "anti_nu_mu", "nu_e", "anti_nu_e"))
+
+
+def _l_over_e(observation: NeutrinoObservationInput) -> float | None:
+    if observation.distance_km is None or observation.energy_gev is None or observation.energy_gev <= 0.0:
+        return None
+    return round(observation.distance_km / observation.energy_gev, 8)
+
+
 def _p_neutrino_profile(
     observation: NeutrinoObservationInput,
     reason_codes: tuple[str, ...],
@@ -1881,6 +2236,31 @@ def _chapter9_requested(observation: NeutrinoObservationInput) -> bool:
     )
 
 
+def _chapter10_requested(observation: NeutrinoObservationInput) -> bool:
+    raw = observation.raw_payload
+    if raw.get("chapter10_enabled") is True:
+        return True
+    if isinstance(raw.get("chapter10_source_registry"), Mapping):
+        return True
+    if isinstance(raw.get("chapter10_container"), Mapping):
+        return True
+    if isinstance(raw.get("chapter10_simulated_event"), Mapping):
+        return True
+    if isinstance(raw.get("chapter10_run_contract"), Mapping):
+        return True
+    return _contains_any(
+        observation.text,
+        (
+            "chapter10",
+            "chapter 10",
+            "chamber_10",
+            "eventcontainer_10",
+            "simulatedneutrinoevent_10",
+            "runcontract_10",
+        ),
+    )
+
+
 def _chapter9_source_ids(payload: Mapping[str, Any]) -> list[str]:
     registry = payload.get("chapter9_source_registry")
     if not isinstance(registry, Mapping):
@@ -1896,6 +2276,33 @@ def _chapter9_source_ids(payload: Mapping[str, Any]) -> list[str]:
 def _chapter9_experiment_choice(payload: Mapping[str, Any]) -> Mapping[str, object]:
     choice = payload.get("chapter9_experiment_choice")
     return choice if isinstance(choice, Mapping) else {}
+
+
+def _chapter10_source_ids(payload: Mapping[str, Any]) -> list[str]:
+    registry = payload.get("chapter10_source_registry")
+    if not isinstance(registry, Mapping):
+        return []
+    raw_ids = registry.get("source_ids", registry.get("sources", []))
+    if isinstance(raw_ids, Mapping):
+        raw_ids = raw_ids.keys()
+    if not isinstance(raw_ids, (list, tuple, set)):
+        return []
+    return [str(item).strip() for item in raw_ids if str(item).strip()]
+
+
+def _chapter10_container(payload: Mapping[str, Any]) -> Mapping[str, object]:
+    container = payload.get("chapter10_container")
+    return container if isinstance(container, Mapping) else {}
+
+
+def _chapter10_event(payload: Mapping[str, Any]) -> Mapping[str, object]:
+    event = payload.get("chapter10_simulated_event")
+    return event if isinstance(event, Mapping) else {}
+
+
+def _chapter10_run_contract(payload: Mapping[str, Any]) -> Mapping[str, object]:
+    contract = payload.get("chapter10_run_contract")
+    return contract if isinstance(contract, Mapping) else {}
 
 
 def _chapter7_metric(observation: NeutrinoObservationInput, key: str) -> float | None:

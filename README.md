@@ -146,6 +146,15 @@ future simulation container, not as T2K reproduction, CP measurement, real
 detection, or physical proof. Synthia still performs only lexical/source-choice
 admission and still does not emit downstream FNP fractal fields.
 
+The fixture `tests/fixtures/neutrino_chapter10_valid_event.json` shows the
+additive chamber/container/run-contract gate. Synthia emits
+`chapter10_chamber_profile` with `Chamber_10`, `EventContainer_10`,
+`SimulatedNeutrinoEvent_10`, and `RunContract_10`. The profile prepares a
+chapter-11 first passage under declared controls; it is not a detector, not
+container proof, not T2K reproduction, not CP measurement, and not a real
+neutrino event. Synthia still does not emit `D_f`, `D_f_hat`, `dF`,
+`i_fractal`, or `i_fractal_candidate`.
+
 ## Plithogenic Biology And System Math
 
 Synthia separates pure engine math from system math. The pure engine math layer contains bounded neutrosophic and plithogenic operators: `T/I/F` values, contradiction load, probability load, dominant attribute values, rough boundary regions, and deterministic projections into the public chain. Those operators are useful by themselves, but biology changes their role. When the object is a species, a taxonomic memory record, a food-safety signal, a conservation concern, a public-health review packet, a geography/ecology context, or an expert disagreement, Synthia is no longer treating math as an isolated abstract engine. It is calling that math inside a living `I_system^S`.

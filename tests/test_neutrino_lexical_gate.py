@@ -470,6 +470,10 @@ def _chapter9_event():
     return json.loads(Path("tests/fixtures/neutrino_chapter9_valid_event.json").read_text(encoding="utf-8"))
 
 
+def _chapter10_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter10_valid_event.json").read_text(encoding="utf-8"))
+
+
 def test_chapter6_valid_event_returns_complete_i_neutrino_vector():
     payload = classify_neutrino_observation(_chapter6_event())
     packet = payload["LexPacket_neutrino"]
@@ -762,3 +766,91 @@ def test_chapter9_t2k_cp_detection_and_source_proof_claims_are_rejected():
     assert "chapter9_math_source_as_physical_proof" in reasons
     assert "chapter9_background_missing_as_zero" in reasons
     assert "chapter9_source_stack_as_proof" in reasons
+
+
+def test_chapter10_valid_event_returns_chamber_container_profile_without_fnp_fields():
+    payload = classify_neutrino_observation(_chapter10_event())
+    packet = payload["LexPacket_neutrino"]
+    chapter10 = packet["chapter10_chamber_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter10["profile_version"] == "chapter10.chamber_container_public_safe.v1"
+    assert chapter10["chapter10_status"] == "run_prepared_for_chapter11"
+    assert chapter10["source_visibility"]["registry_status"] == "present"
+    assert chapter10["Chamber_10"]["not_detector"] is True
+    assert chapter10["EventContainer_10"]["schema_version"] == "chamber.event_container.v1"
+    assert chapter10["EventContainer_10"]["required_fields_present"] is True
+    assert chapter10["SimulatedNeutrinoEvent_10"]["event_status"] == "educational_simulation"
+    assert chapter10["SimulatedNeutrinoEvent_10"]["detection_status"] == "no_real_detection_claim"
+    assert chapter10["SimulatedNeutrinoEvent_10"]["L_over_E_context"]["L_over_E"] == 491.66666667
+    assert chapter10["RunContract_10"]["run_contract_status"] == "declared"
+    assert chapter10["SynthiaGate_10"]["ready_for_FNP"] == "true_after_Synthia_for_run_contract_validation"
+    assert chapter10["RunPrepared_10"]["chapter11_execution_ready"] is True
+    assert chapter10["RunPrepared_10"]["physical_claim_allowed"] is False
+    assert not _json_has_key(payload, "D_f")
+    assert not _json_has_key(payload, "D_f_hat")
+    assert not _json_has_key(payload, "dF")
+    assert not _json_has_key(payload, "i_fractal")
+    assert not _json_has_key(payload, "i_fractal_candidate")
+
+
+def test_chapter10_missing_source_registry_is_suspended():
+    event = _chapter10_event()
+    event.pop("chapter10_source_registry")
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "chapter10_missing_source_registry" in payload["refusal_packet"]["reason_codes"]
+    assert payload["LexPacket_neutrino"]["chapter10_chamber_profile"]["chapter10_status"] == "suspended"
+
+
+def test_chapter10_missing_container_event_or_run_contract_is_suspended():
+    for key, code in (
+        ("chapter10_container", "chapter10_missing_container_contract"),
+        ("chapter10_simulated_event", "chapter10_missing_simulated_event"),
+        ("chapter10_run_contract", "chapter10_missing_run_contract"),
+    ):
+        event = _chapter10_event()
+        event.pop(key)
+
+        payload = classify_neutrino_observation(event)
+
+        assert payload["Adm_lex"] is False
+        assert payload["decision"]["status"] == "suspended"
+        assert code in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter10_overclaim_language_is_rejected():
+    event = _chapter10_event()
+    event["notes"] = (
+        "chamber = detector and container valid is proof and simulated event is detection "
+        "and T2K reproduced and path_comparison = CP_measurement and background missing equals zero "
+        "and prepared_tension_slot = dF"
+    )
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    reasons = payload["refusal_packet"]["reason_codes"]
+    assert "chapter10_chamber_as_detector" in reasons
+    assert "chapter10_container_as_proof" in reasons
+    assert "chapter10_event_as_detection" in reasons
+    assert "chapter10_t2k_reproduction_claim" in reasons
+    assert "chapter10_cp_measurement_claim" in reasons
+    assert "chapter10_background_missing_as_zero" in reasons
+    assert "chapter10_prepared_tension_as_df" in reasons
+
+
+def test_chapter10_ready_for_fnp_before_synthia_is_rejected():
+    event = _chapter10_event()
+    event["ready_for_FNP"] = True
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "ready_for_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
+    assert "chapter10_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
