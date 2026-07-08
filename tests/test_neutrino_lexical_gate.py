@@ -466,6 +466,10 @@ def _chapter8_event():
     return json.loads(Path("tests/fixtures/neutrino_chapter8_valid_event.json").read_text(encoding="utf-8"))
 
 
+def _chapter9_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter9_valid_event.json").read_text(encoding="utf-8"))
+
+
 def test_chapter6_valid_event_returns_complete_i_neutrino_vector():
     payload = classify_neutrino_observation(_chapter6_event())
     packet = payload["LexPacket_neutrino"]
@@ -671,3 +675,90 @@ def test_chapter8_suspended_or_rejected_as_numeric_shortcut_is_rejected():
     assert payload["decision"]["status"] == "rejected"
     assert "chapter8_suspended_as_zero" in payload["refusal_packet"]["reason_codes"]
     assert "chapter8_rejected_as_noise" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter9_valid_event_returns_source_choice_profile_without_fnp_fields():
+    payload = classify_neutrino_observation(_chapter9_event())
+    packet = payload["LexPacket_neutrino"]
+    chapter9 = packet["chapter9_source_choice_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter9["profile_version"] == "chapter9.source_choice_public_safe.v1"
+    assert chapter9["chapter9_status"] == "selected_for_container"
+    assert chapter9["source_visibility"]["registry_status"] == "present"
+    assert set(chapter9["source_visibility"]["required_source_ids"]) == {
+        "SB60-002",
+        "CH9-T2K-OSC-001",
+        "SB60-052",
+    }
+    assert chapter9["central_experiment"]["experiment_id"] == (
+        "chapter11_t2k_like_flavor_antiflavor_phase_projection"
+    )
+    assert chapter9["central_experiment"]["status"] == "selected_for_simulation"
+    assert chapter9["central_experiment"]["reproduction_status"] == "not_T2K_reproduction"
+    assert chapter9["central_experiment"]["detection_status"] == "no_real_detection_claim"
+    assert chapter9["central_experiment"]["ready_for_container"] is True
+    assert chapter9["central_experiment"]["ready_for_physical_claim"] is False
+    assert chapter9["paths"]["Path_A"]["initial_flavor"] == "nu_mu"
+    assert chapter9["paths"]["Path_B"]["initial_flavor"] == "anti_nu_mu"
+    assert chapter9["synthia_gate"]["approved_for_container_validation"] is True
+    assert chapter9["synthia_gate"]["ready_for_FNP"] == "true_after_Synthia_for_container_validation"
+    assert not _json_has_key(payload, "D_f")
+    assert not _json_has_key(payload, "D_f_hat")
+    assert not _json_has_key(payload, "dF")
+    assert not _json_has_key(payload, "i_fractal")
+    assert not _json_has_key(payload, "i_fractal_candidate")
+
+
+def test_chapter9_missing_source_registry_is_suspended():
+    event = _chapter9_event()
+    event.pop("chapter9_source_registry")
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "chapter9_missing_source_registry" in payload["refusal_packet"]["reason_codes"]
+    assert payload["LexPacket_neutrino"]["chapter9_source_choice_profile"]["chapter9_status"] == (
+        "blocked_or_suspended"
+    )
+
+
+def test_chapter9_missing_or_unbounded_experiment_choice_is_suspended_or_rejected():
+    missing = _chapter9_event()
+    missing.pop("chapter9_experiment_choice")
+
+    payload = classify_neutrino_observation(missing)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "chapter9_missing_central_experiment" in payload["refusal_packet"]["reason_codes"]
+
+    unbounded = _chapter9_event()
+    unbounded["chapter9_experiment_choice"]["experiment_id"] = "all_neutrino_physics"
+
+    payload = classify_neutrino_observation(unbounded)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "chapter9_unbounded_experiment_choice" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter9_t2k_cp_detection_and_source_proof_claims_are_rejected():
+    event = _chapter9_event()
+    event["notes"] = (
+        "T2K reproduced and CP violation measured and selected experiment is real detection "
+        "and mathematical source proves physical and background missing equals zero and source stack proves"
+    )
+
+    payload = classify_neutrino_observation(event)
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    reasons = payload["refusal_packet"]["reason_codes"]
+    assert "chapter9_t2k_reproduction_claim" in reasons
+    assert "chapter9_cp_measurement_claim" in reasons
+    assert "chapter9_experiment_choice_as_detection" in reasons
+    assert "chapter9_math_source_as_physical_proof" in reasons
+    assert "chapter9_background_missing_as_zero" in reasons
+    assert "chapter9_source_stack_as_proof" in reasons

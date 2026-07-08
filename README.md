@@ -137,6 +137,15 @@ run status: `admissible_under_guardrails`, `suspended`, or `rejected`.
 not detection, and not a bypass around Synthia. Synthia still does not emit
 `D_f`, `D_f_hat`, `dF`, `i_fractal`, or `i_fractal_candidate`.
 
+The fixture `tests/fixtures/neutrino_chapter9_valid_event.json` shows the
+additive source-choice gate. Synthia emits `chapter9_source_choice_profile`
+to make the public source registry and the central T2K-like simulation choice
+explicit. The selected experiment is
+`chapter11_t2k_like_flavor_antiflavor_phase_projection`; it is selected for a
+future simulation container, not as T2K reproduction, CP measurement, real
+detection, or physical proof. Synthia still performs only lexical/source-choice
+admission and still does not emit downstream FNP fractal fields.
+
 ## Plithogenic Biology And System Math
 
 Synthia separates pure engine math from system math. The pure engine math layer contains bounded neutrosophic and plithogenic operators: `T/I/F` values, contradiction load, probability load, dominant attribute values, rough boundary regions, and deterministic projections into the public chain. Those operators are useful by themselves, but biology changes their role. When the object is a species, a taxonomic memory record, a food-safety signal, a conservation concern, a public-health review packet, a geography/ecology context, or an expert disagreement, Synthia is no longer treating math as an isolated abstract engine. It is calling that math inside a living `I_system^S`.

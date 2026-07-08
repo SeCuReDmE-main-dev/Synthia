@@ -1,0 +1,80 @@
+{
+  "event_id": "chapter9-public-safe-neutrino-001",
+  "claim_class": "simulation",
+  "interaction_channel": "weak_CC",
+  "created_flavor": "mu",
+  "flavor_basis": {
+    "e": 0.0,
+    "mu": 1.0,
+    "tau": 0.0
+  },
+  "mass_basis": {
+    "nu1": 0.17,
+    "nu2": 0.33,
+    "nu3": 0.5
+  },
+  "mixing_model": "PMNS_like_toy",
+  "mixing_status": "toy_simulation",
+  "distance_km": 295,
+  "energy_gev": 0.6,
+  "medium_type": "vacuum",
+  "density_status": "not_applicable",
+  "matter_effect_status": "ignored_in_phase1",
+  "MSW_status": "not_used",
+  "secondary_products": [
+    "muon_like_track"
+  ],
+  "detector_signature": "toy muon-like indirect projection",
+  "source_type": "toy_simulation",
+  "source_status": "simulation_input",
+  "source_truth": {
+    "phase1_reference": "public physics reference",
+    "chapter9_registry": "public source ids only"
+  },
+  "chapter5_enabled": true,
+  "chapter7_enabled": true,
+  "chapter8_enabled": true,
+  "chapter9_enabled": true,
+  "scale_context": {
+    "domain": "toy_neutrino_event",
+    "scale": "local_chamber",
+    "measurement_method": "public_safe_carrier_request"
+  },
+  "carrier_request": {
+    "carrier_family": "phase_carrier"
+  },
+  "chapter7_synthia_reading": {
+    "selected_observation_lexicon": "phase_evolution",
+    "secondary_observation_lexicon": "weak_interaction",
+    "H_lex": 0.51793373,
+    "G_lex": 0.36,
+    "I_lexicon": 0.33264458,
+    "C_lex": 0.12,
+    "E_gap": 0.0,
+    "dL_lex": 0.31927681,
+    "classification_status": "stable",
+    "approved_for_fnp": true
+  },
+  "chapter8_run_request": {
+    "expected_run_status": "admissible_under_guardrails",
+    "requested_next_step": "FNP_QNN_readout"
+  },
+  "chapter9_source_registry": {
+    "source_ids": [
+      "SB60-002",
+      "CH9-T2K-OSC-001",
+      "SB60-052"
+    ],
+    "source_role": "boundary_not_proof"
+  },
+  "chapter9_experiment_choice": {
+    "experiment_id": "chapter11_t2k_like_flavor_antiflavor_phase_projection",
+    "status": "selected_for_simulation",
+    "reproduction_status": "not_T2K_reproduction",
+    "detection_status": "no_real_detection_claim",
+    "ready_for_container": true,
+    "ready_for_physical_claim": false,
+    "objective": "compare_two_flavor_paths_under_guardrails"
+  },
+  "notes": "chapter9 source choice: T2K-like simulation frame, not T2K reproduction, not CP measurement, not detection"
+}
