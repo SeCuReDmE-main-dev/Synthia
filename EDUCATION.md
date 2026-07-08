@@ -68,6 +68,14 @@ For chapter-8 style exercises, the gate can also return
 `suspended` or `rejected` run must not be converted into a numeric shortcut.
 The profile is still lexical/admission-only and does not compute FNP friction.
 
+For chapter-9 style exercises, the gate can also return
+`chapter9_source_choice_profile`. This makes the source registry and central
+T2K-like simulation choice explicit before the next chamber container is built.
+The selected experiment is bounded as a future educational simulation
+container; it is not T2K reproduction, not a CP measurement, not detector
+evidence, and not physical proof. Synthia still performs only lexical and
+source-choice admission and does not return downstream FNP fractal fields.
+
 Use:
 
 ```powershell

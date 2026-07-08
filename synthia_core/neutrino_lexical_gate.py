@@ -83,6 +83,16 @@ REFUSAL_CATEGORIES = (
     "chapter8_candidate_as_proof",
     "chapter8_simulation_status_missing",
     "chapter8_invalid_run_status",
+    "chapter9_missing_source_registry",
+    "chapter9_missing_central_experiment",
+    "chapter9_fnp_before_synthia",
+    "chapter9_t2k_reproduction_claim",
+    "chapter9_cp_measurement_claim",
+    "chapter9_experiment_choice_as_detection",
+    "chapter9_math_source_as_physical_proof",
+    "chapter9_background_missing_as_zero",
+    "chapter9_source_stack_as_proof",
+    "chapter9_unbounded_experiment_choice",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -126,6 +136,14 @@ CRITICAL_REJECTION_CODES = {
     "chapter8_rejected_as_noise",
     "chapter8_unbounded_next_step",
     "chapter8_candidate_as_proof",
+    "chapter9_fnp_before_synthia",
+    "chapter9_t2k_reproduction_claim",
+    "chapter9_cp_measurement_claim",
+    "chapter9_experiment_choice_as_detection",
+    "chapter9_math_source_as_physical_proof",
+    "chapter9_background_missing_as_zero",
+    "chapter9_source_stack_as_proof",
+    "chapter9_unbounded_experiment_choice",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
@@ -154,6 +172,8 @@ SUSPENSION_CODES = {
     "chapter8_missing_run_vector",
     "chapter8_simulation_status_missing",
     "chapter8_invalid_run_status",
+    "chapter9_missing_source_registry",
+    "chapter9_missing_central_experiment",
 }
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
@@ -195,6 +215,8 @@ CHAPTER6_REQUIRED_CARRIERS = (
     "I_uncertainty",
 )
 CHAPTER6_FORBIDDEN_PROFILE_KEYS = {"D_f", "D_f_hat", "dF", "i_fractal", "i_fractal_candidate"}
+CHAPTER9_REQUIRED_SOURCE_IDS = ("SB60-002", "CH9-T2K-OSC-001", "SB60-052")
+CHAPTER9_EXPERIMENT_ID = "chapter11_t2k_like_flavor_antiflavor_phase_projection"
 
 
 class DecisionStatus(str, Enum):
@@ -279,6 +301,7 @@ class LexPacketNeutrino:
     chapter6_vector_profile: Mapping[str, object]
     chapter7_transition_profile: Mapping[str, object]
     chapter8_run_profile: Mapping[str, object]
+    chapter9_source_choice_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -301,6 +324,7 @@ class LexPacketNeutrino:
             "chapter6_vector_profile": dict(self.chapter6_vector_profile),
             "chapter7_transition_profile": dict(self.chapter7_transition_profile),
             "chapter8_run_profile": dict(self.chapter8_run_profile),
+            "chapter9_source_choice_profile": dict(self.chapter9_source_choice_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -342,6 +366,12 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter6_vector_profile,
         chapter7_transition_profile,
     )
+    chapter9_source_choice_profile = _chapter9_source_choice_profile(
+        observation,
+        reason_codes,
+        status,
+        chapter8_run_profile,
+    )
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -360,6 +390,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter6_vector_profile=chapter6_vector_profile,
         chapter7_transition_profile=chapter7_transition_profile,
         chapter8_run_profile=chapter8_run_profile,
+        chapter9_source_choice_profile=chapter9_source_choice_profile,
     ).as_dict()
     return {
         "success": True,
@@ -406,7 +437,20 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
         reasons.append("decay_as_internal_flavor_mechanism")
     if "fusion" in text:
         reasons.append("fusion_as_internal_flavor_mechanism")
-    if _contains_any(text, ("choice", "choose", "chooses", "intention", "decides", "decide")):
+    if _contains_any(
+        text,
+        (
+            "neutrino chooses",
+            "neutrino choose",
+            "neutrino decides",
+            "neutrino decide",
+            "neutrino intention",
+            "voluntary choice",
+            "voluntary intention",
+            "particle chooses",
+            "particle decides",
+        ),
+    ):
         reasons.append("choice_or_intention_language")
 
     if _numeric_equal(observation.raw_payload.get("dL_lex"), observation.raw_payload.get("dF")) or _contains_any(
@@ -801,6 +845,84 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
         }:
             reasons.append("chapter8_invalid_run_status")
 
+    if _chapter9_requested(observation):
+        source_ids = set(_chapter9_source_ids(observation.raw_payload))
+        if not set(CHAPTER9_REQUIRED_SOURCE_IDS) <= source_ids:
+            reasons.append("chapter9_missing_source_registry")
+        experiment = _chapter9_experiment_choice(observation.raw_payload)
+        if not experiment:
+            reasons.append("chapter9_missing_central_experiment")
+        elif str(experiment.get("experiment_id", "")).strip() != CHAPTER9_EXPERIMENT_ID:
+            reasons.append("chapter9_unbounded_experiment_choice")
+        if ready_for_fnp is True or _contains_any(
+            text,
+            (
+                "chapter9 fnp before synthia",
+                "chapter 9 fnp before synthia",
+                "central experiment skips synthia",
+                "chapter9 direct fnp",
+            ),
+        ):
+            reasons.append("chapter9_fnp_before_synthia")
+        if _contains_any(
+            text,
+            (
+                "t2k reproduced",
+                "t2k reproduction claim",
+                "t2k_like = t2k",
+                "t2k-like proves t2k",
+            ),
+        ):
+            reasons.append("chapter9_t2k_reproduction_claim")
+        if _contains_any(
+            text,
+            (
+                "cp measurement claim",
+                "cp violation measured",
+                "measures cp violation",
+                "chapter9 cp measurement",
+            ),
+        ):
+            reasons.append("chapter9_cp_measurement_claim")
+        if _contains_any(
+            text,
+            (
+                "experiment choice is detection",
+                "chosen experiment detects",
+                "selected experiment is real detection",
+                "central experiment proves detection",
+            ),
+        ):
+            reasons.append("chapter9_experiment_choice_as_detection")
+        if _contains_any(
+            text,
+            (
+                "mathematical source proves physical",
+                "math source as physical proof",
+                "source_mathematical -> physical_property_claim",
+                "plithogenic reading is physical structure",
+            ),
+        ):
+            reasons.append("chapter9_math_source_as_physical_proof")
+        if _contains_any(
+            text,
+            (
+                "background missing equals zero",
+                "background_model_missing = background_zero",
+                "missing background is zero",
+            ),
+        ):
+            reasons.append("chapter9_background_missing_as_zero")
+        if _contains_any(
+            text,
+            (
+                "source stack proves",
+                "source_physical + source_mathematical = proof",
+                "sources prove the experiment",
+            ),
+        ):
+            reasons.append("chapter9_source_stack_as_proof")
+
     if _chapter5_requested(observation) and set(reasons) & (
         CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES
     ):
@@ -971,6 +1093,12 @@ def _chapter5_intake_profile(
     lex_metrics = _nested_mapping(chapter4_profile, "lex_metrics")
     p_profile = _nested_mapping(chapter4_profile, "p_neutrino_profile")
     allowed_payload = guard.get("allowed_payload") if isinstance(guard.get("allowed_payload"), Mapping) else {}
+    if not allowed_payload and status is DecisionStatus.ACCEPTED:
+        allowed_payload = {
+            "event_id": observation.event_id,
+            "payload_status": "full_lexical_payload_admitted",
+            "approved_scope": "full_lexical_payload",
+        }
     excluded_payload = guard.get("excluded_payload") if isinstance(guard.get("excluded_payload"), Mapping) else {}
     scale_context = observation.raw_payload.get("scale_context")
     scale_context = scale_context if isinstance(scale_context, Mapping) else {}
@@ -1396,6 +1524,111 @@ def _chapter8_blocked_next_step(run_status: str) -> str:
     return "repair_payload"
 
 
+def _chapter9_source_choice_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    chapter8_run_profile: Mapping[str, object],
+) -> dict[str, object]:
+    requested = _chapter9_requested(observation)
+    source_ids = _chapter9_source_ids(observation.raw_payload)
+    source_set = set(source_ids)
+    experiment = _chapter9_experiment_choice(observation.raw_payload)
+    run_permission = _nested_mapping(chapter8_run_profile, "run_permission")
+    can_continue_from_chapter8 = (
+        run_permission.get("can_continue_to_chapter9") is True
+        and _nested_mapping(chapter8_run_profile, "run_decision").get("run_status")
+        == "admissible_under_guardrails"
+    )
+    admitted = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+    required_sources_present = set(CHAPTER9_REQUIRED_SOURCE_IDS) <= source_set
+    experiment_id = str(experiment.get("experiment_id", "")).strip()
+    central_selected = experiment_id == CHAPTER9_EXPERIMENT_ID
+    profile_status = (
+        "selected_for_container"
+        if requested and admitted and required_sources_present and central_selected and can_continue_from_chapter8
+        else "not_requested"
+        if not requested
+        else "blocked_or_suspended"
+    )
+    return {
+        "profile_version": "chapter9.source_choice_public_safe.v1",
+        "chapter9_status": profile_status,
+        "source_visibility": {
+            "source_visible": requested,
+            "registry_status": "present" if required_sources_present else "missing_required_source",
+            "required_source_ids": list(CHAPTER9_REQUIRED_SOURCE_IDS),
+            "provided_source_ids": source_ids,
+            "source_role": "source_as_boundary_not_proof",
+        },
+        "source_families": {
+            "source_physical": ["SB60-002", "CH9-T2K-OSC-001"],
+            "source_mathematical": ["SB60-052"],
+            "source_boundaries": [
+                "source_physical != source_mathematical",
+                "source_physical != proof",
+                "source_mathematical != physical_proof",
+                "citation != total_authority",
+            ],
+        },
+        "central_experiment": {
+            "experiment_id": experiment_id or CHAPTER9_EXPERIMENT_ID,
+            "status": str(experiment.get("status", "selected_for_simulation")),
+            "reproduction_status": str(experiment.get("reproduction_status", "not_T2K_reproduction")),
+            "detection_status": str(experiment.get("detection_status", "no_real_detection_claim")),
+            "ready_for_container": bool(experiment.get("ready_for_container", central_selected)),
+            "ready_for_physical_claim": bool(experiment.get("ready_for_physical_claim", False)),
+            "objective": str(experiment.get("objective", "compare_two_flavor_paths_under_guardrails")),
+        },
+        "paths": {
+            "Path_A": {
+                "beam_kind": "neutrino",
+                "initial_flavor": "nu_mu",
+                "target_projection": "nu_e",
+                "status": "simulation_path",
+            },
+            "Path_B": {
+                "beam_kind": "antineutrino",
+                "initial_flavor": "anti_nu_mu",
+                "target_projection": "anti_nu_e",
+                "status": "simulation_path",
+            },
+        },
+        "chapter8_dependency": {
+            "can_continue_to_chapter9": can_continue_from_chapter8,
+            "run_status": _nested_mapping(chapter8_run_profile, "run_decision").get("run_status", "unknown"),
+            "permission_boundary": "chapter8_permission_is_not_proof",
+        },
+        "synthia_gate": {
+            "Adm_lex": admitted,
+            "approved_for_container_validation": (
+                admitted and required_sources_present and central_selected and can_continue_from_chapter8
+            ),
+            "ready_for_FNP": (
+                "true_after_Synthia_for_container_validation"
+                if admitted and required_sources_present and central_selected and can_continue_from_chapter8
+                else "false"
+            ),
+            "reason_codes": list(reason_codes),
+            "next_required_gate": "FNP chapter9 experiment choice validation",
+        },
+        "forbidden_upgrades": [
+            "T2K_like_as_T2K_reproduction",
+            "CP_asymmetry_toy_as_CP_measurement",
+            "central_experiment_as_real_detection",
+            "source_stack_as_proof",
+            "background_missing_as_zero",
+            "FNP_before_Synthia",
+        ],
+        "boundary": {
+            "synthia_role": "source_choice_and_lexical_gate_only",
+            "no_fractal_computation": True,
+            "no_real_detection_claim": True,
+            "chapter10_next": "build_experimental_container",
+        },
+    }
+
+
 def _p_neutrino_profile(
     observation: NeutrinoObservationInput,
     reason_codes: tuple[str, ...],
@@ -1632,6 +1865,37 @@ def _chapter8_requested(observation: NeutrinoObservationInput) -> bool:
     if isinstance(raw.get("chapter8_run_request"), Mapping):
         return True
     return _contains_any(observation.text, ("chapter8", "chapter 8", "first run", "run_status"))
+
+
+def _chapter9_requested(observation: NeutrinoObservationInput) -> bool:
+    raw = observation.raw_payload
+    if raw.get("chapter9_enabled") is True:
+        return True
+    if isinstance(raw.get("chapter9_source_registry"), Mapping):
+        return True
+    if isinstance(raw.get("chapter9_experiment_choice"), Mapping):
+        return True
+    return _contains_any(
+        observation.text,
+        ("chapter9", "chapter 9", "t2k-like", "t2k_like", "central experiment"),
+    )
+
+
+def _chapter9_source_ids(payload: Mapping[str, Any]) -> list[str]:
+    registry = payload.get("chapter9_source_registry")
+    if not isinstance(registry, Mapping):
+        return []
+    raw_ids = registry.get("source_ids", registry.get("sources", []))
+    if isinstance(raw_ids, Mapping):
+        raw_ids = raw_ids.keys()
+    if not isinstance(raw_ids, (list, tuple, set)):
+        return []
+    return [str(item).strip() for item in raw_ids if str(item).strip()]
+
+
+def _chapter9_experiment_choice(payload: Mapping[str, Any]) -> Mapping[str, object]:
+    choice = payload.get("chapter9_experiment_choice")
+    return choice if isinstance(choice, Mapping) else {}
 
 
 def _chapter7_metric(observation: NeutrinoObservationInput, key: str) -> float | None:
