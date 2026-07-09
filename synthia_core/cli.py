@@ -6,8 +6,10 @@ import argparse
 import json
 import os
 from pathlib import Path
+import sys
 
 from .codex_connector import build_wake_prompt, codex_status
+from .document_pipeline import run_document_pipeline
 from .hipporag_bridge import (
     HippoRAGEdgeTrace,
     RethinkDBHippoRAGTraceStore,
@@ -142,6 +144,7 @@ def _load_json_value(value: str) -> object:
 
 
 def main(argv: list[str] | None = None) -> int:
+    effective_argv = argv if argv is not None else sys.argv[1:]
     parser = argparse.ArgumentParser(prog="synthia")
     subparsers = parser.add_subparsers(dest="area", required=True)
 
@@ -154,6 +157,15 @@ def main(argv: list[str] | None = None) -> int:
     soul_sub = soul.add_subparsers(dest="command", required=True)
     soul_build = soul_sub.add_parser("build")
     soul_build.add_argument("--private-org", default=str(_default_private_org()))
+
+    document = subparsers.add_parser("document")
+    document_sub = document.add_subparsers(dest="command", required=True)
+    document_pipeline = document_sub.add_parser("pipeline")
+    document_pipeline.add_argument("--input", required=True)
+    document_pipeline.add_argument("--profile", default="taxonomy-review")
+    document_pipeline.add_argument("--private-org", default=str(_default_private_org()))
+    document_pipeline.add_argument("--emit-lexicon", action="store_true")
+    document_pipeline.add_argument("--emit-annex", action="store_true")
 
     lexicon = subparsers.add_parser("lexicon")
     lexicon_sub = lexicon.add_subparsers(dest="command", required=True)
@@ -492,7 +504,7 @@ def main(argv: list[str] | None = None) -> int:
     backend.add_argument("action", choices=["status", "ensure-schema"])
     _configure_rethinkdb_flags(backend)
 
-    args = parser.parse_args(argv)
+    args = parser.parse_args(effective_argv)
 
     if args.area == "sources" and args.command == "scan-root":
         _print_json(scan_root(args.root))
@@ -502,6 +514,18 @@ def main(argv: list[str] | None = None) -> int:
         path = Path(args.private_org) / "01_soul_and_storyline" / "synthia_soul.md"
         _print_json({"path": str(path), "exists": path.exists(), "private_org": args.private_org})
         return 0
+
+    if args.area == "document" and args.command == "pipeline":
+        payload, exit_code = run_document_pipeline(
+            input_path=args.input,
+            profile_name=args.profile,
+            private_org=args.private_org,
+            command=effective_argv,
+            emit_lexicon=args.emit_lexicon,
+            emit_annex=args.emit_annex,
+        )
+        _print_json(payload)
+        return exit_code
 
     if args.area == "lexicon":
         registry = seed_base_lexicon()
