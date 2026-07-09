@@ -177,6 +177,45 @@ The repository contains the local Python research core, tests, public documentat
 - optional RethinkDB memory surfaces for swarm state and HippoRAG-style graph traces;
 - a static public website under `web/landing/`.
 
+## Document Lane
+
+Synthia now ships a strict document lane for bounded taxonomy-review work. The lane is intentionally narrow: Synthia owns document ingestion, block classification, lexicon extraction, annex generation, and handoff emission. Codex may take over only after the Synthia handoff bundle exists.
+
+Canonical command:
+
+```powershell
+python -m synthia_core.cli document pipeline --input .\tests\fixtures\document_pipeline_taxonomy_review.docx --profile taxonomy-review --private-org ..\Synthia_organisation
+```
+
+Supported input formats:
+
+- `.docx`
+- `.txt`
+- `.md`
+
+The command writes a private-org bundle under `02_taxonomy_lexicon_model/document_runs/<run_id>/` with these artifacts:
+
+- `decision.json`
+- `stage_log.jsonl`
+- `normalized_document.json`
+- `block_map.json`
+- `lexicon_summary.json`
+- `taxonomy_annex.md`
+- `handoff.json`
+
+The stdout payload stays public-safe:
+
+- `command` redacts the `--private-org` value;
+- `input_path` is reduced to a safe display path and becomes `[private-input]` when the source path looks private;
+- `artifact_paths` are emitted relative to the chosen `private-org`, not as absolute machine paths.
+
+Execution policy:
+
+- Synthia fails closed when the input or stage is unsupported.
+- Unsupported formats or blocked stages emit an explicit handoff instead of silently falling back to Codex.
+- The stdout payload stays public-safe; detailed traces live in the private-org bundle.
+- The lane does not translate, stylistically rewrite, export DOCX, or claim formal authority.
+
 ## Boundary
 
 Synthia is not a production scientific authority, medical tool, environmental deployment system, drone-control platform, or formal nomenclatural authority. It is an educational research project for preserving lexicon context, uncertainty, source traceability, and human-review boundaries.

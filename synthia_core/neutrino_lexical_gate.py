@@ -106,6 +106,19 @@ REFUSAL_CATEGORIES = (
     "chapter10_background_missing_as_zero",
     "chapter10_prepared_tension_as_df",
     "chapter10_unbounded_manipulation",
+    "chapter11_missing_passage_contract",
+    "chapter11_missing_injection_packet",
+    "chapter11_path_pair_missing",
+    "chapter11_path_container_mismatch",
+    "chapter11_path_admission_route_mismatch",
+    "chapter11_t2k_reproduction_claim",
+    "chapter11_cp_measurement_claim",
+    "chapter11_path_comparison_as_cp_measurement",
+    "chapter11_background_missing_as_zero",
+    "chapter11_fnp_before_synthia",
+    "chapter11_dl_lex_as_df",
+    "chapter11_fnp_output_in_synthia",
+    "chapter11_candidate_as_proof",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -166,6 +179,14 @@ CRITICAL_REJECTION_CODES = {
     "chapter10_background_missing_as_zero",
     "chapter10_prepared_tension_as_df",
     "chapter10_unbounded_manipulation",
+    "chapter11_t2k_reproduction_claim",
+    "chapter11_cp_measurement_claim",
+    "chapter11_path_comparison_as_cp_measurement",
+    "chapter11_background_missing_as_zero",
+    "chapter11_fnp_before_synthia",
+    "chapter11_dl_lex_as_df",
+    "chapter11_fnp_output_in_synthia",
+    "chapter11_candidate_as_proof",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
@@ -200,6 +221,11 @@ SUSPENSION_CODES = {
     "chapter10_missing_container_contract",
     "chapter10_missing_simulated_event",
     "chapter10_missing_run_contract",
+    "chapter11_missing_passage_contract",
+    "chapter11_missing_injection_packet",
+    "chapter11_path_pair_missing",
+    "chapter11_path_container_mismatch",
+    "chapter11_path_admission_route_mismatch",
 }
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
@@ -247,6 +273,19 @@ CHAPTER10_REQUIRED_SOURCE_IDS = ("CH10-GEANT4-001", "CH10-SCHEMA-001")
 CHAPTER10_CONTAINER_SCHEMA_VERSION = "chamber.event_container.v1"
 CHAPTER10_EVENT_SCHEMA_VERSION = "chamber.simulated_neutrino_event.v1"
 CHAPTER10_RUN_CONTRACT_VERSION = "chamber.run_contract.v1"
+CHAPTER11_PASSAGE_CONTRACT_VERSION = "chamber.chapter11_passage_contract.v1"
+CHAPTER11_INJECTION_PACKET_VERSION = "chamber.chapter11_injection_packet.v1"
+CHAPTER11_FORBIDDEN_OUTPUT_KEYS = {
+    "D_f",
+    "D_f_hat",
+    "dF",
+    "i_fractal",
+    "i_fractal_candidate",
+    "D_f_11",
+    "D_f_hat_11",
+    "dF_11",
+    "i_fractal_candidate_11",
+}
 
 
 class DecisionStatus(str, Enum):
@@ -333,6 +372,7 @@ class LexPacketNeutrino:
     chapter8_run_profile: Mapping[str, object]
     chapter9_source_choice_profile: Mapping[str, object]
     chapter10_chamber_profile: Mapping[str, object]
+    chapter11_passage_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -357,6 +397,7 @@ class LexPacketNeutrino:
             "chapter8_run_profile": dict(self.chapter8_run_profile),
             "chapter9_source_choice_profile": dict(self.chapter9_source_choice_profile),
             "chapter10_chamber_profile": dict(self.chapter10_chamber_profile),
+            "chapter11_passage_profile": dict(self.chapter11_passage_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -410,6 +451,13 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         status,
         chapter9_source_choice_profile,
     )
+    chapter11_passage_profile = _chapter11_passage_profile(
+        observation,
+        reason_codes,
+        status,
+        d_l_lex,
+        chapter10_chamber_profile,
+    )
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -430,6 +478,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter8_run_profile=chapter8_run_profile,
         chapter9_source_choice_profile=chapter9_source_choice_profile,
         chapter10_chamber_profile=chapter10_chamber_profile,
+        chapter11_passage_profile=chapter11_passage_profile,
     ).as_dict()
     return {
         "success": True,
@@ -1063,6 +1112,97 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
             ),
         ):
             reasons.append("chapter10_unbounded_manipulation")
+
+    if _chapter11_requested(observation):
+        contract = _chapter11_passage_contract(observation.raw_payload)
+        injection = _chapter11_injection_packet(observation.raw_payload)
+        path_a = _chapter11_path_event(injection, "Path_A_event", "path_A_neutrino")
+        path_b = _chapter11_path_event(injection, "Path_B_event", "path_B_antineutrino")
+        if not contract:
+            reasons.append("chapter11_missing_passage_contract")
+        if not injection:
+            reasons.append("chapter11_missing_injection_packet")
+        if not path_a or not path_b:
+            reasons.append("chapter11_path_pair_missing")
+        if path_a and path_b and _chapter11_path_container_mismatch(path_a, path_b):
+            reasons.append("chapter11_path_container_mismatch")
+        if path_a and path_b and _chapter11_path_route_mismatch(path_a, path_b):
+            reasons.append("chapter11_path_admission_route_mismatch")
+        if ready_for_fnp is True or _contains_any(
+            text,
+            (
+                "chapter11 fnp before synthia",
+                "chapter 11 fnp before synthia",
+                "chapter11 direct fnp",
+                "passage skips synthia",
+                "ready_for_fnp before synthia",
+            ),
+        ):
+            reasons.append("chapter11_fnp_before_synthia")
+        if _contains_any(
+            text,
+            (
+                "t2k reproduced",
+                "t2k reproduction claim",
+                "t2k_like = t2k",
+                "t2k-like reproduces t2k",
+                "chapter11 t2k reproduction",
+            ),
+        ):
+            reasons.append("chapter11_t2k_reproduction_claim")
+        if _contains_any(
+            text,
+            (
+                "cp measurement claim",
+                "cp violation measured",
+                "measures cp violation",
+                "chapter11 cp measurement",
+            ),
+        ):
+            reasons.append("chapter11_cp_measurement_claim")
+        if _contains_any(
+            text,
+            (
+                "path_comparison = cp_measurement",
+                "pathcomparison_11 = cp_measurement",
+                "path comparison measures cp",
+                "two_path_contrast = cp_measurement",
+            ),
+        ):
+            reasons.append("chapter11_path_comparison_as_cp_measurement")
+        if _contains_any(
+            text,
+            (
+                "background missing equals zero",
+                "background_missing = background_zero",
+                "background_model_missing = background_zero",
+                "missing background is zero",
+            ),
+        ):
+            reasons.append("chapter11_background_missing_as_zero")
+        if _contains_any(
+            text,
+            (
+                "dl_lex = df_11",
+                "dl_lex equals df_11",
+                "dl_lex = df",
+                "dl_lex as df_11",
+                "dL_lex = dF_11".lower(),
+            ),
+        ):
+            reasons.append("chapter11_dl_lex_as_df")
+        if _contains_any(
+            text,
+            (
+                "candidate_as_proof",
+                "i_fractal_candidate_11 proves",
+                "candidate proves",
+                "candidate is proof",
+            ),
+        ):
+            reasons.append("chapter11_candidate_as_proof")
+        if _contains_forbidden_chapter11_output(observation.raw_payload):
+            reasons.append("chapter11_fnp_output_in_synthia")
 
     if _chapter5_requested(observation) and set(reasons) & (
         CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES
@@ -1978,6 +2118,159 @@ def _chapter10_path_pair_ready(event: Mapping[str, object]) -> bool:
     return all(token in text for token in ("path_a", "path_b", "nu_mu", "anti_nu_mu", "nu_e", "anti_nu_e"))
 
 
+def _chapter11_passage_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    d_l_lex: float,
+    chapter10_chamber_profile: Mapping[str, object],
+) -> dict[str, object]:
+    requested = _chapter11_requested(observation)
+    contract = _chapter11_passage_contract(observation.raw_payload)
+    injection = _chapter11_injection_packet(observation.raw_payload)
+    path_a = _chapter11_path_event(injection, "Path_A_event", "path_A_neutrino")
+    path_b = _chapter11_path_event(injection, "Path_B_event", "path_B_antineutrino")
+    common_controls = _chapter11_common_controls(injection)
+    chapter10_ready = _nested_mapping(chapter10_chamber_profile, "RunPrepared_10").get("chapter11_execution_ready") is True
+    admitted = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+    critical_block = bool(set(reason_codes) & CRITICAL_REJECTION_CODES)
+    suspended = bool(set(reason_codes) & SUSPENSION_CODES)
+    path_pair_ready = bool(path_a and path_b)
+    symmetry_valid = (
+        path_pair_ready
+        and not _chapter11_path_container_mismatch(path_a, path_b)
+        and not _chapter11_path_route_mismatch(path_a, path_b)
+    )
+    passage_ready = requested and admitted and chapter10_ready and bool(contract) and bool(injection) and symmetry_valid
+    if not requested:
+        profile_status = "not_requested"
+    elif critical_block:
+        profile_status = "rejected"
+    elif suspended or not passage_ready:
+        profile_status = "suspended"
+    else:
+        profile_status = "ready_for_fnp_passage"
+
+    return {
+        "profile_version": "chapter11.passage_public_safe.v1",
+        "chapter11_status": profile_status,
+        "Chapter11PassageContract": _chapter11_contract_profile(contract, chapter10_ready),
+        "Chapter11InjectionPacket": _chapter11_injection_profile(injection, path_pair_ready),
+        "Path_A_event": _chapter11_path_profile(path_a, "Path_A_event"),
+        "Path_B_event": _chapter11_path_profile(path_b, "Path_B_event"),
+        "CommonPathControls": _chapter11_controls_profile(common_controls),
+        "ChamberSymmetry_11": {
+            "status": "valid" if symmetry_valid else "invalid_or_incomplete",
+            "same_container": bool(path_a and path_b and not _chapter11_path_container_mismatch(path_a, path_b)),
+            "same_admission_route": bool(path_a and path_b and not _chapter11_path_route_mismatch(path_a, path_b)),
+            "same_baseline_policy": str(common_controls.get("baseline_policy", "same")) == "same",
+            "same_energy_policy": str(common_controls.get("energy_policy", "same")) == "same",
+            "same_boundary": str(common_controls.get("simulation_boundary", BOUNDARY)) == BOUNDARY,
+            "comparison_boundary": "PathComparison_11 != CP_measurement",
+        },
+        "SynthiaReading_11": {
+            "selected_observation_lexicon": "t2k_like_path_pair" if requested else "not_requested",
+            "secondary_observation_lexicon": "simulation_boundary",
+            "active_lexicons": [
+                "source_boundary_lex",
+                "path_pair_lex",
+                "simulation_boundary_lex",
+                "cp_measurement_guard_lex",
+                "fnp_boundary_lex",
+            ],
+            "dL_lex": d_l_lex,
+            "classification_status": "admitted_under_lexical_guardrails" if passage_ready else profile_status,
+            "approved_for_fnp": passage_ready,
+            "ready_for_Synthia": requested,
+            "ready_for_FNP": "true_after_Synthia" if passage_ready else "false",
+            "physical_claim_allowed": False,
+            "reason_codes": list(reason_codes),
+            "reading_boundary": "dL_lex is lexical friction only; Synthia does not compute FNP outputs",
+        },
+        "forbidden_upgrades": [
+            "T2K_like_as_T2K_reproduction",
+            "PathComparison_11_as_CP_measurement",
+            "Path_A_event_as_measured_appearance_event",
+            "Path_B_event_as_CP_measurement",
+            "background_missing_as_zero",
+            "dL_lex_as_dF_11",
+            "FNP_before_Synthia",
+            "candidate_as_proof",
+        ],
+        "boundary": {
+            "synthia_role": "chapter11 passage lexical gate only",
+            "no_fractal_computation": True,
+            "no_real_detection_claim": True,
+            "chapter12_next": "variation_tests_after_conditional_readout",
+        },
+    }
+
+
+def _chapter11_contract_profile(contract: Mapping[str, object], chapter10_ready: bool) -> dict[str, object]:
+    if not contract:
+        return {"status": "missing"}
+    return {
+        "schema_version": str(contract.get("schema_version", CHAPTER11_PASSAGE_CONTRACT_VERSION)),
+        "status": str(contract.get("status", "established")),
+        "run_origin": str(contract.get("run_origin", "chapter8_admissible_under_guardrails")),
+        "experiment_choice": str(contract.get("experiment_choice", CHAPTER9_EXPERIMENT_ID)),
+        "container_status": str(contract.get("container_status", "chapter10_ready")),
+        "chapter10_execution_ready": chapter10_ready,
+        "Synthia_required": bool(contract.get("Synthia_required", True)),
+        "FNP_before_Synthia": bool(contract.get("FNP_before_Synthia", False)),
+        "physical_claim_allowed": bool(contract.get("physical_claim_allowed", False)),
+        "contract_boundary": str(contract.get("contract_boundary", "T2K_like != T2K_reproduction")),
+    }
+
+
+def _chapter11_injection_profile(injection: Mapping[str, object], path_pair_ready: bool) -> dict[str, object]:
+    if not injection:
+        return {"status": "missing"}
+    return {
+        "schema_version": str(injection.get("schema_version", CHAPTER11_INJECTION_PACKET_VERSION)),
+        "status": str(injection.get("status", "assembled")),
+        "route": str(injection.get("route", "container_to_synthia_to_fnp")),
+        "path_pair_ready": path_pair_ready,
+        "ready_for_Synthia": bool(injection.get("ready_for_Synthia", True)),
+        "ready_for_FNP": str(injection.get("ready_for_FNP", "false_before_Synthia")),
+        "injection_boundary": str(injection.get("injection_boundary", "simulation_path_pair_not_measurement")),
+    }
+
+
+def _chapter11_path_profile(path: Mapping[str, object], label: str) -> dict[str, object]:
+    if not path:
+        return {"path_label": label, "status": "missing"}
+    return {
+        "path_label": label,
+        "path_id": str(path.get("path_id", label)),
+        "container_id": str(path.get("container_id", "")),
+        "admission_route": str(path.get("admission_route", "container_to_synthia_to_fnp")),
+        "beam_kind": str(path.get("beam_kind", "")),
+        "initial_flavor": str(path.get("initial_flavor", "")),
+        "target_projection": str(path.get("target_projection", "")),
+        "path_status": str(path.get("path_status", path.get("status", "simulation_path"))),
+        "detection_claim": bool(path.get("detection_claim", False)),
+        "measurement_claim": bool(path.get("measurement_claim", False)),
+        "reproduction_claim": bool(path.get("reproduction_claim", False)),
+        "boundary": str(path.get("boundary", "simulation_path != measured_event")),
+    }
+
+
+def _chapter11_controls_profile(common_controls: Mapping[str, object]) -> dict[str, object]:
+    if not common_controls:
+        return {"status": "missing"}
+    return {
+        "status": "declared",
+        "container_policy": str(common_controls.get("container_policy", "same")),
+        "admission_route_policy": str(common_controls.get("admission_route_policy", "same")),
+        "baseline_policy": str(common_controls.get("baseline_policy", "same")),
+        "energy_policy": str(common_controls.get("energy_policy", "same")),
+        "detector_projection_policy": str(common_controls.get("detector_projection_policy", "same")),
+        "background_model_status": str(common_controls.get("background_model_status", "missing_or_simplified")),
+        "simulation_boundary": str(common_controls.get("simulation_boundary", BOUNDARY)),
+    }
+
+
 def _l_over_e(observation: NeutrinoObservationInput) -> float | None:
     if observation.distance_km is None or observation.energy_gev is None or observation.energy_gev <= 0.0:
         return None
@@ -2261,6 +2554,19 @@ def _chapter10_requested(observation: NeutrinoObservationInput) -> bool:
     )
 
 
+def _chapter11_requested(observation: NeutrinoObservationInput) -> bool:
+    raw = observation.raw_payload
+    if raw.get("chapter11_enabled") is True:
+        return True
+    if isinstance(raw.get("chapter11_passage_contract"), Mapping):
+        return True
+    if isinstance(raw.get("chapter11_injection_packet"), Mapping):
+        return True
+    if isinstance(raw.get("SynthiaReading_11"), Mapping):
+        return True
+    return False
+
+
 def _chapter9_source_ids(payload: Mapping[str, Any]) -> list[str]:
     registry = payload.get("chapter9_source_registry")
     if not isinstance(registry, Mapping):
@@ -2303,6 +2609,71 @@ def _chapter10_event(payload: Mapping[str, Any]) -> Mapping[str, object]:
 def _chapter10_run_contract(payload: Mapping[str, Any]) -> Mapping[str, object]:
     contract = payload.get("chapter10_run_contract")
     return contract if isinstance(contract, Mapping) else {}
+
+
+def _chapter11_passage_contract(payload: Mapping[str, Any]) -> Mapping[str, object]:
+    contract = payload.get("chapter11_passage_contract")
+    return contract if isinstance(contract, Mapping) else {}
+
+
+def _chapter11_injection_packet(payload: Mapping[str, Any]) -> Mapping[str, object]:
+    packet = payload.get("chapter11_injection_packet")
+    return packet if isinstance(packet, Mapping) else {}
+
+
+def _chapter11_common_controls(injection: Mapping[str, object]) -> Mapping[str, object]:
+    controls = injection.get("CommonPathControls") if isinstance(injection, Mapping) else None
+    if not isinstance(controls, Mapping):
+        controls = injection.get("common_path_controls") if isinstance(injection, Mapping) else None
+    return controls if isinstance(controls, Mapping) else {}
+
+
+def _chapter11_path_event(
+    injection: Mapping[str, object],
+    key: str,
+    expected_path_id: str,
+) -> Mapping[str, object]:
+    if not isinstance(injection, Mapping):
+        return {}
+    direct = injection.get(key)
+    if isinstance(direct, Mapping):
+        return direct
+    paths = injection.get("paths")
+    if isinstance(paths, Mapping):
+        candidate = paths.get(key) or paths.get(expected_path_id)
+        if isinstance(candidate, Mapping):
+            return candidate
+    if isinstance(paths, list):
+        for item in paths:
+            if not isinstance(item, Mapping):
+                continue
+            if str(item.get("path_id", "")).strip() == expected_path_id:
+                return item
+    return {}
+
+
+def _chapter11_path_container_mismatch(path_a: Mapping[str, object], path_b: Mapping[str, object]) -> bool:
+    container_a = str(path_a.get("container_id", "")).strip()
+    container_b = str(path_b.get("container_id", "")).strip()
+    return not container_a or not container_b or container_a != container_b
+
+
+def _chapter11_path_route_mismatch(path_a: Mapping[str, object], path_b: Mapping[str, object]) -> bool:
+    route_a = str(path_a.get("admission_route", "")).strip()
+    route_b = str(path_b.get("admission_route", "")).strip()
+    expected = "container_to_synthia_to_fnp"
+    return route_a != expected or route_b != expected or route_a != route_b
+
+
+def _contains_forbidden_chapter11_output(value: object) -> bool:
+    if isinstance(value, Mapping):
+        return any(
+            str(key) in CHAPTER11_FORBIDDEN_OUTPUT_KEYS or _contains_forbidden_chapter11_output(item)
+            for key, item in value.items()
+        )
+    if isinstance(value, list):
+        return any(_contains_forbidden_chapter11_output(item) for item in value)
+    return False
 
 
 def _chapter7_metric(observation: NeutrinoObservationInput, key: str) -> float | None:
