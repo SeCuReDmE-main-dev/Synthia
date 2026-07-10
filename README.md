@@ -170,6 +170,14 @@ downstream internal-repeatability test up to `P2_internal_repeatability`; it
 does not calculate the medium, reconstruct detector output, compute fractal
 friction, or validate a physical model.
 
+The fixture `tests/fixtures/neutrino_chapter13_valid_event.json` adds a
+`chapter13_distributed_validation_profile` for four frozen 67-worker
+campaigns. Synthia validates worker/task counts, source revision pins,
+manifest policy, p114 consensus inputs, bounded p046 limits, and the sandbox
+kill plan. Its terminal state is `ready_for_p114 = true_after_Synthia` and
+`ready_for_FNP = false_before_p114`; Synthia remains admission-only and emits
+no fractal computation fields.
+
 ## Plithogenic Biology And System Math
 
 Synthia separates pure engine math from system math. The pure engine math layer contains bounded neutrosophic and plithogenic operators: `T/I/F` values, contradiction load, probability load, dominant attribute values, rough boundary regions, and deterministic projections into the public chain. Those operators are useful by themselves, but biology changes their role. When the object is a species, a taxonomic memory record, a food-safety signal, a conservation concern, a public-health review packet, a geography/ecology context, or an expert disagreement, Synthia is no longer treating math as an isolated abstract engine. It is calling that math inside a living `I_system^S`.

@@ -482,6 +482,10 @@ def _chapter12_event():
     return json.loads(Path("tests/fixtures/neutrino_chapter12_valid_event.json").read_text(encoding="utf-8"))
 
 
+def _chapter13_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter13_valid_event.json").read_text(encoding="utf-8"))
+
+
 def test_chapter6_valid_event_returns_complete_i_neutrino_vector():
     payload = classify_neutrino_observation(_chapter6_event())
     packet = payload["LexPacket_neutrino"]
@@ -975,3 +979,89 @@ def test_chapter12_cli_emits_validation_profile(capsys):
     assert payload["LexPacket_neutrino"]["chapter12_validation_profile"]["chapter12_status"] == (
         "ready_for_fnp_validation"
     )
+
+
+def test_chapter13_valid_contract_is_ready_for_p114_but_not_fnp():
+    payload = classify_neutrino_observation(_chapter13_event())
+    chapter13 = payload["LexPacket_neutrino"]["chapter13_distributed_validation_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter13["profile_version"] == "chapter13.distributed_validation_public_safe.v1"
+    assert chapter13["chapter13_status"] == "ready_for_p114_consensus"
+    assert chapter13["DistributedValidationContract_13"]["run_count"] == 4
+    assert chapter13["DistributedValidationContract_13"]["worker_count_per_run"] == 67
+    assert chapter13["DistributedValidationContract_13"]["total_sandbox_lifecycles"] == 268
+    assert chapter13["DistributedValidationContract_13"]["total_task_results"] == 1072
+    assert chapter13["SynthiaReading_13"]["approved_for_p114_consensus"] is True
+    assert chapter13["SynthiaReading_13"]["ready_for_p114"] == "true_after_Synthia"
+    assert chapter13["SynthiaReading_13"]["ready_for_FNP"] == "false_before_p114"
+    for key in ("D_f", "D_f_hat", "dF", "i_fractal", "i_fractal_candidate"):
+        assert not _json_has_key(payload, key)
+
+
+def test_chapter13_invalid_counts_and_missing_pins_suspend():
+    event = _chapter13_event()
+    contract = event["chapter13_distributed_validation_contract"]
+    contract["worker_count_per_run"] = 66
+    contract["source_revisions"].pop("pluginpack_commit")
+
+    payload = classify_neutrino_observation(event)
+    reasons = payload["refusal_packet"]["reason_codes"]
+
+    assert payload["decision"]["status"] == "suspended"
+    assert "chapter13_invalid_worker_or_task_count" in reasons
+    assert "chapter13_missing_revision_pin" in reasons
+
+
+def test_chapter13_ambiguous_p114_items_suspend_before_p114():
+    event = _chapter13_event()
+    event["chapter13_distributed_validation_contract"]["p114_items"] = [
+        {"label": "invalid", "truth": 0.2, "indeterminacy": 1.2, "falsity": 0.1}
+    ]
+
+    payload = classify_neutrino_observation(event)
+    chapter13 = payload["LexPacket_neutrino"]["chapter13_distributed_validation_profile"]
+
+    assert payload["decision"]["status"] == "suspended"
+    assert "chapter13_invalid_p114_items" in payload["refusal_packet"]["reason_codes"]
+    assert chapter13["SynthiaReading_13"]["ready_for_p114"] == "false"
+
+
+def test_chapter13_unbounded_chaos_and_claim_upgrades_reject():
+    event = _chapter13_event()
+    contract = event["chapter13_distributed_validation_contract"]
+    contract["p046_policy"]["bounded"] = False
+    contract["p046_policy"]["host_mutation_allowed"] = True
+    contract["manual_random_override"] = True
+    contract["physical_model_validated"] = True
+    contract["real_detection_claim"] = True
+    contract["dL_lex_as_dF"] = True
+    contract["candidate_proof_claim"] = True
+    contract["ready_for_FNP"] = True
+
+    payload = classify_neutrino_observation(event)
+    reasons = payload["refusal_packet"]["reason_codes"]
+
+    assert payload["decision"]["status"] == "rejected"
+    assert "chapter13_unbounded_chaos" in reasons
+    assert "chapter13_manual_random_override" in reasons
+    assert "chapter13_physical_validation_claim" in reasons
+    assert "chapter13_real_detection_claim" in reasons
+    assert "chapter13_dl_lex_as_df" in reasons
+    assert "chapter13_candidate_as_proof" in reasons
+    assert "chapter13_fnp_before_synthia" in reasons
+
+
+def test_chapter13_cli_emits_distributed_validation_profile(capsys):
+    assert main(
+        [
+            "neutrino",
+            "guardrail-check",
+            "--input",
+            "tests/fixtures/neutrino_chapter13_valid_event.json",
+            "--json",
+        ]
+    ) == 0
+    payload = json.loads(capsys.readouterr().out)
+    chapter13 = payload["LexPacket_neutrino"]["chapter13_distributed_validation_profile"]
+    assert chapter13["chapter13_status"] == "ready_for_p114_consensus"
