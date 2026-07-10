@@ -85,6 +85,19 @@ reproduction, and a path comparison is not a CP measurement. Synthia still
 performs lexical/container admission only and does not return downstream FNP
 fractal fields.
 
+For chapter-11 exercises, `chapter11_passage_profile` validates the two-path
+injection packet under one declared container and admission route. The output
+can become `true_after_Synthia`, but it remains a lexical passage decision and
+never a T2K reproduction, CP measurement, or detector result.
+
+For chapter-12 exercises, `chapter12_validation_profile` checks that an
+internal validation request names its reference run, supplies exactly ten
+carrier identities, declares the toy-medium and detector-response policies,
+records random seeds, and bounds repetition counts and tolerances. Synthia
+does not execute those calculations. It only admits or blocks the downstream
+FNP-QNN validation request, with `P2_internal_repeatability` as the maximum
+proof state.
+
 Use:
 
 ```powershell

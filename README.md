@@ -155,6 +155,21 @@ container proof, not T2K reproduction, not CP measurement, and not a real
 neutrino event. Synthia still does not emit `D_f`, `D_f_hat`, `dF`,
 `i_fractal`, or `i_fractal_candidate`.
 
+The fixture `tests/fixtures/neutrino_chapter11_valid_event.json` executes that
+first passage as a guarded path pair. It declares one common container,
+admission route, baseline policy, energy policy, background status, and
+simulation boundary. Synthia emits `chapter11_passage_profile` only after the
+two paths preserve those controls; path comparison remains chamber evidence,
+not T2K reproduction or CP measurement.
+
+The fixture `tests/fixtures/neutrino_chapter12_valid_event.json` adds the
+`chapter12_validation_profile`. It validates a reference-run identity, the
+exact ten-carrier policy, explicit medium and detector requirements, declared
+random seeds, tolerances, and repetition limits. This profile authorizes a
+downstream internal-repeatability test up to `P2_internal_repeatability`; it
+does not calculate the medium, reconstruct detector output, compute fractal
+friction, or validate a physical model.
+
 ## Plithogenic Biology And System Math
 
 Synthia separates pure engine math from system math. The pure engine math layer contains bounded neutrosophic and plithogenic operators: `T/I/F` values, contradiction load, probability load, dominant attribute values, rough boundary regions, and deterministic projections into the public chain. Those operators are useful by themselves, but biology changes their role. When the object is a species, a taxonomic memory record, a food-safety signal, a conservation concern, a public-health review packet, a geography/ecology context, or an expert disagreement, Synthia is no longer treating math as an isolated abstract engine. It is calling that math inside a living `I_system^S`.
