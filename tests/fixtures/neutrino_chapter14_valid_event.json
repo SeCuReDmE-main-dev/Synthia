@@ -1,0 +1,30 @@
+{
+  "event_id": "chapter14-public-safe-threshold-001",
+  "claim_class": "simulation",
+  "interaction_channel": "weak_CC",
+  "created_flavor": "mu",
+  "flavor_basis": {"e": 0.0, "mu": 1.0, "tau": 0.0},
+  "mass_basis": {"nu1": 0.17, "nu2": 0.33, "nu3": 0.5},
+  "distance_km": 295,
+  "energy_gev": 0.6,
+  "source_truth": {"chapter14_reference": "bounded mathematical threshold contract"},
+  "chapter14_threshold_contract": {
+    "sources": ["PENROSE-1979", "SHECHTMAN-1984", "FREEDMAN-2007"],
+    "penrose_rule_packet": {"rules": [{"rule_id": "matching-1", "local_condition": "declared edge match"}], "scale": {"unit": "tile", "resolution": 1.0}, "measure": {"name": "adjacency", "definition": "shared admitted edge"}, "provenance": ["PENROSE-1979"], "admission": "admitted_mathematical"},
+    "i_quasicrystal_vec": {"carriers": [
+      {"name":"local_matching","tension":0.2,"weight":1,"source_fields":["rules"]},
+      {"name":"aperiodicity","tension":0.3,"weight":1,"source_fields":["rules"]},
+      {"name":"inflation_deflation","tension":0.4,"weight":1,"source_fields":["rules"]},
+      {"name":"fivefold_orientation","tension":0.5,"weight":1,"source_fields":["rules"]},
+      {"name":"tile_frequency","tension":0.6,"weight":1,"source_fields":["rules"]},
+      {"name":"adjacency","tension":0.7,"weight":1,"source_fields":["rules"]},
+      {"name":"substitution_depth","tension":0.4,"weight":1,"source_fields":["rules"]},
+      {"name":"phason_susceptibility","tension":0.3,"weight":1,"source_fields":["phason"]},
+      {"name":"defect_density","tension":0.1,"weight":1,"source_fields":["phason"]},
+      {"name":"scale_transfer","tension":0.2,"weight":1,"source_fields":["scale"]}
+    ]},
+    "phason_transition": {"state_before":[1,0,0],"state_after":[0,1,0],"movement":"internal_reindexing","relations":["adjacent"],"scale":{"unit":"tile"},"cost":0.2,"uncertainty":0.1,"status":"simulated"},
+    "limits": ["simulation_not_detection", "PenroseRulePacket_not_physical_substrate", "physical_model_validated_false"],
+    "claim_flags": {"substrate_as_established_fact":false,"real_detection_claim":false,"penrose_as_physical_proof":false,"quasicrystal_proves_neutrino":false,"biological_validation_claim":false}
+  }
+}

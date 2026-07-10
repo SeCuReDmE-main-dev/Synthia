@@ -1,3 +1,14 @@
+> [!IMPORTANT]
+> **Book II evidence boundary (2026-07-10).** Synthia classifies and admits
+> public-safe lexical research objects before FNP-QNN computes. The verified
+> ceiling is `P2_internal_repeatability`: `simulation != detection`,
+> `candidate != proof`, `dL_lex != dF`, and
+> `PenroseRulePacket != physical_substrate`. No result in this repository
+> validates a physical neutrino model, detects a neutrino, reproduces T2K, or
+> establishes new physics. Until the website sweep, this README and
+> [`docs/book2_final_evidence_2026-07-10.md`](docs/book2_final_evidence_2026-07-10.md)
+> are the authoritative public handoff.
+
 [![SecuredMe Education Suite public calendar](https://img.shields.io/badge/SecuredMe%20Education%20Suite-public%20calendar%20%7C%20alpha%20Aug%203%202026-5484ED?style=for-the-badge&logo=googlecalendar&logoColor=white)](https://calendrier.securedme.ca)
 
 **Attribution:** Jean-Sebastien Beaulieu · [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443) · [SecuredMe](https://securedme.ca) · [Synthia](https://synthia.securedme.ca)
@@ -177,6 +188,19 @@ manifest policy, p114 consensus inputs, bounded p046 limits, and the sandbox
 kill plan. Its terminal state is `ready_for_p114 = true_after_Synthia` and
 `ready_for_FNP = false_before_p114`; Synthia remains admission-only and emits
 no fractal computation fields.
+
+The fixture `tests/fixtures/neutrino_chapter14_valid_event.json` closes the
+Book II source boundary. The dedicated `neutrino chapter14-threshold-check`
+command verifies the primary-source object, the exact ten-carrier policy,
+bounded phason-transition metadata, and explicit claim limits before FNP-QNN
+may calculate a matrix threshold. Synthia can admit, suspend, or reject this
+packet, but it never calculates `A_adj`, `S_sub`, `P_phason`, `q_t`, `D_f`,
+`dF`, or `i_fractal_candidate`. `PenroseRulePacket` remains a mathematical
+research packet and never becomes a claimed physical substrate.
+
+The complete public-safe Book II software map, frozen evidence hashes, and
+reproduction commands are maintained in
+[`docs/book2_final_evidence_2026-07-10.md`](docs/book2_final_evidence_2026-07-10.md).
 
 ## Plithogenic Biology And System Math
 
