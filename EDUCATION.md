@@ -98,6 +98,15 @@ does not execute those calculations. It only admits or blocks the downstream
 FNP-QNN validation request, with `P2_internal_repeatability` as the maximum
 proof state.
 
+For chapter-13 distributed-validation exercises,
+`chapter13_distributed_validation_profile` validates four complete 67-worker
+campaign contracts before any sandbox is created. It checks the frozen run
+matrix, four-task worker bundles, full revision pins, deterministic random
+assignment policy, p114 inputs, bounded p046 policy, TTL, and kill-in-finally
+requirements. p114 may clarify or reject after Synthia, but it may never
+override a Synthia rejection. Datadog telemetry is observational and cannot
+alter admission.
+
 Use:
 
 ```powershell
