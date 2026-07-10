@@ -119,6 +119,20 @@ REFUSAL_CATEGORIES = (
     "chapter11_dl_lex_as_df",
     "chapter11_fnp_output_in_synthia",
     "chapter11_candidate_as_proof",
+    "chapter12_missing_validation_contract",
+    "chapter12_missing_reference_run",
+    "chapter12_incomplete_carrier_policy",
+    "chapter12_incomplete_matter_model",
+    "chapter12_incomplete_detector_response",
+    "chapter12_hidden_randomness",
+    "chapter12_invalid_repeat_protocol",
+    "chapter12_invalid_proof_upgrade",
+    "chapter12_msw_as_measurement",
+    "chapter12_trace_as_neutrino",
+    "chapter12_secondary_as_primary_interaction",
+    "chapter12_repetition_as_experimental_evidence",
+    "chapter12_fnp_before_synthia",
+    "chapter12_fnp_output_in_synthia",
 )
 
 CRITICAL_REJECTION_CODES = {
@@ -187,6 +201,13 @@ CRITICAL_REJECTION_CODES = {
     "chapter11_dl_lex_as_df",
     "chapter11_fnp_output_in_synthia",
     "chapter11_candidate_as_proof",
+    "chapter12_invalid_proof_upgrade",
+    "chapter12_msw_as_measurement",
+    "chapter12_trace_as_neutrino",
+    "chapter12_secondary_as_primary_interaction",
+    "chapter12_repetition_as_experimental_evidence",
+    "chapter12_fnp_before_synthia",
+    "chapter12_fnp_output_in_synthia",
 }
 CORRECTION_CODES = {
     "literal_mass_gain_loss_claim",
@@ -226,6 +247,13 @@ SUSPENSION_CODES = {
     "chapter11_path_pair_missing",
     "chapter11_path_container_mismatch",
     "chapter11_path_admission_route_mismatch",
+    "chapter12_missing_validation_contract",
+    "chapter12_missing_reference_run",
+    "chapter12_incomplete_carrier_policy",
+    "chapter12_incomplete_matter_model",
+    "chapter12_incomplete_detector_response",
+    "chapter12_hidden_randomness",
+    "chapter12_invalid_repeat_protocol",
 }
 VALID_INTERACTION_CHANNELS = {"weak_CC", "weak_NC"}
 VALID_FLAVORS = {"nu_e", "nu_mu", "nu_tau", "unknown"}
@@ -275,6 +303,7 @@ CHAPTER10_EVENT_SCHEMA_VERSION = "chamber.simulated_neutrino_event.v1"
 CHAPTER10_RUN_CONTRACT_VERSION = "chamber.run_contract.v1"
 CHAPTER11_PASSAGE_CONTRACT_VERSION = "chamber.chapter11_passage_contract.v1"
 CHAPTER11_INJECTION_PACKET_VERSION = "chamber.chapter11_injection_packet.v1"
+CHAPTER12_VALIDATION_CONTRACT_VERSION = "chamber.chapter12_validation_contract.v1"
 CHAPTER11_FORBIDDEN_OUTPUT_KEYS = {
     "D_f",
     "D_f_hat",
@@ -285,6 +314,10 @@ CHAPTER11_FORBIDDEN_OUTPUT_KEYS = {
     "D_f_hat_11",
     "dF_11",
     "i_fractal_candidate_11",
+}
+CHAPTER12_FORBIDDEN_OUTPUT_KEYS = CHAPTER11_FORBIDDEN_OUTPUT_KEYS | {
+    "effective_matter_potential",
+    "reconstructed_detector_output",
 }
 
 
@@ -373,6 +406,7 @@ class LexPacketNeutrino:
     chapter9_source_choice_profile: Mapping[str, object]
     chapter10_chamber_profile: Mapping[str, object]
     chapter11_passage_profile: Mapping[str, object]
+    chapter12_validation_profile: Mapping[str, object]
 
     def as_dict(self) -> dict[str, object]:
         decision = {
@@ -398,6 +432,7 @@ class LexPacketNeutrino:
             "chapter9_source_choice_profile": dict(self.chapter9_source_choice_profile),
             "chapter10_chamber_profile": dict(self.chapter10_chamber_profile),
             "chapter11_passage_profile": dict(self.chapter11_passage_profile),
+            "chapter12_validation_profile": dict(self.chapter12_validation_profile),
             "guardrail_categories": list(REFUSAL_CATEGORIES),
             "metric_definition": "dL_lex is lexical admission load only; downstream FNP friction is separate.",
         }
@@ -458,6 +493,12 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         d_l_lex,
         chapter10_chamber_profile,
     )
+    chapter12_validation_profile = _chapter12_validation_profile(
+        observation,
+        reason_codes,
+        status,
+        chapter11_passage_profile,
+    )
     refusal_packet = RefusalPacket(
         blocked=not adm_lex,
         reason_codes=reason_codes,
@@ -479,6 +520,7 @@ def classify_neutrino_observation(payload: Mapping[str, Any]) -> dict[str, objec
         chapter9_source_choice_profile=chapter9_source_choice_profile,
         chapter10_chamber_profile=chapter10_chamber_profile,
         chapter11_passage_profile=chapter11_passage_profile,
+        chapter12_validation_profile=chapter12_validation_profile,
     ).as_dict()
     return {
         "success": True,
@@ -1203,6 +1245,72 @@ def _reason_codes(observation: NeutrinoObservationInput) -> list[str]:
             reasons.append("chapter11_candidate_as_proof")
         if _contains_forbidden_chapter11_output(observation.raw_payload):
             reasons.append("chapter11_fnp_output_in_synthia")
+
+    if _chapter12_requested(observation):
+        contract = _chapter12_validation_contract(observation.raw_payload)
+        if not contract:
+            reasons.append("chapter12_missing_validation_contract")
+        else:
+            if not str(contract.get("reference_run_id", "")).strip():
+                reasons.append("chapter12_missing_reference_run")
+            supplied_carriers = contract.get("required_carriers", [])
+            if not isinstance(supplied_carriers, list) or set(map(str, supplied_carriers)) != set(CHAPTER6_REQUIRED_CARRIERS):
+                reasons.append("chapter12_incomplete_carrier_policy")
+
+            medium_policy = contract.get("medium_policy")
+            if not isinstance(medium_policy, Mapping) or medium_policy.get("explicit_matter_potential_required") is not True:
+                reasons.append("chapter12_incomplete_matter_model")
+
+            detector_policy = contract.get("detector_policy")
+            if not isinstance(detector_policy, Mapping) or detector_policy.get("response_matrix_required") is not True:
+                reasons.append("chapter12_incomplete_detector_response")
+            elif str(detector_policy.get("background_policy", "")) != "explicit_or_none_by_model":
+                reasons.append("chapter12_incomplete_detector_response")
+
+            repeat_protocol = contract.get("repeat_protocol")
+            if not isinstance(repeat_protocol, Mapping):
+                reasons.append("chapter12_invalid_repeat_protocol")
+            else:
+                deterministic_runs = _optional_float(repeat_protocol.get("deterministic_runs"))
+                stochastic_runs = _optional_float(repeat_protocol.get("stochastic_runs"))
+                maximum_runs = _optional_float(repeat_protocol.get("maximum_runs"))
+                delta_tolerance = _optional_float(repeat_protocol.get("delta_max_tolerance"))
+                rmse_tolerance = _optional_float(repeat_protocol.get("rmse_tolerance"))
+                if (
+                    deterministic_runs is None
+                    or stochastic_runs is None
+                    or maximum_runs is None
+                    or not 1 <= deterministic_runs <= maximum_runs <= 1000
+                    or not 1 <= stochastic_runs <= maximum_runs
+                    or delta_tolerance is None
+                    or rmse_tolerance is None
+                    or delta_tolerance < 0
+                    or rmse_tolerance < 0
+                ):
+                    reasons.append("chapter12_invalid_repeat_protocol")
+                if repeat_protocol.get("hidden_randomness") is not False or not str(
+                    repeat_protocol.get("seed_policy", "")
+                ).strip():
+                    reasons.append("chapter12_hidden_randomness")
+
+            if str(contract.get("proof_state_requested", "")) not in {
+                "P0_structural",
+                "P1_software_execution",
+                "P2_internal_repeatability",
+            } or contract.get("physical_model_validated") is not False:
+                reasons.append("chapter12_invalid_proof_upgrade")
+            if isinstance(medium_policy, Mapping) and medium_policy.get("MSW_measurement_claim") is True:
+                reasons.append("chapter12_msw_as_measurement")
+            if isinstance(detector_policy, Mapping) and detector_policy.get("trace_is_neutrino") is True:
+                reasons.append("chapter12_trace_as_neutrino")
+            if isinstance(detector_policy, Mapping) and detector_policy.get("secondary_is_primary_interaction") is True:
+                reasons.append("chapter12_secondary_as_primary_interaction")
+            if contract.get("repetition_is_experimental_evidence") is True:
+                reasons.append("chapter12_repetition_as_experimental_evidence")
+            if contract.get("ready_for_FNP") is True or ready_for_fnp is True:
+                reasons.append("chapter12_fnp_before_synthia")
+        if _contains_forbidden_chapter12_output(observation.raw_payload):
+            reasons.append("chapter12_fnp_output_in_synthia")
 
     if _chapter5_requested(observation) and set(reasons) & (
         CRITICAL_REJECTION_CODES | CORRECTION_CODES | SUSPENSION_CODES
@@ -2271,6 +2379,89 @@ def _chapter11_controls_profile(common_controls: Mapping[str, object]) -> dict[s
     }
 
 
+def _chapter12_validation_profile(
+    observation: NeutrinoObservationInput,
+    reason_codes: tuple[str, ...],
+    status: DecisionStatus,
+    chapter11_passage_profile: Mapping[str, object],
+) -> dict[str, object]:
+    requested = _chapter12_requested(observation)
+    contract = _chapter12_validation_contract(observation.raw_payload)
+    admitted = status in {DecisionStatus.ACCEPTED, DecisionStatus.ACCEPTED_WITH_PARTITION}
+    ready = requested and admitted and bool(contract)
+    if not requested:
+        profile_status = "not_requested"
+    elif ready:
+        profile_status = "ready_for_fnp_validation"
+    elif status is DecisionStatus.REJECTED:
+        profile_status = "rejected"
+    else:
+        profile_status = "suspended"
+
+    required_carriers = contract.get("required_carriers", []) if contract else []
+    medium_policy = contract.get("medium_policy", {}) if contract else {}
+    detector_policy = contract.get("detector_policy", {}) if contract else {}
+    repeat_protocol = contract.get("repeat_protocol", {}) if contract else {}
+    invariants = contract.get("invariants", []) if contract else []
+    if not isinstance(medium_policy, Mapping):
+        medium_policy = {}
+    if not isinstance(detector_policy, Mapping):
+        detector_policy = {}
+    if not isinstance(repeat_protocol, Mapping):
+        repeat_protocol = {}
+    if not isinstance(required_carriers, list):
+        required_carriers = []
+    if not isinstance(invariants, list):
+        invariants = []
+
+    return {
+        "profile_version": "chapter12.validation_public_safe.v1",
+        "chapter12_status": profile_status,
+        "ValidationContract_12": {
+            "schema_version": str(contract.get("schema_version", CHAPTER12_VALIDATION_CONTRACT_VERSION))
+            if contract
+            else CHAPTER12_VALIDATION_CONTRACT_VERSION,
+            "status": str(contract.get("status", "missing")) if contract else "missing",
+            "reference_run_id": str(contract.get("reference_run_id", "")) if contract else "",
+            "proof_state_requested": str(contract.get("proof_state_requested", "")) if contract else "",
+            "physical_model_validated": False,
+            "chapter11_dependency": "reference_declared" if contract.get("reference_run_id") else "missing",
+            "chapter11_inline_status": str(chapter11_passage_profile.get("chapter11_status", "not_supplied")),
+        },
+        "carrier_policy": {
+            "required_carriers": list(map(str, required_carriers)),
+            "required_count": len(CHAPTER6_REQUIRED_CARRIERS),
+            "provided_count": len(required_carriers),
+            "exact_ten_carrier_set": set(map(str, required_carriers)) == set(CHAPTER6_REQUIRED_CARRIERS),
+            "missing_carriers": [name for name in CHAPTER6_REQUIRED_CARRIERS if name not in set(map(str, required_carriers))],
+        },
+        "medium_policy": dict(medium_policy),
+        "detector_policy": dict(detector_policy),
+        "repeat_protocol": dict(repeat_protocol),
+        "invariants": list(map(str, invariants)),
+        "SynthiaReading_12": {
+            "ready_for_Synthia": requested,
+            "approved_for_fnp_validation": ready,
+            "ready_for_FNP": "true_after_Synthia" if ready else "false",
+            "reason_codes": list(reason_codes),
+            "next_required_gate": "FNP chapter12 validation" if ready else "repair_chapter12_validation_contract",
+        },
+        "capability_boundary": {
+            "requested_claim": "ten-carrier software computation",
+            "maximum_proof_state": "P2_internal_repeatability",
+            "physical_model_validated": False,
+            "simulation_is_detection": False,
+            "repetition_is_experimental_evidence": False,
+        },
+        "boundary": {
+            "synthia_role": "chapter12 validation contract and lexical gate only",
+            "no_medium_computation": True,
+            "no_detector_reconstruction": True,
+            "no_fractal_computation": True,
+        },
+    }
+
+
 def _l_over_e(observation: NeutrinoObservationInput) -> float | None:
     if observation.distance_km is None or observation.energy_gev is None or observation.energy_gev <= 0.0:
         return None
@@ -2567,6 +2758,11 @@ def _chapter11_requested(observation: NeutrinoObservationInput) -> bool:
     return False
 
 
+def _chapter12_requested(observation: NeutrinoObservationInput) -> bool:
+    raw = observation.raw_payload
+    return raw.get("chapter12_enabled") is True or isinstance(raw.get("chapter12_validation_contract"), Mapping)
+
+
 def _chapter9_source_ids(payload: Mapping[str, Any]) -> list[str]:
     registry = payload.get("chapter9_source_registry")
     if not isinstance(registry, Mapping):
@@ -2621,6 +2817,11 @@ def _chapter11_injection_packet(payload: Mapping[str, Any]) -> Mapping[str, obje
     return packet if isinstance(packet, Mapping) else {}
 
 
+def _chapter12_validation_contract(payload: Mapping[str, Any]) -> Mapping[str, object]:
+    contract = payload.get("chapter12_validation_contract")
+    return contract if isinstance(contract, Mapping) else {}
+
+
 def _chapter11_common_controls(injection: Mapping[str, object]) -> Mapping[str, object]:
     controls = injection.get("CommonPathControls") if isinstance(injection, Mapping) else None
     if not isinstance(controls, Mapping):
@@ -2673,6 +2874,18 @@ def _contains_forbidden_chapter11_output(value: object) -> bool:
         )
     if isinstance(value, list):
         return any(_contains_forbidden_chapter11_output(item) for item in value)
+    return False
+
+
+def _contains_forbidden_chapter12_output(value: object) -> bool:
+    if isinstance(value, Mapping):
+        for key, item in value.items():
+            if str(key) in CHAPTER12_FORBIDDEN_OUTPUT_KEYS:
+                return True
+            if _contains_forbidden_chapter12_output(item):
+                return True
+    elif isinstance(value, list):
+        return any(_contains_forbidden_chapter12_output(item) for item in value)
     return False
 
 

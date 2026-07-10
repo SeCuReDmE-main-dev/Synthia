@@ -474,6 +474,14 @@ def _chapter10_event():
     return json.loads(Path("tests/fixtures/neutrino_chapter10_valid_event.json").read_text(encoding="utf-8"))
 
 
+def _chapter11_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter11_valid_event.json").read_text(encoding="utf-8"))
+
+
+def _chapter12_event():
+    return json.loads(Path("tests/fixtures/neutrino_chapter12_valid_event.json").read_text(encoding="utf-8"))
+
+
 def test_chapter6_valid_event_returns_complete_i_neutrino_vector():
     payload = classify_neutrino_observation(_chapter6_event())
     packet = payload["LexPacket_neutrino"]
@@ -854,3 +862,116 @@ def test_chapter10_ready_for_fnp_before_synthia_is_rejected():
     assert payload["decision"]["status"] == "rejected"
     assert "ready_for_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
     assert "chapter10_fnp_before_synthia" in payload["refusal_packet"]["reason_codes"]
+
+
+def test_chapter11_valid_event_establishes_passage_without_fnp_fields():
+    payload = classify_neutrino_observation(_chapter11_event())
+    chapter11 = payload["LexPacket_neutrino"]["chapter11_passage_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter11["Chapter11PassageContract"]["status"] == "established"
+    assert chapter11["Chapter11InjectionPacket"]["status"] == "assembled"
+    assert chapter11["ChamberSymmetry_11"]["status"] == "valid"
+    assert chapter11["ChamberSymmetry_11"]["same_container"] is True
+    assert chapter11["ChamberSymmetry_11"]["same_admission_route"] is True
+    assert chapter11["SynthiaReading_11"]["approved_for_fnp"] is True
+    assert chapter11["SynthiaReading_11"]["ready_for_FNP"] == "true_after_Synthia"
+    for key in ("D_f", "D_f_hat", "dF", "i_fractal", "i_fractal_candidate"):
+        assert not _json_has_key(payload, key)
+
+
+def test_chapter11_path_mismatch_and_overclaims_are_blocked():
+    event = _chapter11_event()
+    event["chapter11_injection_packet"]["Path_B_event"]["container_id"] = "other_container"
+    event["notes"] = (
+        "T2K reproduced; CP violation measured; path comparison measures CP; "
+        "background missing equals zero; chapter11 direct FNP; candidate is proof"
+    )
+
+    payload = classify_neutrino_observation(event)
+    reasons = payload["refusal_packet"]["reason_codes"]
+
+    assert payload["Adm_lex"] is False
+    assert "chapter11_path_container_mismatch" in reasons
+    assert "chapter11_t2k_reproduction_claim" in reasons
+    assert "chapter11_cp_measurement_claim" in reasons
+    assert "chapter11_path_comparison_as_cp_measurement" in reasons
+    assert "chapter11_background_missing_as_zero" in reasons
+    assert "chapter11_fnp_before_synthia" in reasons
+    assert "chapter11_candidate_as_proof" in reasons
+
+
+def test_chapter12_valid_contract_is_ready_for_fnp_validation_only():
+    payload = classify_neutrino_observation(_chapter12_event())
+    chapter12 = payload["LexPacket_neutrino"]["chapter12_validation_profile"]
+
+    assert payload["Adm_lex"] is True
+    assert chapter12["profile_version"] == "chapter12.validation_public_safe.v1"
+    assert chapter12["chapter12_status"] == "ready_for_fnp_validation"
+    assert chapter12["carrier_policy"]["exact_ten_carrier_set"] is True
+    assert chapter12["carrier_policy"]["provided_count"] == 10
+    assert chapter12["SynthiaReading_12"]["approved_for_fnp_validation"] is True
+    assert chapter12["SynthiaReading_12"]["ready_for_FNP"] == "true_after_Synthia"
+    assert chapter12["capability_boundary"]["maximum_proof_state"] == "P2_internal_repeatability"
+    assert chapter12["capability_boundary"]["physical_model_validated"] is False
+    for key in ("D_f", "D_f_hat", "dF", "i_fractal", "i_fractal_candidate"):
+        assert not _json_has_key(payload, key)
+
+
+def test_chapter12_incomplete_contract_is_suspended():
+    event = _chapter12_event()
+    contract = event["chapter12_validation_contract"]
+    contract["required_carriers"].remove("I_uncertainty")
+    contract["medium_policy"].pop("explicit_matter_potential_required")
+    contract["detector_policy"]["background_policy"] = "missing_means_zero"
+    contract["repeat_protocol"]["hidden_randomness"] = True
+
+    payload = classify_neutrino_observation(event)
+    reasons = payload["refusal_packet"]["reason_codes"]
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "suspended"
+    assert "chapter12_incomplete_carrier_policy" in reasons
+    assert "chapter12_incomplete_matter_model" in reasons
+    assert "chapter12_incomplete_detector_response" in reasons
+    assert "chapter12_hidden_randomness" in reasons
+
+
+def test_chapter12_invalid_claim_upgrades_are_rejected():
+    event = _chapter12_event()
+    contract = event["chapter12_validation_contract"]
+    contract["proof_state_requested"] = "P5_physical_truth"
+    contract["physical_model_validated"] = True
+    contract["medium_policy"]["MSW_measurement_claim"] = True
+    contract["detector_policy"]["trace_is_neutrino"] = True
+    contract["detector_policy"]["secondary_is_primary_interaction"] = True
+    contract["repetition_is_experimental_evidence"] = True
+    contract["ready_for_FNP"] = True
+
+    payload = classify_neutrino_observation(event)
+    reasons = payload["refusal_packet"]["reason_codes"]
+
+    assert payload["Adm_lex"] is False
+    assert payload["decision"]["status"] == "rejected"
+    assert "chapter12_invalid_proof_upgrade" in reasons
+    assert "chapter12_msw_as_measurement" in reasons
+    assert "chapter12_trace_as_neutrino" in reasons
+    assert "chapter12_secondary_as_primary_interaction" in reasons
+    assert "chapter12_repetition_as_experimental_evidence" in reasons
+    assert "chapter12_fnp_before_synthia" in reasons
+
+
+def test_chapter12_cli_emits_validation_profile(capsys):
+    assert main(
+        [
+            "neutrino",
+            "guardrail-check",
+            "--input",
+            "tests/fixtures/neutrino_chapter12_valid_event.json",
+            "--json",
+        ]
+    ) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["LexPacket_neutrino"]["chapter12_validation_profile"]["chapter12_status"] == (
+        "ready_for_fnp_validation"
+    )

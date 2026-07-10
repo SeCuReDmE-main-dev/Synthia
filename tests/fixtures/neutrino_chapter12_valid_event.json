@@ -1,0 +1,71 @@
+{
+  "event_id": "chapter12-public-safe-neutrino-001",
+  "claim_class": "simulation",
+  "interaction_channel": "weak_CC",
+  "created_flavor": "mu",
+  "flavor_basis": {"e": 0.0, "mu": 1.0, "tau": 0.0},
+  "mass_basis": {"nu1": 0.17, "nu2": 0.33, "nu3": 0.5},
+  "mixing_model": "PMNS_like_toy",
+  "mixing_status": "toy_simulation",
+  "distance_km": 295,
+  "energy_gev": 0.6,
+  "medium_type": "vacuum",
+  "density_status": "not_applicable",
+  "matter_effect_status": "toy_model_available",
+  "MSW_status": "toy_only_not_measurement",
+  "secondary_products": ["muon_like_track"],
+  "detector_signature": "toy muon-like indirect projection",
+  "source_type": "toy_simulation",
+  "source_status": "simulation_input",
+  "source_truth": {"chapter12_reference": "public-safe internal simulation contract"},
+  "chapter5_enabled": true,
+  "chapter7_enabled": true,
+  "scale_context": {
+    "domain": "toy_neutrino_event",
+    "scale": "local_chamber",
+    "measurement_method": "public_safe_carrier_request"
+  },
+  "carrier_request": {"carrier_family": "multi_attribute_tension_carrier"},
+  "chapter12_enabled": true,
+  "chapter12_validation_contract": {
+    "schema_version": "chamber.chapter12_validation_contract.v1",
+    "status": "declared",
+    "reference_run_id": "chapter11_first_passage_001",
+    "proof_state_requested": "P2_internal_repeatability",
+    "physical_model_validated": false,
+    "required_carriers": [
+      "I_source", "I_flavor", "I_mass", "I_mix", "I_phase",
+      "I_medium", "I_interaction", "I_secondary", "I_detector", "I_uncertainty"
+    ],
+    "medium_policy": {
+      "levels": ["vacuum", "context_only", "toy_matter_model"],
+      "explicit_matter_potential_required": true,
+      "MSW_measurement_claim": false
+    },
+    "detector_policy": {
+      "response_matrix_required": true,
+      "background_policy": "explicit_or_none_by_model",
+      "trace_is_neutrino": false,
+      "secondary_is_primary_interaction": false
+    },
+    "repeat_protocol": {
+      "deterministic_runs": 100,
+      "stochastic_runs": 100,
+      "maximum_runs": 1000,
+      "seed_policy": "declared_and_recorded",
+      "hidden_randomness": false,
+      "delta_max_tolerance": 1e-12,
+      "rmse_tolerance": 1e-12
+    },
+    "invariants": [
+      "I_neutrino_vec != dL_lex",
+      "dL_lex != dF",
+      "simulation != detection",
+      "candidate != proof"
+    ],
+    "ready_for_Synthia": true,
+    "ready_for_FNP": "false_before_Synthia",
+    "repetition_is_experimental_evidence": false
+  },
+  "notes": "chapter12 internal repeatability contract; ten-carrier software calculation, not physical validation"
+}

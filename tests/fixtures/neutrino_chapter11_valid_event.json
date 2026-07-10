@@ -1,5 +1,5 @@
 {
-  "event_id": "chapter10-public-safe-neutrino-001",
+  "event_id": "chapter11-public-safe-neutrino-001",
   "claim_class": "simulation",
   "interaction_channel": "weak_CC",
   "created_flavor": "mu",
@@ -36,6 +36,7 @@
   "chapter8_enabled": true,
   "chapter9_enabled": true,
   "chapter10_enabled": true,
+  "chapter11_enabled": true,
   "scale_context": {
     "domain": "toy_neutrino_event",
     "scale": "local_chamber",
@@ -177,5 +178,57 @@
     ],
     "output_boundary": "no_result_before_chapter11"
   },
-  "notes": "chapter10 chamber, container, simulated event and run contract: preparation only; not T2K reproduction, not CP measurement, not detection"
+  "chapter11_passage_contract": {
+    "schema_version": "chamber.chapter11_passage_contract.v1",
+    "status": "established",
+    "run_origin": "chapter8_admissible_under_guardrails",
+    "experiment_choice": "chapter11_t2k_like_flavor_antiflavor_phase_projection",
+    "container_status": "chapter10_ready",
+    "Synthia_required": true,
+    "FNP_before_Synthia": false,
+    "physical_claim_allowed": false,
+    "contract_boundary": "T2K_like != T2K_reproduction"
+  },
+  "chapter11_injection_packet": {
+    "schema_version": "chamber.chapter11_injection_packet.v1",
+    "status": "assembled",
+    "route": "container_to_synthia_to_fnp",
+    "ready_for_Synthia": true,
+    "ready_for_FNP": "false_before_Synthia",
+    "injection_boundary": "simulation_path_pair_not_measurement",
+    "Path_A_event": {
+      "path_id": "path_A_neutrino",
+      "container_id": "chapter10_t2k_like_container_001",
+      "admission_route": "container_to_synthia_to_fnp",
+      "beam_kind": "neutrino",
+      "initial_flavor": "nu_mu",
+      "target_projection": "nu_e",
+      "path_status": "simulation_path",
+      "detection_claim": false,
+      "measurement_claim": false,
+      "reproduction_claim": false
+    },
+    "Path_B_event": {
+      "path_id": "path_B_antineutrino",
+      "container_id": "chapter10_t2k_like_container_001",
+      "admission_route": "container_to_synthia_to_fnp",
+      "beam_kind": "antineutrino",
+      "initial_flavor": "anti_nu_mu",
+      "target_projection": "anti_nu_e",
+      "path_status": "simulation_path",
+      "detection_claim": false,
+      "measurement_claim": false,
+      "reproduction_claim": false
+    },
+    "CommonPathControls": {
+      "container_policy": "same",
+      "admission_route_policy": "same",
+      "baseline_policy": "same",
+      "energy_policy": "same",
+      "detector_projection_policy": "same",
+      "background_model_status": "declared_nonzero_toy",
+      "simulation_boundary": "simulation_not_detection"
+    }
+  },
+  "notes": "chapter11 first passage under a declared contract; not T2K reproduction, not CP measurement, not detection"
 }
