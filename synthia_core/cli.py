@@ -57,6 +57,16 @@ from .plithogenic_probability_statistics import (
 )
 from .plithogenic_set import operate_plithogenic_sets, plithogenic_set_explain, score_plithogenic_set
 from .algorithm_behavior import build_algorithmic_bioinformatics_demo_case, score_algorithm_behavior_case
+from .assets import (
+    approval_packet,
+    build_inventory,
+    classify_education_assets,
+    classify_manifest,
+    manifest_sha256,
+    proposed_migration,
+    validate_manifest,
+    write_json,
+)
 from .biology_graph import build_tree_tobacco_demo_graph, score_biology_graph_review
 from .molecular_evidence import build_dna_similarity_demo_case, score_molecular_review_case
 from .neutrino_lexical_gate import classify_neutrino_observation
@@ -167,6 +177,31 @@ def main(argv: list[str] | None = None) -> int:
     document_pipeline.add_argument("--private-org", default=str(_default_private_org()))
     document_pipeline.add_argument("--emit-lexicon", action="store_true")
     document_pipeline.add_argument("--emit-annex", action="store_true")
+
+    assets = subparsers.add_parser("assets")
+    assets_sub = assets.add_subparsers(dest="command", required=True)
+    assets_inventory = assets_sub.add_parser("inventory")
+    assets_inventory.add_argument("--root", default=None)
+    assets_inventory.add_argument("--out", default=None)
+    assets_classify = assets_sub.add_parser("classify")
+    assets_classify.add_argument("--root", default=None)
+    assets_classify.add_argument("--observations", default=None)
+    assets_classify.add_argument("--out", default=None)
+    assets_review = assets_sub.add_parser("review-manifest")
+    assets_review.add_argument("--manifest", required=True)
+    assets_review.add_argument("--approver", default=None)
+    assets_review.add_argument("--out", default=None)
+    assets_apply = assets_sub.add_parser("apply")
+    assets_apply.add_argument("--manifest", required=True)
+    assets_apply.add_argument("--approval", required=True)
+    assets_apply.add_argument("--execute", action="store_true")
+    assets_verify = assets_sub.add_parser("verify")
+    assets_verify.add_argument("--manifest", required=True)
+    assets_special = assets_sub.add_parser("classify-education-assets")
+    assets_special.add_argument("--root", default=None)
+    assets_special.add_argument("--quantech-url", default=None)
+    assets_special.add_argument("--quantech-token", default=None)
+    assets_special.add_argument("--out", default=None)
 
     lexicon = subparsers.add_parser("lexicon")
     lexicon_sub = lexicon.add_subparsers(dest="command", required=True)
@@ -530,6 +565,76 @@ def main(argv: list[str] | None = None) -> int:
         )
         _print_json(payload)
         return exit_code
+
+    if args.area == "assets":
+        if args.command == "inventory":
+            payload = build_inventory(args.root)
+            if args.out:
+                write_json(args.out, payload)
+                payload = {"ok": True, "path": args.out, "summary": payload["summary"], "hierarchy": payload["hierarchy"]}
+            _print_json(payload)
+            return 0
+        if args.command == "classify":
+            payload = classify_manifest(args.root, observations_path=args.observations)
+            if args.out:
+                write_json(args.out, payload)
+                payload = {"ok": True, "path": args.out, "summary": payload["summary"], "hierarchy": payload["hierarchy"]}
+            _print_json(payload)
+            return 0
+        if args.command == "review-manifest":
+            manifest = _load_json_value(args.manifest)
+            if not isinstance(manifest, dict):
+                raise ValueError("--manifest must decode to a JSON object")
+            validation = validate_manifest(manifest)
+            payload = {
+                "validation": validation,
+                "manifest_sha256": manifest_sha256(manifest),
+                "migration_plan": proposed_migration(manifest),
+                "approval": approval_packet(manifest, args.approver) if args.approver else None,
+                "requires_human_approval": True,
+            }
+            if args.out:
+                write_json(args.out, payload)
+                payload = {"ok": True, "path": args.out, "validation": validation}
+            _print_json(payload)
+            return 0 if validation["ok"] else 1
+        if args.command == "apply":
+            manifest = _load_json_value(args.manifest)
+            approval = _load_json_value(args.approval)
+            if not isinstance(manifest, dict) or not isinstance(approval, dict):
+                raise ValueError("--manifest and --approval must decode to JSON objects")
+            expected = manifest_sha256(manifest)
+            approval_shape_ok = (
+                approval.get("kind") == "synthia.education_assets.approval"
+                and bool(approval.get("approver"))
+                and approval.get("valid_only_for_exact_manifest_hash") is True
+            )
+            ok = approval_shape_ok and approval.get("manifest_sha256") == expected
+            payload = {
+                "ok": bool(ok and args.execute),
+                "dry_run": not args.execute,
+                "approval_shape_ok": approval_shape_ok,
+                "approval_matches_manifest": ok,
+                "manifest_sha256": expected,
+                "migration_plan": proposed_migration(manifest),
+                "boundary": "This command validates migration authority only; file moves require a reviewed implementation pass.",
+            }
+            _print_json(payload)
+            return 0 if ok else 1
+        if args.command == "verify":
+            manifest = _load_json_value(args.manifest)
+            if not isinstance(manifest, dict):
+                raise ValueError("--manifest must decode to a JSON object")
+            payload = validate_manifest(manifest)
+            _print_json(payload)
+            return 0 if payload["ok"] else 1
+        if args.command == "classify-education-assets":
+            payload = classify_education_assets(args.root, args.quantech_url, args.quantech_token)
+            if args.out:
+                write_json(args.out, payload)
+                payload = {"ok": True, "path": args.out, "summary": payload["summary"], "observer_status": payload["observer_status"]}
+            _print_json(payload)
+            return 0
 
     if args.area == "lexicon":
         registry = seed_base_lexicon()

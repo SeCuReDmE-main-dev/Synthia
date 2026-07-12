@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securedme.local/synthia/assets/asset-approval.schema.json",
+  "title": "AssetApproval",
+  "type": "object",
+  "required": ["kind", "manifest_sha256", "approver", "approved_at", "valid_only_for_exact_manifest_hash"],
+  "additionalProperties": true,
+  "properties": {
+    "kind": { "const": "synthia.education_assets.approval" },
+    "manifest_sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "approver": { "type": "string", "minLength": 1 },
+    "approved_at": { "type": "string" },
+    "valid_only_for_exact_manifest_hash": { "const": true }
+  }
+}

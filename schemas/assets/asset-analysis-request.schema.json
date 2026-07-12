@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securedme.local/synthia/assets/asset-analysis-request.schema.json",
+  "title": "AssetAnalysisRequest",
+  "type": "object",
+  "required": ["toolSlug", "path", "relativePath", "sha256", "expectedType"],
+  "additionalProperties": true,
+  "properties": {
+    "toolSlug": { "type": "string", "minLength": 1 },
+    "path": { "type": "string", "minLength": 1 },
+    "relativePath": { "type": "string", "minLength": 1 },
+    "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "expectedType": { "type": "string", "minLength": 1 }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securedme.local/synthia/assets/asset-migration-entry.schema.json",
+  "title": "AssetMigrationEntry",
+  "type": "object",
+  "required": ["tool_slug", "old_path", "new_path", "sha256", "consumers", "rollback"],
+  "additionalProperties": true,
+  "properties": {
+    "tool_slug": { "type": "string", "minLength": 1 },
+    "old_path": { "type": "string", "minLength": 1 },
+    "new_path": { "type": "string", "minLength": 1 },
+    "sha256": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "consumers": { "type": "array", "items": { "type": "string" } },
+    "rollback": { "type": "object" }
+  }
+}

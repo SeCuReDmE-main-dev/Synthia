@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securedme.local/synthia/assets/synthia-asset-classification.schema.json",
+  "title": "SynthiaAssetClassification",
+  "type": "object",
+  "required": ["role", "state", "variant", "review_required", "evidence", "tif", "lexicon_layer"],
+  "additionalProperties": true,
+  "properties": {
+    "role": {
+      "enum": ["logo", "banner", "icon", "badge", "mascot", "illustration", "diagram", "screenshot", "social-card", "video", "audio", "source-document", "archive", "unknown"]
+    },
+    "state": {
+      "enum": ["official-candidate", "alternate", "draft", "legacy", "generated", "shared-suite", "quarantine", "unknown"]
+    },
+    "variant": { "type": "string" },
+    "review_required": { "type": "boolean" },
+    "evidence": { "type": "array", "items": { "type": "string" } },
+    "tif": { "type": "object" },
+    "lexicon_layer": { "const": "I_lexicon" }
+  }
+}

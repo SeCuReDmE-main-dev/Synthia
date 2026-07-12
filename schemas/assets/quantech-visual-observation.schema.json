@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securedme.local/synthia/assets/quantech-visual-observation.schema.json",
+  "title": "QuantechVisualObservation",
+  "type": "object",
+  "required": ["observer", "format", "width", "height", "pHash", "mediaStored"],
+  "additionalProperties": true,
+  "properties": {
+    "observer": { "const": "quantech-vid-local-observer" },
+    "format": { "type": "string" },
+    "width": { "type": "integer", "minimum": 1 },
+    "height": { "type": "integer", "minimum": 1 },
+    "ratio": { "type": ["number", "null"] },
+    "hasAlpha": { "type": "boolean" },
+    "dominantColors": { "type": "array" },
+    "visualEntropy": { "type": "number", "minimum": 0, "maximum": 1 },
+    "pHash": { "type": "string", "minLength": 1 },
+    "mediaStored": { "const": false }
+  }
+}
