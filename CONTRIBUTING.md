@@ -10,14 +10,21 @@
 - Private modified copies, broken forks, and unreviewed rewrites are not a maintainer support obligation.
 
 
-Official support is PR-based. Changes must preserve the school-tool governance standard in `SCHOOL_TOOL_GOVERNANCE.md`.
+During pre-alpha, official support and feedback are issue-based. External pull
+requests are not evaluated for merge until the classroom stability gate in
+`SCHOOL_TOOL_GOVERNANCE.md` is reached. Forks remain welcome for learning and
+experimentation under SEL-2.0.
 
-Accepted contributions:
+Useful issue reports:
 
-- documentation improvements for students and teachers;
-- bug fixes with focused tests;
-- Codex/OpenAI or Antigravity/Gemini classroom workflow improvements;
+- reproducible bugs with a minimal command and environment details;
+- documentation gaps affecting students or teachers;
+- public-source corrections for taxonomy traces;
 - safer examples and clearer human-review boundaries.
+
+Do not include private correspondence, credentials, unpublished evidence, or
+sensitive student data in issues. Maintainers may close requests that cross the
+scientific-authority or school-tool boundary.
 
 Not accepted as official school routes:
 

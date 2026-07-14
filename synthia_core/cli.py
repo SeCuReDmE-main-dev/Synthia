@@ -87,6 +87,7 @@ from .symbolic_plithogenic_algebra import (
     symbolic_plithogenic_explain,
 )
 from .taxonomy_memory import TaxonomicMemorySystem
+from .showcase import SUPPORTED_CASES, write_showcase_trace
 
 
 def _print_json(payload: object) -> None:
@@ -413,6 +414,13 @@ def main(argv: list[str] | None = None) -> int:
     codex_sub.add_parser("status")
     wake = codex_sub.add_parser("wake-prompt")
     wake.add_argument("--private-org", default=str(_default_private_org()))
+
+    showcase = subparsers.add_parser("showcase")
+    showcase_sub = showcase.add_subparsers(dest="command", required=True)
+    showcase_export = showcase_sub.add_parser("export")
+    showcase_export.add_argument("--case", required=True, choices=SUPPORTED_CASES)
+    showcase_export.add_argument("--output", required=True)
+    showcase_export.add_argument("--pretty", action="store_true")
 
     taxonomy = subparsers.add_parser("taxonomy")
     taxonomy_sub = taxonomy.add_subparsers(dest="command", required=True)
@@ -860,6 +868,17 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.area == "codex" and args.command == "wake-prompt":
         print(build_wake_prompt(args.private_org))
+        return 0
+
+    if args.area == "showcase" and args.command == "export":
+        destination = write_showcase_trace(args.case, args.output, pretty=args.pretty)
+        _print_json(
+            {
+                "case": args.case,
+                "output": str(destination),
+                "schema_version": "synthia.showcase.trace.v1",
+            }
+        )
         return 0
 
     if args.area == "taxonomy" and args.command == "aburria-packet":

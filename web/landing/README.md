@@ -6,7 +6,9 @@ The landing page uses a resilient visual system:
 
 - The visible identity is CSS-rendered so the page stays polished even if image uploads fail.
 - `synthia-logo.png` and `synthia-hero.png` can still be uploaded as optional future assets, but the current public page does not depend on them to render.
-- No JavaScript, no API key, no server-side dependency, and no private evidence.
+- The Trace Lab uses a small browser script to render a versioned JSON file from
+  the same public origin. It makes no AI/API call, stores no key, has no
+  server-side dependency, and contains no private evidence.
 
 Deploy the generated `dist/synthia-public/` package to the cPanel document root:
 
@@ -14,7 +16,11 @@ Deploy the generated `dist/synthia-public/` package to the cPanel document root:
 /home/xacm7978/synthia.securedme.ca/
   index.html
   neutrosophic-lexicon.html
+  trace-lab.html
+  trace-lab.js
   synthia-landing.css
+  data/
+    aburria-trace.json
   assets/
     synthia-hero.png
     synthia-logo.png
@@ -24,9 +30,10 @@ Upload checklist:
 
 1. Upload `index.html`.
 2. Upload `neutrosophic-lexicon.html`.
-3. Upload `synthia-landing.css`.
-4. Upload the complete `assets/` folder.
-5. Verify `https://synthia.securedme.ca/assets/synthia-hero.png` returns `200`.
+3. Upload `trace-lab.html`, `trace-lab.js`, and `data/aburria-trace.json`.
+4. Upload `synthia-landing.css`.
+5. Upload the complete `assets/` folder.
+6. Verify the asset and Trace Lab URLs return `200`.
 
 cPanel Git workflow:
 
