@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from synthia_core.cli import main
+from synthia_core.cli import _load_json_value, main
 from synthia_core.safety import assert_public_path
 from synthia_core.soul import build_public_soul_summary
 
@@ -13,6 +13,21 @@ def test_public_path_rejects_private_markers():
         assert "private-looking" in str(exc)
     else:
         raise AssertionError("private path should be rejected")
+
+
+def test_inline_json_survives_platform_filename_limits(monkeypatch):
+    payload = {"records": [{"label": "x" * 300}]}
+    inline = json.dumps(payload)
+    original_exists = Path.exists
+
+    def platform_exists(path):
+        if str(path) == inline:
+            raise OSError("filename too long")
+        return original_exists(path)
+
+    monkeypatch.setattr(Path, "exists", platform_exists)
+
+    assert _load_json_value(inline) == payload
 
 
 def test_public_soul_summary_filters_private_evidence(tmp_path: Path):

@@ -1,0 +1,124 @@
+{
+  "ai_role": "traceability_support_only",
+  "authority_boundary": "Candidate memory for human review; formal nomenclatural authority remains human and Code-governed.",
+  "canonical_taxon": "Aburria aburri",
+  "case_id": "aburria-aburri-memory-repair",
+  "formal_authority": "Lesson, 1828",
+  "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon",
+  "human_review_required": true,
+  "locales": {
+    "en": {
+      "boundary_title": "Authority boundary",
+      "eyebrow": "Living Taxonomy",
+      "language": "English",
+      "repairs_title": "Memory layers restored",
+      "sources_title": "Public source registry",
+      "subtitle": "Synthia turns scattered public evidence into a traceable candidate memory without replacing expert judgment.",
+      "timeline.modern": "A 2026 peer-reviewed treatment supplies current taxonomic context.",
+      "timeline.original": "The formal authority remains Lesson, 1828.",
+      "timeline.redescription": "A 2012 redescription restores morphology, ecology, nesting, and diagnostic context to the candidate memory.",
+      "title": "See a scientific memory repair itself",
+      "unresolved_title": "Still unresolved"
+    },
+    "es": {
+      "boundary_title": "Límite de autoridad",
+      "eyebrow": "Taxonomía viva",
+      "language": "Español",
+      "repairs_title": "Capas de memoria restauradas",
+      "sources_title": "Registro de fuentes públicas",
+      "subtitle": "Synthia convierte evidencia pública dispersa en una memoria candidata trazable sin sustituir el juicio experto.",
+      "timeline.modern": "Un estudio revisado por pares de 2026 aporta contexto taxonómico actual.",
+      "timeline.original": "La autoridad formal sigue siendo Lesson, 1828.",
+      "timeline.redescription": "Una redescripción de 2012 restaura morfología, ecología, nidificación y contexto diagnóstico.",
+      "title": "Observa cómo se repara una memoria científica",
+      "unresolved_title": "Aún sin resolver"
+    },
+    "fr": {
+      "boundary_title": "Limite d’autorité",
+      "eyebrow": "Taxonomie vivante",
+      "language": "Français",
+      "repairs_title": "Couches de mémoire restaurées",
+      "sources_title": "Registre des sources publiques",
+      "subtitle": "Synthia transforme des preuves publiques dispersées en mémoire candidate traçable, sans remplacer le jugement expert.",
+      "timeline.modern": "Un traitement évalué par les pairs en 2026 apporte le contexte taxonomique actuel.",
+      "timeline.original": "L’autorité formelle demeure Lesson, 1828.",
+      "timeline.redescription": "Une redescription de 2012 restaure la morphologie, l’écologie, la nidification et le contexte diagnostique.",
+      "title": "Voir une mémoire scientifique se réparer",
+      "unresolved_title": "Encore non résolu"
+    },
+    "it": {
+      "boundary_title": "Confine di autorità",
+      "eyebrow": "Tassonomia vivente",
+      "language": "Italiano",
+      "repairs_title": "Strati di memoria ripristinati",
+      "sources_title": "Registro delle fonti pubbliche",
+      "subtitle": "Synthia trasforma prove pubbliche disperse in una memoria candidata tracciabile senza sostituire il giudizio esperto.",
+      "timeline.modern": "Uno studio peer-reviewed del 2026 fornisce il contesto tassonomico attuale.",
+      "timeline.original": "L’autorità formale resta Lesson, 1828.",
+      "timeline.redescription": "Una ridescrizione del 2012 ripristina morfologia, ecologia, nidificazione e contesto diagnostico.",
+      "title": "Guarda una memoria scientifica ripararsi",
+      "unresolved_title": "Ancora irrisolto"
+    }
+  },
+  "memory_repairs": [
+    "morphology",
+    "ecology",
+    "nesting",
+    "diagnostic_context"
+  ],
+  "review_status": "candidate_memory_for_human_review",
+  "schema_version": "synthia.showcase.trace.v1",
+  "source_registry": [
+    {
+      "citation": "Aguilar, H. F. & Aguilar H., R. F. (2012), Revista de Ecología Latinoamericana 17(3):53-61.",
+      "kind": "critical_redescription",
+      "public_url": null,
+      "source_id": "aguilar-aguilar-2012-redescription",
+      "year": 2012
+    },
+    {
+      "citation": "Papéis Avulsos de Zoologia 66:e202566014.",
+      "kind": "peer_reviewed_taxonomic_context",
+      "public_url": "https://revistas.usp.br/paz/article/view/237191",
+      "source_id": "paz-2026-aburria-taxonomy",
+      "year": 2026
+    },
+    {
+      "citation": "NCBI Taxonomy Browser: Aburria aburri (Taxonomy ID 125058).",
+      "kind": "current_registry_context",
+      "public_url": "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=125058&mode=info",
+      "source_id": "ncbi-taxonomy-aburria-aburri",
+      "year": 2026
+    }
+  ],
+  "timeline": [
+    {
+      "citation": "Lesson, 1828",
+      "event_id": "original-authority",
+      "event_type": "formal_authority",
+      "public_url": null,
+      "summary_key": "timeline.original",
+      "year": 1828
+    },
+    {
+      "citation": "H. F. Aguilar & R. F. Aguilar H. (2012). Redescripción del gualí, Aburria aburri (Lesson, 1828) (Craciformes: Cracidae), con notas sobre el nido y el huevo. Revista de Ecología Latinoamericana 17(3):53-61.",
+      "event_id": "critical-redescription",
+      "event_type": "redescription",
+      "public_url": null,
+      "summary_key": "timeline.redescription",
+      "year": 2012
+    },
+    {
+      "citation": "Taxonomy of Aburria Reichenbach, 1853 (Aves, Galliformes, Cracidae) based on morphological characters. Papéis Avulsos de Zoologia 66:e202566014.",
+      "event_id": "modern-taxonomy-context",
+      "event_type": "taxonomic_context",
+      "public_url": "https://doi.org/10.11606/1807-0205/2026.66.014",
+      "summary_key": "timeline.modern",
+      "year": 2026
+    }
+  ],
+  "unresolved_layers": [
+    "source_interpretation",
+    "taxonomic_context"
+  ]
+}

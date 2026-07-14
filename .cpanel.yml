@@ -2,8 +2,13 @@
 deployment:
   tasks:
     - /bin/mkdir -p /home/xacm7978/synthia.securedme.ca/assets
+    - /bin/mkdir -p /home/xacm7978/synthia.securedme.ca/data
     - /bin/cp web/landing/index.html /home/xacm7978/synthia.securedme.ca/
     - /bin/cp web/landing/neutrosophic-lexicon.html /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/trace-lab.html /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/trace-lab.js /home/xacm7978/synthia.securedme.ca/
     - /bin/cp web/landing/synthia-landing.css /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/data/aburria-trace.json /home/xacm7978/synthia.securedme.ca/data/
     - /bin/cp web/landing/assets/synthia-logo.png /home/xacm7978/synthia.securedme.ca/assets/
     - /bin/cp web/landing/assets/synthia-hero.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/showcase-cover.png /home/xacm7978/synthia.securedme.ca/assets/

@@ -1,3 +1,22 @@
+# Synthia
+
+**Living taxonomy for scientific memory.** Synthia is a free, source-available
+educational research system that turns scattered biological evidence into
+traceable candidate memories for human review. It preserves the lexicon,
+sources, uncertainty, and authority boundary behind every classification.
+
+[Try the Aburria Trace Lab](https://synthia.securedme.ca/trace-lab.html) ·
+[Inspect the generated trace](web/landing/data/aburria-trace.json) ·
+[Read the public invariant](#public-invariant)
+
+```powershell
+python -m synthia_core.cli showcase export --case aburria --output trace.json --pretty
+```
+
+The public demo is static and keyless. Codex helped build, test, and document
+Synthia through the governed browser-authenticated workflow; Synthia itself does
+not send taxonomic evidence to an OpenAI API.
+
 > [!IMPORTANT]
 > **Book II evidence boundary (2026-07-10).** Synthia classifies and admits
 > public-safe lexical research objects before FNP-QNN computes. The verified
@@ -50,7 +69,7 @@ The reason for excluding generic local AI routes from official school mode is st
 
 > **License.** This project uses the Secured Educational License 2.0 (SEL-2.0). It is provided for education, research, simulation, classroom training, and supervised learning. Misuse, unsafe private forks, unsupported provider routes, and unsupervised authority claims are not maintained or endorsed by the official school version. See [LICENSE](LICENSE), [NOTICE](NOTICE), [DISCLAIMER](DISCLAIMER), and [SAFETY.md](SAFETY.md).
 
-# Synthia
+## Project foundation
 
 Synthia is an educational research codebase for context-preserving lexicon intelligence, biology classification, source traceability, taxonomy memory, and uncertainty-aware classification.
 

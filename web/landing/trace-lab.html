@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A public Synthia trace showing how scattered taxonomic evidence becomes a reviewable candidate memory."
+    />
+    <title>SYNTHIA Trace Lab | Living Taxonomy</title>
+    <link rel="icon" href="./assets/synthia-logo.png" />
+    <link rel="stylesheet" href="./synthia-landing.css?v=3" />
+    <script src="./trace-lab.js?v=1" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="site-shell">
+      <header class="site-header" aria-label="Synthia public navigation">
+        <a class="brand-mark" href="./index.html" aria-label="Synthia home">
+          <span>
+            <strong>SYNTHIA</strong>
+            <small>Biology. Taxonomy. Lexicon intelligence.</small>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="Primary sections">
+          <a href="./index.html">Home</a>
+          <a href="./trace-lab.html" aria-current="page">Trace Lab</a>
+          <a href="./neutrosophic-lexicon.html">Neutrosophic</a>
+          <a href="https://github.com/SeCuReDmE-main-dev/Synthia">GitHub</a>
+        </nav>
+      </header>
+
+      <main id="main" class="trace-page">
+        <section class="trace-hero" aria-labelledby="trace-title">
+          <div>
+            <p class="eyebrow" id="trace-eyebrow">Living Taxonomy</p>
+            <h1 id="trace-title">See a scientific memory repair itself</h1>
+            <p class="lead" id="trace-subtitle">
+              Synthia turns scattered public evidence into a traceable candidate
+              memory without replacing expert judgment.
+            </p>
+          </div>
+          <label class="language-control" for="language-selector">
+            <span>Language</span>
+            <select id="language-selector" aria-label="Display language">
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="it">Italiano</option>
+            </select>
+          </label>
+        </section>
+
+        <div id="trace-loading" class="status-card" role="status" aria-live="polite">
+          Loading the public trace…
+        </div>
+        <div id="trace-error" class="status-card error-card" role="alert" hidden>
+          The trace could not be loaded. You can still inspect the generated JSON in the repository.
+        </div>
+
+        <section id="trace-content" hidden>
+          <div class="trace-identity" aria-label="Case identity">
+            <div>
+              <span>Candidate memory</span>
+              <strong id="trace-taxon"></strong>
+            </div>
+            <div>
+              <span>Formal authority</span>
+              <strong id="trace-authority"></strong>
+            </div>
+            <div>
+              <span>Schema</span>
+              <strong id="trace-schema"></strong>
+            </div>
+          </div>
+
+          <section class="section-band trace-section" aria-labelledby="timeline-title">
+            <div class="section-heading">
+              <p class="eyebrow">Evidence over time</p>
+              <h2 id="timeline-title">A reviewable memory timeline</h2>
+            </div>
+            <ol id="trace-timeline" class="trace-timeline"></ol>
+          </section>
+
+          <section class="trace-columns" aria-label="Memory state">
+            <article class="feature-card">
+              <h2 id="repairs-title">Memory layers restored</h2>
+              <ul id="repair-list" class="tag-list"></ul>
+            </article>
+            <article class="feature-card unresolved-card">
+              <h2 id="unresolved-title">Still unresolved</h2>
+              <ul id="unresolved-list" class="tag-list"></ul>
+            </article>
+          </section>
+
+          <section class="section-band trace-section" aria-labelledby="sources-title">
+            <div class="section-heading">
+              <p class="eyebrow">Traceability</p>
+              <h2 id="sources-title">Public source registry</h2>
+            </div>
+            <div id="source-registry" class="trace-sources"></div>
+          </section>
+
+          <section class="boundary-note trace-boundary" aria-labelledby="authority-boundary-title">
+            <p class="eyebrow">Human review required</p>
+            <h2 id="authority-boundary-title">Authority boundary</h2>
+            <p id="authority-boundary"></p>
+            <div class="chain-line" id="trace-hierarchy"></div>
+          </section>
+
+          <section class="section-band trace-section" aria-labelledby="continue-title">
+            <div class="section-heading">
+              <p class="eyebrow">Reproduce locally</p>
+              <h2 id="continue-title">Continue with Codex</h2>
+              <p>
+                Clone Synthia, use the browser-authenticated Codex route, and regenerate
+                this public artifact without placing API keys in the repository.
+              </p>
+            </div>
+            <div class="command-panel">
+              <code id="showcase-command">python -m synthia_core.cli showcase export --case aburria --output web/landing/data/aburria-trace.json --pretty</code>
+              <button class="button secondary" id="copy-command" type="button">Copy command</button>
+            </div>
+            <p class="microcopy" id="copy-status" aria-live="polite"></p>
+          </section>
+        </section>
+
+        <noscript>
+          <div class="status-card error-card">
+            JavaScript is needed only to render the local public JSON. No remote API or key is used.
+          </div>
+        </noscript>
+      </main>
+
+      <footer class="page-footer">
+        <strong>SYNTHIA</strong>
+        <span>Open educational research for traceable classification memory.</span>
+        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">Inspect the source</a>
+      </footer>
+    </div>
+  </body>
+</html>

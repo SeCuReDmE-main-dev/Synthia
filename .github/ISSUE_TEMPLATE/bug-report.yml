@@ -1,0 +1,46 @@
+name: Reproducible bug
+description: Report a public-safe Synthia defect with a minimal reproduction.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Synthia is pre-alpha. Do not include credentials, private correspondence,
+        unpublished evidence, or sensitive student data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and the expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest public-safe command or fixture that reproduces the issue.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit or release
+      placeholder: Commit SHA or version
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Python version, and relevant optional dependencies.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Public-safety confirmation
+      options:
+        - label: This report contains no secret, private evidence, or sensitive student data.
+          required: true

@@ -1,0 +1,37 @@
+name: Public source correction
+description: Suggest a correction to a public taxonomy trace for human review.
+title: "[Source]: "
+labels: [documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A source correction is a review candidate, not a nomenclatural act.
+        Cite only evidence that can be shared publicly.
+  - type: input
+    id: trace
+    attributes:
+      label: Trace or taxon
+      placeholder: aburria-aburri-memory-repair
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Proposed correction
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Public sources
+      description: Provide stable citations and URLs where available.
+    validations:
+      required: true
+  - type: checkboxes
+    id: authority
+    attributes:
+      label: Authority boundary
+      options:
+        - label: I understand that maintainers and qualified reviewers decide whether the candidate memory changes.
+          required: true
