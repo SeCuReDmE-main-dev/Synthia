@@ -140,8 +140,13 @@ def _parse_tif_triplet(value: str, label: str = "value") -> tuple[float, float, 
 
 def _load_json_value(value: str) -> object:
     path = Path(value)
-    if path.exists():
-        return json.loads(path.read_text(encoding="utf-8"))
+    try:
+        if path.exists():
+            return json.loads(path.read_text(encoding="utf-8"))
+    except OSError:
+        # Inline JSON can exceed a platform's maximum filename length.  In
+        # that case it is data, not a path, so let the JSON parser handle it.
+        pass
     return json.loads(value)
 
 
