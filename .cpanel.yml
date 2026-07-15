@@ -2,8 +2,19 @@
 deployment:
   tasks:
     - /bin/mkdir -p /home/xacm7978/synthia.securedme.ca/assets
+    - /bin/mkdir -p /home/xacm7978/synthia.securedme.ca/data
     - /bin/cp web/landing/index.html /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/trace-lab.html /home/xacm7978/synthia.securedme.ca/
     - /bin/cp web/landing/neutrosophic-lexicon.html /home/xacm7978/synthia.securedme.ca/
     - /bin/cp web/landing/synthia-landing.css /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/synthia-access.js /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/data/aburria-trace.json /home/xacm7978/synthia.securedme.ca/data/
     - /bin/cp web/landing/assets/synthia-logo.png /home/xacm7978/synthia.securedme.ca/assets/
     - /bin/cp web/landing/assets/synthia-hero.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-landing-dark.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-landing-light.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-banner-dark.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-banner-light.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-icon-dark.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-icon-light.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-identity.png /home/xacm7978/synthia.securedme.ca/assets/

@@ -1,0 +1,27 @@
+{
+  "schema_version": "synthia.showcase.trace.v1",
+  "formal_name": "Aburria aburri",
+  "formal_authority": "Lesson, 1828",
+  "critical_redescriptions": [
+    {
+      "formal_name": "Aburria aburri",
+      "formal_authority": "Lesson, 1828",
+      "critical_redescription": "Aguilar H. F. & R. F. Aguilar, 2012",
+      "repair_types": ["morphology", "ecology", "nesting", "diagnostic_context"],
+      "indeterminacy_status": "partially_resolved",
+      "source_ids": ["gdoc.aguilar_beaulieu_white_paper"],
+      "code_aware_boundary": "Formal nomenclatural authority remains governed by the relevant Code and human review.",
+      "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+    }
+  ],
+  "unresolved_layers": ["partially_resolved_redescription_context"],
+  "conservation_links": ["Integral Conservation memory continuity"],
+  "human_review_required": true,
+  "ai_role": "traceability_support_only",
+  "public_boundary": "Synthia supports traceability and candidate-memory review. It is not a formal taxonomic authority and does not make nomenclatural acts.",
+  "runtime": {
+    "static_page": true,
+    "api_key_required": false,
+    "private_evidence_exposed": false
+  }
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Synthia Trace Lab - Aburria candidate memory</title>
+    <link rel="stylesheet" href="synthia-landing.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"><span class="brand-shield">SY</span><span>Synthia <strong>Trace Lab</strong></span></a>
+      <nav class="nav"><a href="index.html">Overview</a><a href="data/aburria-trace.json">Public JSON</a><a href="https://github.com/SeCuReDmE-main-dev/Synthia">Code</a></nav>
+      <div class="header-actions"><button class="utility" type="button" data-theme-toggle>Dark</button><a class="primary-link" href="index.html">Back to Synthia</a></div>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">synthia.showcase.trace.v1</p>
+          <h1>Trace Lab</h1>
+          <p class="position">Aburria candidate memory packet.</p>
+          <p class="lead">This static proof surface shows how Synthia exposes source lineage, unresolved layers, and the human-review boundary for a scientific-memory candidate.</p>
+        </div>
+        <figure class="hero-visual"><img src="assets/synthia-landing-dark.png" alt="Synthia Trace Lab visual reference"></figure>
+      </section>
+      <section class="proof-panel">
+        <p class="section-kicker">Public trace</p>
+        <div class="proof-grid">
+          <article class="proof-card feature">
+            <h2>Aburria aburri</h2>
+            <p>Formal authority is preserved as Lesson, 1828. The 2012 Aguilar redescription is shown as a critical redescription layer, not as a replacement formal authority.</p>
+            <div class="timeline"><span>1828<small> formal authority</small></span><span>2012<small> redescription</small></span><span>review<small> human required</small></span></div>
+          </article>
+          <article class="proof-card code-card">
+            <p class="mono">ai_role</p>
+            <strong>traceability_support_only</strong>
+            <p class="mono ok">human_review_required=true</p>
+            <a href="data/aburria-trace.json">Open JSON contract</a>
+          </article>
+        </div>
+      </section>
+      <section class="reproduce">
+        <div><p class="section-kicker">CLI source</p><h2>Reproduce the packet locally.</h2><p>The public JSON is derived from the Synthia taxonomy CLI output and sanitized for static web delivery.</p></div>
+        <pre><code>python -m synthia_core.cli taxonomy aburria-packet</code></pre>
+      </section>
+    </main>
+    <footer class="site-footer"><div><strong>Synthia Trace Lab</strong><p>Candidate memory for human review.</p></div><nav><a href="index.html">Landing</a><a href="data/aburria-trace.json">JSON</a></nav></footer>
+    <script src="synthia-access.js"></script>
+  </body>
+</html>

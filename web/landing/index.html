@@ -1,262 +1,254 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-access="base">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Synthia is an educational research project for context-preserving lexicon intelligence, biology classification, source traceability, taxonomy memory, and uncertainty-aware classification."
-    />
-    <title>SYNTHIA | Synthetic Intelligence for Biology & Classification</title>
-    <link rel="stylesheet" href="./synthia-landing.css?v=2" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Synthia - Living taxonomy for scientific memory</title>
+    <meta name="description" content="Synthia turns scattered scientific evidence into traceable candidate memory for human review.">
+    <link rel="stylesheet" href="synthia-landing.css">
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand education" href="https://securedme.ca/product/education/" aria-label="Open SecuredMe Education">
+        <span class="brand-mark">SM</span>
+        <span>SecuredMe <strong>Education</strong></span>
+      </a>
+      <span class="brand-divider" aria-hidden="true"></span>
+      <a class="brand synthia" href="#overview" aria-label="Synthia home">
+        <img src="assets/synthia-icon-dark.png" alt="" data-theme-src-dark="assets/synthia-icon-dark.png" data-theme-src-light="assets/synthia-icon-light.png">
+        <span>Synthia <strong>Engine</strong></span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#overview" class="active">Presentation</a>
+        <a href="#start">Trace Lab</a>
+        <a href="#features">Functionality</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#governance">Governance</a>
+        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">Source</a>
+      </nav>
+      <a class="launch-link" href="trace-lab.html">Open Trace Lab</a>
+    </header>
 
-    <div class="site-shell">
-      <header class="site-header" aria-label="Synthia public navigation">
-        <a class="brand-mark" href="./index.html" aria-label="Synthia home">
-          <span>
-            <strong>SYNTHIA</strong>
-            <small>Biology. Taxonomy. Lexicon intelligence.</small>
-          </span>
-        </a>
-
-        <nav class="nav-links" aria-label="Primary sections">
-          <a href="#model">Model</a>
-          <a href="#i-lexicon">I_lexicon</a>
-          <a href="./neutrosophic-lexicon.html">Neutrosophic</a>
-          <a href="#biology">Biology</a>
-          <a href="#collaboration">Collaboration</a>
-          <a href="#boundary">Boundary</a>
-        </nav>
-      </header>
-
-      <main id="main">
-        <section class="hero-stage" aria-labelledby="synthia-title">
-          <div class="hero-backdrop" aria-hidden="true"></div>
-          <div class="hero-grid">
-            <article class="hero-copy">
-              <p class="eyebrow">Educational research project</p>
-              <h1 id="synthia-title">Synthetic Intelligence for Biology & Classification</h1>
-              <p class="lead">
-                Synthia is a public research workspace for building context-preserving
-                lexicon intelligence: a system that remembers which vocabulary it is
-                using, why it selected that vocabulary, and what uncertainty still
-                needs human review.
-              </p>
-
-              <div class="hero-actions" aria-label="Project links">
-                <a class="button primary" href="https://github.com/SeCuReDmE-main-dev/Synthia">
-                  Open repository
-                </a>
-                <a class="button secondary" href="./neutrosophic-lexicon.html">
-                  View lexicon page
-                </a>
-              </div>
-
-              <div class="coordinate-grid" aria-label="Public coordinates">
-                <a href="https://synthia.securedme.ca/">
-                  <span>Webspace</span>
-                  <strong>synthia.securedme.ca</strong>
-                </a>
-                <a href="mailto:synthia@securedme.ca">
-                  <span>Email</span>
-                  <strong>synthia@securedme.ca</strong>
-                </a>
-                <a href="https://github.com/SeCuReDmE-main-dev/Synthia">
-                  <span>Repository</span>
-                  <strong>SeCuReDmE-main-dev/Synthia</strong>
-                </a>
-              </div>
-            </article>
-
-            <aside class="signal-panel" aria-label="Synthia identity and invariant">
-              <div class="signal-orb" aria-hidden="true">
-                <span></span>
-              </div>
-              <p class="panel-label">Public invariant</p>
-              <div class="chain-line">I -> I_system^S -> H_lex -> G_lex -> I_lexicon</div>
-              <p>
-                The chain preserves indeterminacy, system location, lexicon
-                hypothesis, graph context, and final classification state.
-              </p>
-              <div class="signal-tags" aria-label="Research tags">
-                <span>Transparent</span>
-                <span>Source-linked</span>
-                <span>Review-first</span>
-              </div>
-            </aside>
-          </div>
-
-          <div class="boundary-ribbon">
-            <strong>Research boundary:</strong>
-            educational classification research only. Not a production authority,
-            medical tool, autonomous robot, environmental deployment system, or formal
-            nomenclatural authority.
-          </div>
-
-          <div class="boundary-ribbon">
-            <strong>Education access note:</strong>
-            Synthia can be explored with free accounts, but deep taxonomy, source mapping,
-            Drive/Docs review, and repeated classification work are designed for education
-            or professional AI workspaces. Check current official access for
-            <a href="https://openai.com/chatgpt/education/">ChatGPT Education</a>,
-            <a href="https://help.openai.com/en/articles/12844995-chatgpt-for-teachers">ChatGPT for Teachers</a>,
-            <a href="https://gemini.google/students/">Gemini for Students</a>, and
-            <a href="https://edu.google.com/intl/ALL_us/ai/gemini-for-education/">Gemini for Education</a>.
-          </div>
-        </section>
-
-        <section class="section-band" id="model" aria-labelledby="model-title">
-          <div class="section-heading">
-            <p class="eyebrow">What Synthia is now</p>
-            <h2 id="model-title">A research core for classification memory</h2>
-            <p>
-              Synthia is not yet a large model or production platform. Its current
-              value is architectural: it gives the project a clean public skeleton
-              for lexicon-aware classification, source evidence, uncertainty, and
-              taxonomy memory repair.
-            </p>
-          </div>
-
-          <div class="feature-grid">
-            <article class="feature-card">
-              <span class="card-index">01</span>
-              <h3>I_lexicon nodes</h3>
-              <p>Concepts carry domain, definition, source IDs, T/I/F values, and lexicon state.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">02</span>
-              <h3>Context switching</h3>
-              <p>A task can move between biology, taxonomy, PhyloCode, math, and AI governance without losing evidence.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">03</span>
-              <h3>Typed bridges</h3>
-              <p>Terms connect through synonymy, redescription, rank shift, analogy, contradiction, and memory repair.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">04</span>
-              <h3>Plithogenic profiles</h3>
-              <p>Multi-attribute contradiction and T/I/F scoring remain visible instead of collapsing into a single confidence number.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">05</span>
-              <h3>Taxonomy memory</h3>
-              <p>Species names can be treated as memory objects linking descriptions, redescriptions, synonymy, ecology, and review.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">06</span>
-              <h3>Private boundary</h3>
-              <p>Evidence ledgers, drafts, and private correspondence stay outside the public repository.</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="section-band dark-band" id="i-lexicon" aria-labelledby="lexicon-title">
-          <div class="split-layout">
+    <main>
+      <section class="hero" id="overview">
+        <div class="hero-copy">
+          <p class="eyebrow">Tier 4 - Synthetic intelligence - Public pre-alpha</p>
+          <div class="synthia-lockup">
+            <img src="assets/synthia-icon-dark.png" alt="Synthia identity mark" data-theme-src-dark="assets/synthia-icon-dark.png" data-theme-src-light="assets/synthia-icon-light.png">
             <div>
-              <p class="eyebrow">I_lexicon engine</p>
-              <h2 id="lexicon-title">A classification system that knows which language it is using</h2>
-            </div>
-            <div class="stacked-content">
-              <p>
-                The goal is not only to classify a document. The goal is to preserve
-                the lexicon behind the classification: biology terms, PhyloCode terms,
-                neutrosophic math terms, governance terms, and the bridges between them.
-              </p>
-              <div class="flow-row" aria-label="I_lexicon chain">
-                <span>I</span>
-                <span>I_system^S</span>
-                <span>H_lex</span>
-                <span>G_lex</span>
-                <span>I_lexicon</span>
-              </div>
+              <p class="word">Synthia</p>
+              <p class="subword">Synthetic Intelligence for Biology & Classification</p>
             </div>
           </div>
-        </section>
-
-        <section class="section-band" id="biology" aria-labelledby="biology-title">
-          <div class="section-heading">
-            <p class="eyebrow">Biology and taxonomy</p>
-            <h2 id="biology-title">Built for biological classification without pretending to replace experts</h2>
+          <h1><span>Synthia</span> Engine: lexical intelligence and uncertainty management.</h1>
+          <p class="lead">Synthia combines lexical intelligence, biological classification, and neutrosophic review to keep scientific memory traceable, source-bound, and ready for human validation.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="trace-lab.html">Open Trace Lab</a>
+            <a class="button secondary" href="https://github.com/SeCuReDmE-main-dev/Synthia">Explore source</a>
           </div>
-          <div class="feature-grid three">
-            <article class="feature-card">
-              <h3>Taxonomic memory repair</h3>
-              <p>Track original descriptions, redescriptions, synonymy, geography, ecology, conservation context, and unresolved layers.</p>
-            </article>
-            <article class="feature-card">
-              <h3>PhyloCode-aware routing</h3>
-              <p>Keep rank, clade, name, and nomenclatural context visible when switching between classification systems.</p>
-            </article>
-            <article class="feature-card">
-              <h3>Human review packets</h3>
-              <p>Produce source-linked candidate records for expert review rather than final scientific claims.</p>
-            </article>
+          <div class="signal-row" aria-label="Synthia signals">
+            <span>Plithogenic Engine</span>
+            <span>Neutrosophic T-I-F</span>
+            <span>Classification Memory</span>
+            <span>Local-first</span>
           </div>
-        </section>
+        </div>
+        <figure class="hero-visual">
+          <img src="assets/synthia-banner-dark.png" alt="Synthia scientific memory banner with biology, classification, intelligence, and knowledge motifs" data-theme-src-dark="assets/synthia-banner-dark.png" data-theme-src-light="assets/synthia-banner-light.png">
+        </figure>
+      </section>
 
-        <section class="section-band" id="collaboration" aria-labelledby="collaboration-title">
-          <div class="section-heading">
-            <p class="eyebrow">Scientific collaboration</p>
-            <h2 id="collaboration-title">Taxonomy direction remains expert-grounded</h2>
-            <p>
-              Jean-Sebastien Beaulieu leads Synthia's software architecture and implementation.
-              Prof. Hector Fernando Aguilar is credited as scientific co-conceptor for the
-              taxonomy, systematics, PhyloCode/classification direction, redescription-memory
-              framing, and expert-review boundary.
-            </p>
-            <p>
-              This credit recognizes scientific conception and field-taxonomy guidance. It does
-              not transfer software authorship, formal nomenclatural authority, or autonomous
-              scientific decision-making to Synthia.
-            </p>
+      <section class="start-strip" id="start">
+        <div class="section-title">
+          <span>1 - Start in 15 minutes</span>
+        </div>
+        <div class="steps">
+          <article>
+            <span class="num">1</span>
+            <h2>Initialize the engine</h2>
+            <p>Run the local command and produce a public-safe candidate trace without exposing private workspace material.</p>
+          </article>
+          <article>
+            <span class="num">2</span>
+            <h2>Load concepts</h2>
+            <p>Keep source objects, terms, relations, and unresolved layers attached to the memory packet.</p>
+          </article>
+          <article>
+            <span class="num">3</span>
+            <h2>Analyze T-I-F</h2>
+            <p>Represent truth, indeterminacy, and falsity without flattening uncertainty into a single confident answer.</p>
+          </article>
+          <article>
+            <span class="num">4</span>
+            <h2>Export the report</h2>
+            <p>Publish a static Trace Lab surface with JSON provenance and a clear human-review boundary.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="feature-section" id="features">
+        <div class="section-title">
+          <span>2 - Key functionality</span>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card violet">
+            <div class="icon">LI</div>
+            <h2>Lexical Intelligence</h2>
+            <p>Specialized language models for scientific terms, semantic extraction, disambiguation, and contextual relationships.</p>
+            <ul>
+              <li>Specialized linguistic models</li>
+              <li>Biological entity extraction</li>
+              <li>Semantic and contextual relations</li>
+            </ul>
+          </article>
+          <article class="feature-card green">
+            <div class="icon">DNA</div>
+            <h2>Biological Classification</h2>
+            <p>Structure candidate knowledge across taxonomies, source layers, and ontology-aware review boundaries.</p>
+            <ul>
+              <li>Taxonomy-aware memory objects</li>
+              <li>Multi-level classification context</li>
+              <li>Adaptive clustering and grouping</li>
+            </ul>
+          </article>
+          <article class="feature-card violet">
+            <div class="icon">TIF</div>
+            <h2>Uncertainty Management</h2>
+            <p>Neutrosophic analysis keeps truth, indeterminacy, falsity, and review status explicit.</p>
+            <ul>
+              <li>Truth - Indeterminacy - Falsity</li>
+              <li>Interpretation remains review-bound</li>
+              <li>No autonomous scientific authority</li>
+            </ul>
+          </article>
+        </div>
+        <div class="engine-band">
+          <strong>Plithogenic Engine</strong>
+          <p>Modular architecture combining lexical intelligence, biological rules, knowledge networks, and neutrosophic calculation for robust, explainable candidate memory.</p>
+          <span>Explainable</span><span>Modular</span><span>Resilient</span><span>Adaptive</span>
+        </div>
+      </section>
+
+      <section class="dashboard-section" id="dashboard">
+        <div class="section-title">
+          <span>3 - Dashboard and analysis</span>
+        </div>
+        <div class="dashboard-grid">
+          <article class="meter-card">
+            <h2>Neutrosophic analysis</h2>
+            <div class="meters">
+              <div><strong>T</strong><span>0.72</span><small>Truth</small></div>
+              <div><strong>I</strong><span>0.18</span><small>Indeterminacy</small></div>
+              <div><strong>F</strong><span>0.10</span><small>Falsity</small></div>
+            </div>
+            <p>Global uncertainty level: 18%</p>
+          </article>
+          <article>
+            <h2>Classification context</h2>
+            <dl class="facts">
+              <div><dt>Realm</dt><dd>Plantae</dd></div>
+              <div><dt>Order</dt><dd>Rosales</dd></div>
+              <div><dt>Family</dt><dd>Rosaceae</dd></div>
+              <div><dt>Species</dt><dd>Rosa canina</dd></div>
+            </dl>
+          </article>
+          <article>
+            <h2>Confidence and coherence</h2>
+            <div class="bars"><span style="--w:84%"></span><span style="--w:88%"></span><span style="--w:76%"></span></div>
+            <p>Evidence is presented as traceable support, not as final scientific authority.</p>
+          </article>
+          <article>
+            <h2>Aburria trace summary</h2>
+            <dl class="facts">
+              <div><dt>Formal name</dt><dd>Aburria aburri</dd></div>
+              <div><dt>Authority</dt><dd>Lesson, 1828</dd></div>
+              <div><dt>Redescription</dt><dd>Aguilar H. F. & R. F. Aguilar, 2012</dd></div>
+              <div><dt>Status</dt><dd>Human review required</dd></div>
+            </dl>
+          </article>
+        </div>
+      </section>
+
+      <section class="memory-section">
+        <div class="section-title">
+          <span>4 - Scientific memory layers</span>
+        </div>
+        <div class="memory-rail">
+          <article><span>01</span><h2>Source Objects</h2><p>Evidence enters as bounded public objects.</p></article>
+          <article><span>02</span><h2>Lexicon State</h2><p>Terms and relations remain explicit.</p></article>
+          <article><span>03</span><h2>T-I-F Review</h2><p>Contradiction and uncertainty stay visible.</p></article>
+          <article><span>04</span><h2>Candidate Memory</h2><p>The trace is prepared for human review.</p></article>
+        </div>
+        <pre><code>python -m synthia_core.cli taxonomy aburria-packet</code></pre>
+      </section>
+
+      <section class="governance-section" id="governance">
+        <article>
+          <h2>Confidentiality / local-first</h2>
+          <p>The public landing is static and public-safe. It exposes no private evidence, API key, Gmail, Drive, or workspace secrets.</p>
+        </article>
+        <article>
+          <h2>Access support</h2>
+          <p>Theme, contrast, text size, reduced motion, Autism Calm, ADHD Sprint, and Deep Work apply to the full page and are stored locally only.</p>
+        </article>
+        <article>
+          <h2>Educational license</h2>
+          <p>SEL-2.0 supports education, research, simulation, classroom training, and supervised learning.</p>
+        </article>
+      </section>
+
+      <section class="cta-band">
+        <div>
+          <h2>Explore Synthia with its sources attached.</h2>
+          <p>Open the Trace Lab, inspect the public JSON, or review the source repository.</p>
+        </div>
+        <div class="hero-actions">
+          <a class="button primary" href="trace-lab.html">Open Trace Lab</a>
+          <a class="button secondary" href="data/aburria-trace.json">Inspect JSON</a>
+          <a class="button ghost" href="https://securedme.ca/product/education/">SecuredMe Education</a>
+        </div>
+      </section>
+    </main>
+
+    <aside class="access-console" data-access-console aria-hidden="true">
+      <div class="access-panel">
+        <div class="access-head">
+          <strong>Access</strong>
+          <button type="button" data-access-close aria-label="Close Access console">Close</button>
+        </div>
+        <div class="control-row">
+          <span>Profile</span>
+          <div class="segmented">
+            <button type="button" data-access-profile="base">Base</button>
+            <button type="button" data-access-profile="autism">Autism Calm</button>
+            <button type="button" data-access-profile="adhd">ADHD Sprint</button>
+            <button type="button" data-access-profile="deep">Deep Work</button>
           </div>
-        </section>
+        </div>
+        <label class="control-row"><span>Contrast</span><input type="checkbox" data-contrast-toggle></label>
+        <label class="control-row"><span>Large text</span><input type="checkbox" data-text-toggle></label>
+        <label class="control-row"><span>Reduced motion</span><input type="checkbox" data-motion-toggle></label>
+      </div>
+    </aside>
 
-        <section class="section-band code-band" id="codebase" aria-labelledby="codebase-title">
-          <div class="section-heading">
-            <p class="eyebrow">Codebase reality</p>
-            <h2 id="codebase-title">What the public repo is responsible for</h2>
-          </div>
-          <div class="terminal-grid">
-            <article>
-              <strong>synthia sources scan-root</strong>
-              <span>Inventory public-safe source artifacts.</span>
-            </article>
-            <article>
-              <strong>synthia lexicon classify</strong>
-              <span>Classify text with domain, evidence, and uncertainty state.</span>
-            </article>
-            <article>
-              <strong>synthia lexicon switch</strong>
-              <span>Move between lexicons without losing context.</span>
-            </article>
-            <article>
-              <strong>synthia nss route</strong>
-              <span>Route mathematical language through public NSS source families.</span>
-            </article>
-          </div>
-        </section>
-
-        <section class="boundary-note" id="boundary" aria-labelledby="boundary-title">
-          <p class="eyebrow">Boundary</p>
-          <h2 id="boundary-title">A serious research instrument begins with disciplined claims</h2>
-          <p>
-            Synthia can model ambiguity, traceability, and taxonomic memory repair.
-            Formal nomenclatural authority remains human and code-governed. Scientific,
-            medical, conservation, and field decisions require expert validation.
-          </p>
-        </section>
-      </main>
-
-      <footer class="page-footer">
-        <strong>SYNTHIA</strong>
-        <span>Open educational research project for lexicon-aware classification.</span>
-        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">GitHub repository</a>
-      </footer>
+    <div class="floating-controls" aria-label="Display controls">
+      <button type="button" data-theme-toggle>Theme: Night</button>
+      <button type="button" data-access-open>Access</button>
     </div>
+
+    <footer class="site-footer">
+      <div class="footer-brand">
+        <strong>SecuredMe Education</strong>
+        <span>Synthia Engine</span>
+      </div>
+      <nav aria-label="Footer navigation">
+        <a href="trace-lab.html">Trace Lab</a>
+        <a href="data/aburria-trace.json">Public JSON</a>
+        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">GitHub</a>
+        <a href="https://securedme.ca/contact/">Contact</a>
+      </nav>
+      <p class="tagline">ProTecH YouR HeritagE, SecUreD OuR LegAcieS</p>
+    </footer>
+    <script src="synthia-access.js"></script>
   </body>
 </html>
