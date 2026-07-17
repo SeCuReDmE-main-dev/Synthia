@@ -1,0 +1,92 @@
+{
+  "name": "scholarium-teach-synthetic-education-v1",
+  "top_k": 3,
+  "documents": [
+    {
+      "document_id": "spatial-soccer",
+      "provenance_id": "source-spatial-soccer",
+      "text": "A soccer player reads angles, distance, timing, and ball trajectory. These spatial reasoning strengths can become concrete examples for learning geometry."
+    },
+    {
+      "document_id": "geometry-visual",
+      "provenance_id": "source-geometry-visual",
+      "text": "Geometry instruction can use diagrams, coordinate grids, movement, and visual models to connect spatial experience with mathematical angles and trajectories."
+    },
+    {
+      "document_id": "spanish-mastery",
+      "provenance_id": "source-spanish-mastery",
+      "text": "Spanish mastery requires answering the matching question after hints, then recalling the phrase later and transferring it into a new conversation context."
+    },
+    {
+      "document_id": "signed-access",
+      "provenance_id": "source-signed-access",
+      "text": "Deaf and non-verbal learners need captions, transcripts, visual choices, sign-language content when available, and communication that never depends on voice alone."
+    },
+    {
+      "document_id": "autism-calm",
+      "provenance_id": "source-autism-calm",
+      "text": "An Autism Calm learning mode uses predictable sequences, visible next steps, low surprise, controllable sensory intensity, and stable routines."
+    },
+    {
+      "document_id": "tourette-safe",
+      "provenance_id": "source-tourette-safe",
+      "text": "A Tourette-safe lesson does not penalize a learner for tics, movement, delayed responses, or involuntary vocalizations and offers flexible timing."
+    },
+    {
+      "document_id": "adhd-sprint",
+      "provenance_id": "source-adhd-sprint",
+      "text": "An ADHD Sprint presents one short objective, a visible timer, a concrete next action, and a clear stopping point without hiding the wider learning path."
+    },
+    {
+      "document_id": "music-fractions",
+      "provenance_id": "source-music-fractions",
+      "text": "Musical rhythm provides practical examples for fractions, ratios, repeated patterns, timing, and subdivision of a whole measure."
+    },
+    {
+      "document_id": "privacy-consent",
+      "provenance_id": "source-privacy-consent",
+      "text": "Education records require explicit purpose, consent status, retention rules, correction paths, and traceable deletion under the Scholarium privacy contract."
+    },
+    {
+      "document_id": "growth-story",
+      "provenance_id": "source-growth-story",
+      "text": "A growth story connects an honest difficulty with evidence of effort, a multidimensional strength, and a next learning strategy without reducing the learner to one grade."
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q-spatial-geometry",
+      "text": "How can soccer spatial reasoning and reading a ball trajectory help a student learn geometry?",
+      "relevant_provenance_ids": ["source-spatial-soccer", "source-geometry-visual"]
+    },
+    {
+      "query_id": "q-spanish-mastery",
+      "text": "What evidence proves a Spanish phrase was mastered after receiving hints?",
+      "relevant_provenance_ids": ["source-spanish-mastery"]
+    },
+    {
+      "query_id": "q-signed-access",
+      "text": "How should a lesson work for a deaf or non-verbal learner without requiring voice?",
+      "relevant_provenance_ids": ["source-signed-access"]
+    },
+    {
+      "query_id": "q-autism-calm",
+      "text": "Which interface mode provides predictable steps and low surprise for an autistic learner?",
+      "relevant_provenance_ids": ["source-autism-calm"]
+    },
+    {
+      "query_id": "q-tourette-safe",
+      "text": "How can teaching avoid penalizing tics, involuntary vocalizations, movement, or response delay?",
+      "relevant_provenance_ids": ["source-tourette-safe"]
+    },
+    {
+      "query_id": "q-music-fractions",
+      "text": "How can musical rhythm teach fractions and subdivision of a whole?",
+      "relevant_provenance_ids": ["source-music-fractions"]
+    }
+  ],
+  "deletion_case": {
+    "query_id": "q-spatial-geometry",
+    "provenance_id": "source-spatial-soccer"
+  }
+}

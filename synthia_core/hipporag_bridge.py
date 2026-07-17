@@ -11,7 +11,7 @@ import hashlib
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Iterable, Mapping
+from typing import Any, Iterable, Mapping, Protocol
 from uuid import uuid4
 
 from .plithogenic import PlithogenicAttribute, PlithogenicMatrix, TIF, clamp01
@@ -26,6 +26,105 @@ class HippoRAGSelectionMechanism(str, Enum):
     LEXICON_BRIDGE = "lexicon_bridge"
     PLITHOGENIC_TRACE = "plithogenic_trace"
     MANUAL_REVIEW = "manual_review"
+
+
+class MemoryLakePort(Protocol):
+    """Narrow central-memory contract used by the Synthia adapter."""
+
+    def index_records(self, records: list[dict[str, Any]], mode: str = "incremental") -> dict[str, Any]: ...
+
+    def search(
+        self,
+        query: str,
+        filters: dict[str, Any] | None = None,
+        limit: int = 8,
+    ) -> dict[str, Any]: ...
+
+    def health(self) -> dict[str, Any]: ...
+
+
+class HippoRAGRetrieverPort(Protocol):
+    def retrieve_dpr(self, queries: list[str], num_to_retrieve: int | None = None) -> object: ...
+
+
+class HippoRAGGenerationDisabled(RuntimeError):
+    """Raised when a caller crosses the retrieval-only production boundary."""
+
+
+class HippoRAGRetrievalOnlyGateway:
+    """Expose HippoRAG evidence retrieval without its answer-generation APIs."""
+
+    SCHEMA = "synthia.hipporag-retrieval.v1"
+    GENERATION_OWNER = "codex_or_gemini"
+
+    def __init__(self, retriever: HippoRAGRetrieverPort) -> None:
+        self.retriever = retriever
+
+    def retrieve(self, queries: Iterable[str], num_to_retrieve: int = 10) -> dict[str, object]:
+        clean_queries = [str(query).strip() for query in queries if str(query).strip()]
+        if not clean_queries:
+            raise ValueError("At least one non-empty retrieval query is required.")
+        if not 1 <= num_to_retrieve <= 50:
+            raise ValueError("num_to_retrieve must be between 1 and 50.")
+
+        raw = self.retriever.retrieve_dpr(clean_queries, num_to_retrieve)
+        metrics: Mapping[str, object] = {}
+        solutions = raw
+        if isinstance(raw, tuple):
+            solutions = raw[0]
+            if len(raw) > 1 and isinstance(raw[1], Mapping):
+                metrics = raw[1]
+        if not isinstance(solutions, Iterable) or isinstance(solutions, (str, bytes, Mapping)):
+            raise TypeError("HippoRAG retrieve returned an unsupported result shape.")
+
+        return {
+            "schema": self.SCHEMA,
+            "queries": clean_queries,
+            "results": [self._serialize_solution(solution) for solution in solutions],
+            "metrics": dict(metrics),
+            "generation_performed": False,
+            "generation_owner": self.GENERATION_OWNER,
+            "retrieval_profile": "hipporag_dpr_only",
+            "authority": "retrieval_support_only",
+            "hierarchy": HIERARCHY,
+        }
+
+    def rag_qa(self, *args: object, **kwargs: object) -> None:
+        self._deny_generation("rag_qa")
+
+    def rag_qa_dpr(self, *args: object, **kwargs: object) -> None:
+        self._deny_generation("rag_qa_dpr")
+
+    def qa(self, *args: object, **kwargs: object) -> None:
+        self._deny_generation("qa")
+
+    def generate(self, *args: object, **kwargs: object) -> None:
+        self._deny_generation("generate")
+
+    @staticmethod
+    def _deny_generation(method: str) -> None:
+        raise HippoRAGGenerationDisabled(
+            f"HippoRAG method {method} is disabled: generation belongs to Codex or Gemini after retrieval review."
+        )
+
+    @staticmethod
+    def _serialize_solution(solution: object) -> dict[str, object]:
+        if isinstance(solution, Mapping):
+            question = solution.get("question", "")
+            docs = solution.get("docs", [])
+            scores = solution.get("doc_scores", [])
+            provenance_ids = solution.get("provenance_ids", [])
+        else:
+            question = getattr(solution, "question", "")
+            docs = getattr(solution, "docs", [])
+            scores = getattr(solution, "doc_scores", [])
+            provenance_ids = getattr(solution, "provenance_ids", [])
+        return {
+            "question": str(question),
+            "documents": [str(document) for document in docs or []],
+            "scores": [float(score) for score in scores or []],
+            "provenance_ids": [str(provenance_id) for provenance_id in provenance_ids or []],
+        }
 
 
 @dataclass(frozen=True)
@@ -255,6 +354,151 @@ class RethinkDBHippoRAGTraceStore:
             }
         finally:
             conn.close()
+
+
+class MemoryLakeHippoRAGTraceStore:
+    """Persist Synthia HippoRAG traces in the central MemoryLake."""
+
+    PRODUCT = "scholarium-central-knowledge-gateway"
+    LANE = "preparation"
+
+    def __init__(self, lake: MemoryLakePort) -> None:
+        self.lake = lake
+
+    def status(self) -> dict[str, object]:
+        health = self.lake.health()
+        return {
+            "backend": "memory_lake",
+            "ready": bool(health.get("ready")),
+            "partition": self.LANE,
+            "product": self.PRODUCT,
+            "memory_lake": health,
+            "hierarchy": HIERARCHY,
+        }
+
+    def store_memory_bit(self, memory_bit: HippoRAGMemoryBit) -> dict[str, object]:
+        payload = memory_bit.as_dict()
+        selection_trace = {
+            "id": f"selection.{memory_bit.memory_bit_id}",
+            "memory_bit_id": memory_bit.memory_bit_id,
+            "lexicon_type": memory_bit.lexicon_type,
+            "selection_mechanism": memory_bit.selection_mechanism,
+            "selection_score": memory_bit.selection_score(),
+            "graph_location": memory_bit.graph_location.as_dict(),
+            "created_at": time.time(),
+            "hierarchy": HIERARCHY,
+        }
+        result = self.lake.index_records(
+            [
+                self._record(
+                    "memory-bit",
+                    memory_bit.memory_bit_id,
+                    memory_bit.content,
+                    payload,
+                    memory_bit.lexicon_type,
+                    memory_bit.source_ids,
+                ),
+                self._record(
+                    "selection-trace",
+                    str(selection_trace["id"]),
+                    (
+                        f"Selected {memory_bit.memory_bit_id} with "
+                        f"{memory_bit.selection_mechanism} at score "
+                        f"{memory_bit.selection_score():.6f}."
+                    ),
+                    selection_trace,
+                    memory_bit.lexicon_type,
+                    memory_bit.source_ids,
+                ),
+            ]
+        )
+        return {
+            "stored": result.get("failed", 0) == 0,
+            "memory_bit_id": memory_bit.memory_bit_id,
+            "partition": self.LANE,
+            "result": result,
+        }
+
+    def store_edge(self, edge: HippoRAGEdgeTrace) -> dict[str, object]:
+        result = self.lake.index_records(
+            [
+                self._record(
+                    "graph-edge",
+                    edge.edge_id,
+                    f"{edge.left_memory_bit_id} {edge.relation} {edge.right_memory_bit_id}",
+                    edge.as_dict(),
+                    edge.lexicon_type,
+                    (edge.left_memory_bit_id, edge.right_memory_bit_id),
+                )
+            ]
+        )
+        return {
+            "stored": result.get("failed", 0) == 0,
+            "edge_id": edge.edge_id,
+            "partition": self.LANE,
+            "result": result,
+        }
+
+    def select_memory_bits(
+        self,
+        lexicon_type: str | None = None,
+        selection_mechanism: str | None = None,
+        limit: int = 10,
+    ) -> dict[str, object]:
+        filters: dict[str, Any] = {"source_type": "hipporag-memory-bit"}
+        if lexicon_type:
+            filters["tag"] = f"lexicon:{lexicon_type}"
+        query = selection_mechanism or lexicon_type or "HippoRAG memory graph trace"
+        result = self.lake.search(query, filters=filters, limit=limit)
+        return {
+            "lexicon_type": lexicon_type,
+            "selection_mechanism": selection_mechanism,
+            "count": int(result.get("count", 0)),
+            "memory_bits": result.get("results", []),
+            "partition": self.LANE,
+            "hierarchy": HIERARCHY,
+        }
+
+    def _record(
+        self,
+        record_type: str,
+        record_id: str,
+        text: str,
+        payload: Mapping[str, object],
+        lexicon_type: str,
+        source_ids: Iterable[str],
+    ) -> dict[str, Any]:
+        return {
+            "path": f"synthia-hipporag:{record_type}:{record_id}",
+            "text": text,
+            "source_type": f"hipporag-{record_type}",
+            "product": self.PRODUCT,
+            "lane": self.LANE,
+            "sensitivity": "private",
+            "uncertainty": "human-review-required",
+            "approval_state": "pending",
+            "subject": f"Synthia HippoRAG {record_type}",
+            "claim": "Trace candidate stored for retrieval and human review.",
+            "confidence_label": "tentative due to conflicting or missing evidence",
+            "provenance_id": record_id,
+            "artifact_targets": ["internal-note"],
+            "connector_source_subtype": "synthia-hipporag-trace",
+            "tags": [
+                "hipporag",
+                "synthia",
+                f"record:{record_type}",
+                f"lexicon:{lexicon_type}",
+                f"partition:{self.LANE}",
+            ],
+            "metadata": {
+                "schema": "synthia.hipporag-trace.v1",
+                "record_type": record_type,
+                "lexicon_type": lexicon_type,
+                "source_ids": list(source_ids),
+                "payload": dict(payload),
+                "hierarchy": HIERARCHY,
+            },
+        }
 
 
 def _optional_str(value: object) -> str | None:
