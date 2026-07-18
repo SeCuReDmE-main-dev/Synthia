@@ -10,7 +10,7 @@
     <header class="site-header">
       <a class="brand" href="index.html"><span class="brand-shield">SY</span><span>Synthia <strong>Trace Lab</strong></span></a>
       <nav class="nav"><a href="index.html">Overview</a><a href="data/aburria-trace.json">Public JSON</a><a href="https://github.com/SeCuReDmE-main-dev/Synthia">Code</a></nav>
-      <div class="header-actions"><button class="utility" type="button" data-theme-toggle>Dark</button><a class="primary-link" href="index.html">Back to Synthia</a></div>
+      <div class="header-actions"><a class="primary-link" href="index.html">Back to Synthia</a></div>
     </header>
     <main>
       <section class="hero">
@@ -43,7 +43,10 @@
         <pre><code>python -m synthia_core.cli taxonomy aburria-packet</code></pre>
       </section>
     </main>
+    <aside class="access-console" data-access-console aria-hidden="true"><div class="access-panel"><div class="access-head"><strong>Access</strong><button type="button" data-access-close aria-label="Close Access console">Close</button></div><div class="control-row"><span>Profile</span><div class="segmented"><button type="button" data-access-profile="base">Base</button><button type="button" data-access-profile="autism">Autism Calm</button><button type="button" data-access-profile="adhd">ADHD Sprint</button><button type="button" data-access-profile="deep">Deep Work</button></div></div><label class="control-row"><span>Contrast</span><input type="checkbox" data-contrast-toggle></label><label class="control-row"><span>Large text</span><input type="checkbox" data-text-toggle></label><label class="control-row"><span>Reduced motion</span><input type="checkbox" data-motion-toggle></label></div></aside>
+    <div class="floating-controls" aria-label="Display controls"><label class="language-control"><span class="sr-only">Language</span><select data-language-select aria-label="Language"><option value="fr-CA">FR</option><option value="en-CA">EN</option><option value="es">ES</option></select></label><button type="button" data-theme-toggle>Theme: Night</button><button type="button" data-access-open>Access</button></div>
     <footer class="site-footer"><div><strong>Synthia Trace Lab</strong><p>Candidate memory for human review.</p></div><nav><a href="index.html">Landing</a><a href="data/aburria-trace.json">JSON</a></nav></footer>
+    <script src="synthia-i18n.js"></script>
     <script src="synthia-access.js"></script>
   </body>
 </html>

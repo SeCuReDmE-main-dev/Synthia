@@ -34,5 +34,6 @@ __pycache__/
 *.pyc
 *.egg-info/
 dist/
+output/
 node_modules/
 *.tsbuildinfo
