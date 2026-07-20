@@ -1,49 +1,119 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-access="base">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Synthia Trace Lab: a static, public-safe candidate-memory proof surface for human review.">
     <title>Synthia Trace Lab - Aburria candidate memory</title>
-    <link rel="stylesheet" href="synthia-landing.css">
+    <link rel="icon" href="assets/synthia-icon-dark.png" type="image/png">
+    <link rel="stylesheet" href="assets/synthia-public-shell.2fa8fb172d5d5a6e.css">
   </head>
-  <body>
+  <body class="trace-page">
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="brand" href="index.html"><span class="brand-shield">SY</span><span>Synthia <strong>Trace Lab</strong></span></a>
-      <nav class="nav"><a href="index.html">Overview</a><a href="data/aburria-trace.json">Public JSON</a><a href="https://github.com/SeCuReDmE-main-dev/Synthia">Code</a></nav>
-      <div class="header-actions"><button class="utility" type="button" data-theme-toggle>Dark</button><a class="primary-link" href="index.html">Back to Synthia</a></div>
+      <div class="site-header__brand">
+        <a class="brand synthia" href="index.html" aria-label="Synthia home">
+          <img src="assets/synthia-icon-dark.png" alt="" data-theme-src-dark="assets/synthia-icon-dark.png" data-theme-src-light="assets/synthia-icon-light.png">
+          <span>Synthia <strong>Engine</strong></span>
+        </a>
+      </div>
+      <nav id="trace-navigation" class="site-nav" data-nav-menu aria-label="Synthia navigation">
+        <a href="index.html">Overview</a>
+        <a href="trace-lab.html" aria-current="page">Trace Lab</a>
+        <a href="neutrosophic-lexicon.html">Lexicon</a>
+        <a href="data/aburria-trace.json">Public JSON</a>
+        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">Source</a>
+      </nav>
+      <div class="header-actions">
+        <a class="launch-link" href="index.html">Synthia home</a>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-controls="trace-navigation" aria-expanded="false">
+          <span class="nav-toggle__icon" aria-hidden="true">☰</span><span>Menu</span>
+        </button>
+      </div>
     </header>
-    <main>
-      <section class="hero">
+
+    <main id="main">
+      <section class="hero" aria-labelledby="trace-title">
         <div class="hero-copy">
           <p class="eyebrow">synthia.showcase.trace.v1</p>
-          <h1>Trace Lab</h1>
+          <h1 id="trace-title"><span>Trace</span> Lab</h1>
           <p class="position">Aburria candidate memory packet.</p>
           <p class="lead">This static proof surface shows how Synthia exposes source lineage, unresolved layers, and the human-review boundary for a scientific-memory candidate.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="data/aburria-trace.json">Open JSON contract</a>
+            <a class="button secondary" href="index.html">Back to Synthia</a>
+          </div>
         </div>
-        <figure class="hero-visual"><img src="assets/synthia-landing-dark.png" alt="Synthia Trace Lab visual reference"></figure>
+        <figure class="hero-visual">
+          <img src="assets/synthia-landing-dark.png" alt="Synthia Trace Lab visual reference" data-theme-src-dark="assets/synthia-landing-dark.png" data-theme-src-light="assets/synthia-landing-light.png">
+        </figure>
       </section>
-      <section class="proof-panel">
+
+      <section class="proof-panel" aria-labelledby="proof-title">
         <p class="section-kicker">Public trace</p>
         <div class="proof-grid">
           <article class="proof-card feature">
-            <h2>Aburria aburri</h2>
+            <h2 id="proof-title">Aburria aburri</h2>
             <p>Formal authority is preserved as Lesson, 1828. The 2012 Aguilar redescription is shown as a critical redescription layer, not as a replacement formal authority.</p>
-            <div class="timeline"><span>1828<small> formal authority</small></span><span>2012<small> redescription</small></span><span>review<small> human required</small></span></div>
+            <div class="timeline" aria-label="Source lineage timeline">
+              <span>1828<small>formal authority</small></span>
+              <span>2012<small>redescription</small></span>
+              <span>review<small>human required</small></span>
+            </div>
           </article>
           <article class="proof-card code-card">
             <p class="mono">ai_role</p>
             <strong>traceability_support_only</strong>
             <p class="mono ok">human_review_required=true</p>
-            <a href="data/aburria-trace.json">Open JSON contract</a>
+            <a class="button secondary" href="data/aburria-trace.json">Open JSON contract</a>
           </article>
         </div>
       </section>
-      <section class="reproduce">
-        <div><p class="section-kicker">CLI source</p><h2>Reproduce the packet locally.</h2><p>The public JSON is derived from the Synthia taxonomy CLI output and sanitized for static web delivery.</p></div>
+
+      <section class="reproduce" aria-labelledby="reproduce-title">
+        <div>
+          <p class="section-kicker">CLI source</p>
+          <h2 id="reproduce-title">Reproduce the packet locally.</h2>
+          <p>The public JSON is derived from the Synthia taxonomy CLI output and sanitized for static web delivery.</p>
+        </div>
         <pre><code>python -m synthia_core.cli taxonomy aburria-packet</code></pre>
       </section>
     </main>
-    <footer class="site-footer"><div><strong>Synthia Trace Lab</strong><p>Candidate memory for human review.</p></div><nav><a href="index.html">Landing</a><a href="data/aburria-trace.json">JSON</a></nav></footer>
-    <script src="synthia-access.js"></script>
+
+    <aside class="access-console" data-access-console aria-hidden="true" aria-labelledby="trace-access-console-title" aria-modal="true" role="dialog">
+      <div class="access-panel">
+        <div class="access-head">
+          <strong id="trace-access-console-title">Access</strong>
+          <button type="button" data-access-close aria-label="Close Access console">Close</button>
+        </div>
+        <div class="control-row">
+          <span>Profile</span>
+          <div class="segmented">
+            <button type="button" data-access-profile="base">Base</button>
+            <button type="button" data-access-profile="autism">Autism Calm</button>
+            <button type="button" data-access-profile="adhd">ADHD Sprint</button>
+            <button type="button" data-access-profile="deep">Deep Work</button>
+          </div>
+        </div>
+        <label class="control-row"><span>Contrast</span><input type="checkbox" data-contrast-toggle></label>
+        <label class="control-row"><span>Large text</span><input type="checkbox" data-text-toggle></label>
+        <label class="control-row"><span>Reduced motion</span><input type="checkbox" data-motion-toggle></label>
+      </div>
+    </aside>
+
+    <div class="action-dock" data-action-dock aria-label="Display controls">
+      <button type="button" data-theme-toggle>Theme: Night</button>
+      <button type="button" data-access-open>Access</button>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-brand"><strong>Synthia Trace Lab</strong><span>Candidate memory for human review.</span></div>
+      <nav aria-label="Trace Lab footer navigation">
+        <a href="index.html">Landing</a>
+        <a href="neutrosophic-lexicon.html">Lexicon</a>
+        <a href="data/aburria-trace.json">JSON</a>
+      </nav>
+    </footer>
+    <script src="assets/synthia-public-shell.914bc27e1baa67e2.js" defer></script>
   </body>
 </html>

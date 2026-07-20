@@ -1,13 +1,16 @@
 ---
+# Public source: web/landing/
+# Release branch: new/synthia-public-landing. This file does not switch branches;
+# merge a reviewed worktree branch into that release branch before cPanel deploys it.
+# cPanel document root: /home/xacm7978/synthia.securedme.ca/
+# The static package is copied directly. There is no dist/ directory to publish.
 deployment:
   tasks:
     - /bin/mkdir -p /home/xacm7978/synthia.securedme.ca/assets
     - /bin/mkdir -p /home/xacm7978/synthia.securedme.ca/data
-    - /bin/cp web/landing/index.html /home/xacm7978/synthia.securedme.ca/
-    - /bin/cp web/landing/trace-lab.html /home/xacm7978/synthia.securedme.ca/
-    - /bin/cp web/landing/neutrosophic-lexicon.html /home/xacm7978/synthia.securedme.ca/
-    - /bin/cp web/landing/synthia-landing.css /home/xacm7978/synthia.securedme.ca/
-    - /bin/cp web/landing/synthia-access.js /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/assets/synthia-public-shell.2fa8fb172d5d5a6e.css /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-public-shell.914bc27e1baa67e2.js /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/assets/synthia-public-shell.manifest.json /home/xacm7978/synthia.securedme.ca/assets/
     - /bin/cp web/landing/data/aburria-trace.json /home/xacm7978/synthia.securedme.ca/data/
     - /bin/cp web/landing/assets/synthia-logo.png /home/xacm7978/synthia.securedme.ca/assets/
     - /bin/cp web/landing/assets/synthia-hero.png /home/xacm7978/synthia.securedme.ca/assets/
@@ -18,3 +21,6 @@ deployment:
     - /bin/cp web/landing/assets/synthia-icon-dark.png /home/xacm7978/synthia.securedme.ca/assets/
     - /bin/cp web/landing/assets/synthia-icon-light.png /home/xacm7978/synthia.securedme.ca/assets/
     - /bin/cp web/landing/assets/synthia-identity.png /home/xacm7978/synthia.securedme.ca/assets/
+    - /bin/cp web/landing/index.html /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/trace-lab.html /home/xacm7978/synthia.securedme.ca/
+    - /bin/cp web/landing/neutrosophic-lexicon.html /home/xacm7978/synthia.securedme.ca/

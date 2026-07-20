@@ -1,35 +1,44 @@
 <!doctype html>
-<html lang="en" data-theme="dark" data-access="base" data-support-app="synthia">
+<html lang="en" data-theme="dark" data-access="base">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Synthia - Living taxonomy for scientific memory</title>
     <meta name="description" content="Synthia turns scattered scientific evidence into traceable candidate memory for human review.">
-    <link rel="stylesheet" href="synthia-landing.css">
+    <link rel="icon" href="assets/synthia-icon-dark.png" type="image/png">
+    <link rel="stylesheet" href="assets/synthia-public-shell.2fa8fb172d5d5a6e.css">
   </head>
-  <body>
+  <body class="landing-page">
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="brand education" href="https://securedme.ca/product/education/" aria-label="Open SecuredMe Education">
-        <span class="brand-mark">SM</span>
-        <span>SecuredMe <strong>Education</strong></span>
-      </a>
-      <span class="brand-divider" aria-hidden="true"></span>
-      <a class="brand synthia" href="#overview" aria-label="Synthia home">
-        <img src="assets/synthia-icon-dark.png" alt="" data-theme-src-dark="assets/synthia-icon-dark.png" data-theme-src-light="assets/synthia-icon-light.png">
-        <span>Synthia <strong>Engine</strong></span>
-      </a>
-      <nav class="nav" aria-label="Primary navigation">
-        <a href="#overview" class="active">Presentation</a>
-        <a href="#start">Trace Lab</a>
+      <div class="site-header__brand">
+        <a class="brand education" href="https://securedme.ca/product/education/" aria-label="Open SecuredMe Education">
+          <span class="brand-mark">SM</span>
+          <span>SecuredMe <strong>Education</strong></span>
+        </a>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <a class="brand synthia" href="#overview" aria-label="Synthia home">
+          <img src="assets/synthia-icon-dark.png" alt="" data-theme-src-dark="assets/synthia-icon-dark.png" data-theme-src-light="assets/synthia-icon-light.png">
+          <span>Synthia <strong>Engine</strong></span>
+        </a>
+      </div>
+      <nav id="synthia-primary-navigation" class="site-nav" data-nav-menu aria-label="Primary navigation">
+        <a href="#overview" aria-current="page">Presentation</a>
+        <a href="trace-lab.html">Trace Lab</a>
         <a href="#features">Functionality</a>
         <a href="#dashboard">Dashboard</a>
         <a href="#governance">Governance</a>
         <a href="https://github.com/SeCuReDmE-main-dev/Synthia">Source</a>
       </nav>
-      <a class="launch-link" href="trace-lab.html">Open Trace Lab</a>
+      <div class="header-actions">
+        <a class="launch-link" href="trace-lab.html">Open Trace Lab</a>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-controls="synthia-primary-navigation" aria-expanded="false">
+          <span class="nav-toggle__icon" aria-hidden="true">☰</span><span>Menu</span>
+        </button>
+      </div>
     </header>
 
-    <main>
+    <main id="main">
       <section class="hero" id="overview">
         <div class="hero-copy">
           <p class="eyebrow">Tier 4 - Synthetic intelligence - Public pre-alpha</p>
@@ -41,12 +50,12 @@
             </div>
           </div>
           <h1><span>Synthia</span> Engine: lexical intelligence and uncertainty management.</h1>
-          <p class="lead">Synthia combines lexical intelligence, biological classification, and neutrosophic review to keep scientific memory traceable, source-bound, and ready for human validation.</p>
-          <p class="collaboration-credit">Design in collaboration with Hector Aguilar.</p>
           <div class="hero-actions">
-            <a class="button primary" href="trace-lab.html">Open Trace Lab</a>
+            <a class="button primary" data-primary-cta href="trace-lab.html">Open Trace Lab</a>
             <a class="button secondary" href="https://github.com/SeCuReDmE-main-dev/Synthia">Explore source</a>
           </div>
+          <p class="lead">Synthia combines lexical intelligence, biological classification, and neutrosophic review to keep scientific memory traceable, source-bound, and ready for human validation.</p>
+          <p class="collaboration-credit">Design in collaboration with Hector Aguilar.</p>
           <div class="signal-row" aria-label="Synthia signals">
             <span>Plithogenic Engine</span>
             <span>Neutrosophic T-I-F</span>
@@ -211,10 +220,10 @@
       </section>
     </main>
 
-    <aside class="access-console" data-access-console aria-hidden="true">
+    <aside class="access-console" data-access-console aria-hidden="true" aria-labelledby="access-console-title" aria-modal="true" role="dialog">
       <div class="access-panel">
         <div class="access-head">
-          <strong>Access</strong>
+          <strong id="access-console-title">Access</strong>
           <button type="button" data-access-close aria-label="Close Access console">Close</button>
         </div>
         <div class="control-row">
@@ -232,7 +241,7 @@
       </div>
     </aside>
 
-    <div class="floating-controls" aria-label="Display controls">
+    <div class="action-dock" data-action-dock aria-label="Display controls">
       <button type="button" data-theme-toggle>Theme: Night</button>
       <button type="button" data-access-open>Access</button>
     </div>
@@ -244,13 +253,13 @@
       </div>
       <nav aria-label="Footer navigation">
         <a href="trace-lab.html">Trace Lab</a>
+        <a href="neutrosophic-lexicon.html">Lexicon</a>
         <a href="data/aburria-trace.json">Public JSON</a>
         <a href="https://github.com/SeCuReDmE-main-dev/Synthia">GitHub</a>
         <a href="https://securedme.ca/contact/">Contact</a>
       </nav>
       <p class="tagline">ProTecH YouR HeritagE, SecUreD OuR LegAcieS</p>
     </footer>
-    <script src="synthia-access.js"></script>
-    <script src="https://securedme.ca/assets/support-widget.js" data-api="https://paypal.securedme.ca" defer></script>
+    <script src="assets/synthia-public-shell.914bc27e1baa67e2.js" defer></script>
   </body>
 </html>
