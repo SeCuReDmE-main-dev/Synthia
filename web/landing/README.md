@@ -54,6 +54,23 @@ never reference an unavailable asset.
 5. Check at phone and desktop widths that the menu opens, the action dock has no
    competing fixed control, and the Trace Lab CTA remains reachable.
 
+## Production release — 2026-07-20
+
+- Pull request `Synthia#21` was merged into `new/synthia-public-landing` at
+  `b63157ab6cc98b876b19b3de91937ffe3cb5d25d`.
+- The registered cPanel repository
+  `/home/xacm7978/synthia.securedme.ca/codebase` was clean on that branch and
+  commit when deployment ID `7` completed successfully.
+- `index.html`, `trace-lab.html`, and `neutrosophic-lexicon.html` returned
+  HTTP 200 after deployment, loaded no external support widget, and passed the
+  full ten-viewport browser gate with no findings.
+- The deployed CSS hash is
+  `2FA8FB172D5D5A6EA80C42266B2F23F88A333CFA4CF34CD59F152902650932B5`.
+  The deployed JavaScript hash is
+  `914BC27E1BAA67E2A5977EF4631DF48CD3968DFB3F044CF9FA1D0BADF05B3893`.
+- Rollback state is the prior cPanel deployment ID `6` from
+  `main@e96bb32747ac567735da2e1675f30f755db9807f`.
+
 The site presents Synthia as an educational research project for
 context-preserving lexicon intelligence, biology classification, source
 traceability, taxonomy memory, and uncertainty-aware classification. It does
