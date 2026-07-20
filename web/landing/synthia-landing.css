@@ -222,6 +222,17 @@ h1 span, .cta-band h2 span {
   font-size: clamp(1.02rem, 1.4vw, 1.28rem);
 }
 
+.collaboration-credit {
+  width: fit-content;
+  margin: 0;
+  padding: .55rem .8rem;
+  border-left: 2px solid var(--green);
+  color: var(--text);
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+  font-size: .86rem;
+  font-weight: 700;
+}
+
 .hero-actions { gap: .85rem; flex-wrap: wrap; }
 .signal-row {
   gap: .8rem;
