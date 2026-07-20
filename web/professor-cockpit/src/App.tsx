@@ -13,17 +13,18 @@ import {
   Info,
   LifeBuoy,
   LockKeyhole,
+  Menu,
   MessageSquareText,
-  PanelLeftClose,
   Search,
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
   UserRound,
-  UsersRound
+  UsersRound,
+  X
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, ReactNode, RefObject } from 'react';
 import {
   audit,
   createInitialState,
@@ -62,12 +63,18 @@ const governanceLinks = [
   ['Settings', SlidersHorizontal]
 ] as const;
 
+const compactNavigationQuery = '(max-width: 1080px)';
+
 export function App() {
   const [state, setState] = useState<AppState>(() => createInitialState());
   const [activeRole, setActiveRole] = useState<UserRole>('Professor');
   const [selectedStudentId, setSelectedStudentId] = useState('stu-alex');
   const [query, setQuery] = useState('');
   const [evidenceOpen, setEvidenceOpen] = useState(false);
+  const [isCompactNavigation, setIsCompactNavigation] = useState(() => window.matchMedia(compactNavigationQuery).matches);
+  const [navigationOpen, setNavigationOpen] = useState(false);
+  const navigationToggleRef = useRef<HTMLButtonElement>(null);
+  const navigationRef = useRef<HTMLElement>(null);
   const selectedStudent = state.students.find((student) => student.studentId === selectedStudentId) ?? state.students[0];
   const [draft, setDraft] = useState<InterventionPlan>(() => makeDraftForStudent(selectedStudent));
   const currentUser = useMemo<UserContext>(() => {
@@ -86,6 +93,28 @@ export function App() {
   useEffect(() => {
     setDraft(makeDraftForStudent(selectedStudent));
   }, [selectedStudent.studentId]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(compactNavigationQuery);
+    const updateNavigationMode = () => {
+      setIsCompactNavigation(mediaQuery.matches);
+      if (!mediaQuery.matches) {
+        setNavigationOpen(false);
+      }
+    };
+
+    updateNavigationMode();
+    mediaQuery.addEventListener('change', updateNavigationMode);
+    return () => mediaQuery.removeEventListener('change', updateNavigationMode);
+  }, []);
+
+  useEffect(() => {
+    if (!isCompactNavigation || !navigationOpen) {
+      return;
+    }
+
+    navigationRef.current?.querySelector<HTMLButtonElement>('[data-cockpit-nav-close]')?.focus();
+  }, [isCompactNavigation, navigationOpen]);
 
   const classMap = getClassLearningMap(state, 'sci10-a', professorContext);
   const classRoster = state.students.filter((student) => student.classId === 'sci10-a');
@@ -129,78 +158,59 @@ export function App() {
     window.alert(`Structured export ready for ${exported.summary.displayName}. Raw FNP-QNN messages included: no.`);
   };
 
+  const closeNavigation = (returnFocus = false) => {
+    setNavigationOpen(false);
+    if (returnFocus) {
+      window.requestAnimationFrame(() => navigationToggleRef.current?.focus());
+    }
+  };
+
+  const selectRole = (role: UserRole) => {
+    setActiveRole(role);
+    if (isCompactNavigation) {
+      closeNavigation(true);
+    }
+  };
+
   return (
     <div className="app-shell">
-      <aside className="sidebar" aria-label="Synthia professor navigation">
-        <div className="brand">
-          <div className="brand-mark" aria-hidden="true">
-            <Sparkles size={24} />
-          </div>
-          <div>
-            <strong>SYNTHIA</strong>
-            <span>Learning. Human. Together.</span>
-          </div>
+      {!isCompactNavigation && <CockpitNavigation activeRole={activeRole} selectRole={selectRole} />}
+
+      {isCompactNavigation && navigationOpen && (
+        <div
+          className="navigation-backdrop"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              closeNavigation(true);
+            }
+          }}
+        >
+          <CockpitNavigation
+            activeRole={activeRole}
+            selectRole={selectRole}
+            onNavigate={() => closeNavigation(true)}
+            drawer
+            navigationRef={navigationRef}
+            closeNavigation={() => closeNavigation(true)}
+          />
         </div>
+      )}
 
-        <section aria-labelledby="roles-title">
-          <h2 id="roles-title" className="rail-title">
-            Role Switcher
-          </h2>
-          <div className="role-stack">
-            {roleOptions.map(({ role, icon: Icon }) => (
-              <button
-                key={role}
-                type="button"
-                className={`rail-button ${activeRole === role ? 'selected' : ''}`}
-                onClick={() => setActiveRole(role)}
-              >
-                <Icon size={18} />
-                <span>{role}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section aria-labelledby="teaching-title">
-          <h2 id="teaching-title" className="rail-title">
-            Teaching
-          </h2>
-          <div className="role-stack">
-            {teachingLinks.map(([label, Icon], index) => (
-              <button key={label} type="button" className={`rail-button ${index === 0 ? 'selected' : ''}`}>
-                <Icon size={18} />
-                <span>{label}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section aria-labelledby="governance-title">
-          <h2 id="governance-title" className="rail-title">
-            Privacy & Governance
-          </h2>
-          <div className="role-stack">
-            {governanceLinks.map(([label, Icon]) => (
-              <button key={label} type="button" className="rail-button">
-                <Icon size={18} />
-                <span>{label}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <div className="rail-footer">
-          <strong>FNP-QNN summaries minimized</strong>
-          <button type="button" className="minimize">
-            <PanelLeftClose size={16} />
-            Minimize
-          </button>
-        </div>
-      </aside>
-
-      <main className="workspace">
+      <main id="cockpit-workspace" className="workspace">
         <header className="topbar">
-          <div>
+          <div className="workspace-heading">
+            <button
+              ref={navigationToggleRef}
+              type="button"
+              className="navigation-toggle"
+              aria-controls="cockpit-navigation"
+              aria-expanded={isCompactNavigation && navigationOpen}
+              data-cockpit-nav-toggle
+              onClick={() => (navigationOpen ? closeNavigation(true) : setNavigationOpen(true))}
+            >
+              {navigationOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
+              <span>{navigationOpen ? 'Close navigation' : 'Navigation'}</span>
+            </button>
             <h1>Synthia Professor Cockpit</h1>
             <p>Grade 10 Science / Sec. 2 / Term 2</p>
           </div>
@@ -242,6 +252,145 @@ export function App() {
         )}
       </main>
     </div>
+  );
+}
+
+interface CockpitNavigationProps {
+  activeRole: UserRole;
+  selectRole: (role: UserRole) => void;
+  onNavigate?: () => void;
+  drawer?: boolean;
+  navigationRef?: RefObject<HTMLElement>;
+  closeNavigation?: () => void;
+}
+
+function CockpitNavigation({
+  activeRole,
+  selectRole,
+  onNavigate,
+  drawer = false,
+  navigationRef,
+  closeNavigation
+}: CockpitNavigationProps) {
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Escape' && closeNavigation) {
+      event.preventDefault();
+      closeNavigation();
+      return;
+    }
+
+    if (event.key !== 'Tab' || !drawer) {
+      return;
+    }
+
+    const focusableItems = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+    const firstItem = focusableItems[0];
+    const lastItem = focusableItems[focusableItems.length - 1];
+
+    if (!firstItem || !lastItem) {
+      return;
+    }
+
+    if (event.shiftKey && document.activeElement === firstItem) {
+      event.preventDefault();
+      lastItem.focus();
+    } else if (!event.shiftKey && document.activeElement === lastItem) {
+      event.preventDefault();
+      firstItem.focus();
+    }
+  };
+
+  return (
+    <aside
+      ref={navigationRef}
+      id={drawer ? 'cockpit-navigation' : undefined}
+      className={`sidebar ${drawer ? 'sidebar--drawer' : ''}`}
+      aria-label="Synthia professor navigation"
+      aria-modal={drawer || undefined}
+      role={drawer ? 'dialog' : undefined}
+      data-cockpit-nav={drawer ? '' : undefined}
+      onKeyDown={handleKeyDown}
+    >
+      <div className="brand">
+        <div className="brand-mark" aria-hidden="true">
+          <Sparkles size={24} />
+        </div>
+        <div>
+          <strong>SYNTHIA</strong>
+          <span>Learning. Human. Together.</span>
+        </div>
+        {drawer && (
+          <button type="button" className="navigation-close" data-cockpit-nav-close onClick={closeNavigation}>
+            <X size={18} aria-hidden="true" />
+            <span>Close navigation</span>
+          </button>
+        )}
+      </div>
+
+      <nav aria-label="Cockpit sections">
+        <section aria-labelledby="roles-title">
+          <h2 id="roles-title" className="rail-title">
+            Role Switcher
+          </h2>
+          <div className="role-stack">
+            {roleOptions.map(({ role, icon: Icon }) => (
+              <button
+                key={role}
+                type="button"
+                className={`rail-button ${activeRole === role ? 'selected' : ''}`}
+                aria-pressed={activeRole === role}
+                onClick={() => selectRole(role)}
+              >
+                <Icon size={18} aria-hidden="true" />
+                <span>{role}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="teaching-title">
+          <h2 id="teaching-title" className="rail-title">
+            Teaching
+          </h2>
+          <div className="role-stack">
+            {teachingLinks.map(([label, Icon], index) => (
+              <button
+                key={label}
+                type="button"
+                className={`rail-button ${index === 0 ? 'selected' : ''}`}
+                aria-current={index === 0 ? 'page' : undefined}
+                onClick={onNavigate}
+              >
+                <Icon size={18} aria-hidden="true" />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="governance-title">
+          <h2 id="governance-title" className="rail-title">
+            Privacy &amp; Governance
+          </h2>
+          <div className="role-stack">
+            {governanceLinks.map(([label, Icon]) => (
+              <button key={label} type="button" className="rail-button" onClick={onNavigate}>
+                <Icon size={18} aria-hidden="true" />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      </nav>
+
+      <div className="rail-footer">
+        <strong>FNP-QNN summaries minimized</strong>
+      </div>
+    </aside>
   );
 }
 

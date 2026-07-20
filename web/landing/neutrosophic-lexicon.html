@@ -1,168 +1,156 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-access="base">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Synthia neutrosophic lexicon page: T/I/F, source traceability, plithogenic contradiction, and I_lexicon routing."
-    />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Synthia neutrosophic lexicon page: T/I/F, source traceability, plithogenic contradiction, and I_lexicon routing.">
     <title>SYNTHIA | Neutrosophic Lexicon</title>
-    <link rel="stylesheet" href="./synthia-landing.css?v=2" />
+    <link rel="icon" href="assets/synthia-icon-dark.png" type="image/png">
+    <link rel="stylesheet" href="assets/synthia-public-shell.2fa8fb172d5d5a6e.css">
   </head>
-  <body>
+  <body class="lexicon-page">
     <a class="skip-link" href="#main">Skip to content</a>
-
-    <div class="site-shell">
-      <header class="site-header" aria-label="Synthia lexicon navigation">
-        <a class="brand-mark" href="./index.html" aria-label="Synthia home">
-          <span>
-            <strong>SYNTHIA</strong>
-            <small>Neutrosophic lexicon page</small>
-          </span>
+    <header class="site-header" aria-label="Synthia lexicon navigation">
+      <div class="site-header__brand">
+        <a class="brand synthia" href="index.html" aria-label="Synthia home">
+          <img src="assets/synthia-icon-dark.png" alt="" data-theme-src-dark="assets/synthia-icon-dark.png" data-theme-src-light="assets/synthia-icon-light.png">
+          <span>Synthia <strong>Engine</strong></span>
         </a>
-        <nav class="nav-links" aria-label="Lexicon sections">
-          <a href="./index.html">Home</a>
-          <a href="#sources">Sources</a>
-          <a href="#kernels">Kernels</a>
-          <a href="#payload">Payload</a>
-          <a href="#boundary">Boundary</a>
-        </nav>
-      </header>
+      </div>
+      <nav id="lexicon-navigation" class="site-nav" data-nav-menu aria-label="Synthia navigation">
+        <a href="index.html">Overview</a>
+        <a href="trace-lab.html">Trace Lab</a>
+        <a href="neutrosophic-lexicon.html" aria-current="page">Lexicon</a>
+        <a href="#sources">Sources</a>
+        <a href="#boundary">Boundary</a>
+        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">Source</a>
+      </nav>
+      <div class="header-actions">
+        <a class="launch-link" href="trace-lab.html">Open Trace Lab</a>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-controls="lexicon-navigation" aria-expanded="false">
+          <span class="nav-toggle__icon" aria-hidden="true">☰</span><span>Menu</span>
+        </button>
+      </div>
+    </header>
 
-      <main id="main">
-        <section class="hero-stage compact-page" aria-labelledby="lexicon-title">
-          <div class="hero-backdrop" aria-hidden="true"></div>
-          <div class="hero-grid">
-            <article class="hero-copy">
-              <p class="eyebrow">Complete lexicon page 01</p>
-              <h1 id="lexicon-title">Neutrosophic Lexicon</h1>
-              <p class="lead">
-                The neutrosophic page is the first complete subject lexicon in
-                Synthia. It maps public NSS sources into safe software kernels for
-                T/I/F, set membership, logic, probability, statistics, plithogenic
-                contradiction, and I_lexicon routing.
-              </p>
-              <div class="hero-actions">
-                <a class="button primary" href="#kernels">View kernels</a>
-                <a class="button secondary" href="./index.html">Back to Synthia</a>
-              </div>
-            </article>
-
-            <aside class="signal-panel">
-              <p class="panel-label">Lexicon chain</p>
-              <div class="chain-line">I -> I_system^S -> H_lex -> G_lex -> I_lexicon</div>
-              <p>
-                Formal values remain source-linked. Operational values are bounded
-                for computation, graph traces, and review packets.
-              </p>
-            </aside>
-          </div>
-        </section>
-
-        <section class="section-band" id="sources" aria-labelledby="sources-title">
-          <div class="section-heading">
-            <p class="eyebrow">Public NSS source ledger</p>
-            <h2 id="sources-title">Primary mathematical sources</h2>
-            <p>
-              These public FS/NSS sources are encoded as safe source IDs and URLs.
-              They guide software interpretation without making Synthia a formal
-              mathematical authority.
-            </p>
-          </div>
-
-          <div class="source-list">
-            <a href="https://fs.unm.edu/eBook-Neutrosophics6.pdf">A Unifying Field in Logics: Neutrosophic Logic, Neutrosophy, Set, Probability and Statistics</a>
-            <a href="https://fs.unm.edu/IFS-generalized.pdf">Neutrosophic Set as a Generalization of the Intuitionistic Fuzzy Set</a>
-            <a href="https://fs.unm.edu/IFL-generalized.pdf">Neutrosophic Logic as a Generalization of Intuitionistic Fuzzy Logic</a>
-            <a href="https://fs.unm.edu/IntrodNeutLogic.pdf">Introduction to Neutrosophic Logic</a>
-            <a href="https://fs.unm.edu/SingleValuedNeutrosophicSets.pdf">Single Valued Neutrosophic Sets</a>
-            <a href="https://fs.unm.edu/NeutrosophicMeasureIntegralProbability.pdf">Introduction to Neutrosophic Measure, Integral, and Probability</a>
-            <a href="https://fs.unm.edu/NeutrosophicStatistics.pdf">Introduction to Neutrosophic Statistics</a>
-            <a href="https://fs.unm.edu/NSS/TheNeutrosophicStatisticalDistribution.pdf">The Neutrosophic Statistical Distribution</a>
-            <a href="https://fs.unm.edu/NSS/NeutrosophicRandomVariables4.pdf">Neutrosophic Random Variables</a>
-            <a href="https://fs.unm.edu/NSS/PracticalIndependentNeutrosophic36.pdf">Practical Applications of the Independent Neutrosophic Components</a>
-            <a href="https://fs.unm.edu/NSS/MultiNeutrosophicSet.pdf">Introduction to the MultiNeutrosophic Set</a>
-            <a href="https://fs.unm.edu/NSS/PlithogenicSetAnExtensionOfCrisp.pdf">Plithogenic Set</a>
-            <a href="https://fs.unm.edu/NSS/IntroductionPlithogenicLogic1.pdf">Introduction to Plithogenic Logic</a>
-            <a href="https://fs.unm.edu/NSS/Articles.htm">NSS Articles Index</a>
-          </div>
-        </section>
-
-        <section class="section-band dark-band" id="kernels" aria-labelledby="kernels-title">
-          <div class="section-heading">
-            <p class="eyebrow">Kernel map</p>
-            <h2 id="kernels-title">How the neutrosophic lexicon becomes code</h2>
-          </div>
-
-          <div class="feature-grid">
-            <article class="feature-card">
-              <span class="card-index">01</span>
-              <h3>Foundation T/I/F</h3>
-              <p>Formal profiles are preserved, then normalized into bounded operational `TIF` values.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">02</span>
-              <h3>Set membership</h3>
-              <p>`T` as membership, `I` as indeterminacy, and `F` as non-membership.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">03</span>
-              <h3>Logic propositions</h3>
-              <p>Relative, absolute, incomplete, paraconsistent, paradoxist, and IFL-compatible profiles.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">04</span>
-              <h3>Single-valued operations</h3>
-              <p>Bounded union, intersection, difference, truth-favorite, and falsity-favorite operators.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">05</span>
-              <h3>Probability and statistics</h3>
-              <p>Event triples, sample-space diagnostics, distributions, and indeterminate datasets.</p>
-            </article>
-            <article class="feature-card">
-              <span class="card-index">06</span>
-              <h3>Plithogenic methods</h3>
-              <p>Dominant attributes, contradiction degree, cumulative truth, and multi-variable routing.</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="section-band" id="payload" aria-labelledby="payload-title">
-          <div class="split-layout">
-            <div>
-              <p class="eyebrow">Classification payload</p>
-              <h2 id="payload-title">What each output should preserve</h2>
+    <main id="main">
+      <section class="hero-stage compact-page" aria-labelledby="lexicon-title">
+        <div class="hero-grid">
+          <article class="hero-copy">
+            <p class="eyebrow">Complete lexicon page 01</p>
+            <h1 id="lexicon-title"><span>Neutrosophic</span> Lexicon</h1>
+            <p class="lead">The neutrosophic page is the first complete subject lexicon in Synthia. It maps public NSS sources into safe software kernels for T/I/F, set membership, logic, probability, statistics, plithogenic contradiction, and I_lexicon routing.</p>
+            <div class="hero-actions">
+              <a class="button primary" href="#kernels">View kernels</a>
+              <a class="button secondary" href="index.html">Back to Synthia</a>
             </div>
-            <pre class="code-panel"><code>{
+          </article>
+
+          <aside class="signal-panel">
+            <p class="panel-label">Lexicon chain</p>
+            <div class="chain-line">I -&gt; I_system^S -&gt; H_lex -&gt; G_lex -&gt; I_lexicon</div>
+            <p>Formal values remain source-linked. Operational values are bounded for computation, graph traces, and review packets.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section-band" id="sources" aria-labelledby="sources-title">
+        <div class="section-heading">
+          <p class="eyebrow">Public NSS source ledger</p>
+          <h2 id="sources-title">Primary mathematical sources</h2>
+          <p>These public FS/NSS sources are encoded as safe source IDs and URLs. They guide software interpretation without making Synthia a formal mathematical authority.</p>
+        </div>
+
+        <div class="source-list">
+          <a href="https://fs.unm.edu/eBook-Neutrosophics6.pdf">A Unifying Field in Logics: Neutrosophic Logic, Neutrosophy, Set, Probability and Statistics</a>
+          <a href="https://fs.unm.edu/IFS-generalized.pdf">Neutrosophic Set as a Generalization of the Intuitionistic Fuzzy Set</a>
+          <a href="https://fs.unm.edu/IFL-generalized.pdf">Neutrosophic Logic as a Generalization of Intuitionistic Fuzzy Logic</a>
+          <a href="https://fs.unm.edu/IntrodNeutLogic.pdf">Introduction to Neutrosophic Logic</a>
+          <a href="https://fs.unm.edu/SingleValuedNeutrosophicSets.pdf">Single Valued Neutrosophic Sets</a>
+          <a href="https://fs.unm.edu/NeutrosophicMeasureIntegralProbability.pdf">Introduction to Neutrosophic Measure, Integral, and Probability</a>
+          <a href="https://fs.unm.edu/NeutrosophicStatistics.pdf">Introduction to Neutrosophic Statistics</a>
+          <a href="https://fs.unm.edu/NSS/TheNeutrosophicStatisticalDistribution.pdf">The Neutrosophic Statistical Distribution</a>
+          <a href="https://fs.unm.edu/NSS/NeutrosophicRandomVariables4.pdf">Neutrosophic Random Variables</a>
+          <a href="https://fs.unm.edu/NSS/PracticalIndependentNeutrosophic36.pdf">Practical Applications of the Independent Neutrosophic Components</a>
+          <a href="https://fs.unm.edu/NSS/MultiNeutrosophicSet.pdf">Introduction to the MultiNeutrosophic Set</a>
+          <a href="https://fs.unm.edu/NSS/PlithogenicSetAnExtensionOfCrisp.pdf">Plithogenic Set</a>
+          <a href="https://fs.unm.edu/NSS/IntroductionPlithogenicLogic1.pdf">Introduction to Plithogenic Logic</a>
+          <a href="https://fs.unm.edu/NSS/Articles.htm">NSS Articles Index</a>
+        </div>
+      </section>
+
+      <section class="section-band dark-band" id="kernels" aria-labelledby="kernels-title">
+        <div class="section-heading">
+          <p class="eyebrow">Kernel map</p>
+          <h2 id="kernels-title">How the neutrosophic lexicon becomes code</h2>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card"><span class="card-index">01</span><h3>Foundation T/I/F</h3><p>Formal profiles are preserved, then normalized into bounded operational TIF values.</p></article>
+          <article class="feature-card"><span class="card-index">02</span><h3>Set membership</h3><p>T as membership, I as indeterminacy, and F as non-membership.</p></article>
+          <article class="feature-card"><span class="card-index">03</span><h3>Logic propositions</h3><p>Relative, absolute, incomplete, paraconsistent, paradoxist, and IFL-compatible profiles.</p></article>
+          <article class="feature-card"><span class="card-index">04</span><h3>Single-valued operations</h3><p>Bounded union, intersection, difference, truth-favorite, and falsity-favorite operators.</p></article>
+          <article class="feature-card"><span class="card-index">05</span><h3>Probability and statistics</h3><p>Event triples, sample-space diagnostics, distributions, and indeterminate datasets.</p></article>
+          <article class="feature-card"><span class="card-index">06</span><h3>Plithogenic methods</h3><p>Dominant attributes, contradiction degree, cumulative truth, and multi-variable routing.</p></article>
+        </div>
+      </section>
+
+      <section class="section-band" id="payload" aria-labelledby="payload-title">
+        <div class="split-layout">
+          <div>
+            <p class="eyebrow">Classification payload</p>
+            <h2 id="payload-title">What each output should preserve</h2>
+          </div>
+          <pre class="code-panel"><code>{
   "selected_lexicon": "neutrosophic",
   "source_ids": ["nss.unifying_field_logics"],
   "formal_value": {"T": 1.2, "I": 0.4, "F": -0.1},
   "operational_tif": {"T": 1.0, "I": 0.4, "F": 0.0},
-  "chain": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon",
+  "chain": "I -&gt; I_system^S -&gt; H_lex -&gt; G_lex -&gt; I_lexicon",
   "review_boundary": "candidate classification for human review"
 }</code></pre>
+        </div>
+      </section>
+
+      <section class="boundary-note" id="boundary" aria-labelledby="boundary-title">
+        <p class="eyebrow">Boundary</p>
+        <h2 id="boundary-title">Candidate routing, not final authority</h2>
+        <p>Synthia uses public NSS sources to structure software behavior. Generated classifications are source-linked candidates for review, not final mathematical, scientific, medical, legal, or nomenclatural authority.</p>
+      </section>
+    </main>
+
+    <aside class="access-console" data-access-console aria-hidden="true" aria-labelledby="lexicon-access-console-title" aria-modal="true" role="dialog">
+      <div class="access-panel">
+        <div class="access-head">
+          <strong id="lexicon-access-console-title">Access</strong>
+          <button type="button" data-access-close aria-label="Close Access console">Close</button>
+        </div>
+        <div class="control-row">
+          <span>Profile</span>
+          <div class="segmented">
+            <button type="button" data-access-profile="base">Base</button>
+            <button type="button" data-access-profile="autism">Autism Calm</button>
+            <button type="button" data-access-profile="adhd">ADHD Sprint</button>
+            <button type="button" data-access-profile="deep">Deep Work</button>
           </div>
-        </section>
+        </div>
+        <label class="control-row"><span>Contrast</span><input type="checkbox" data-contrast-toggle></label>
+        <label class="control-row"><span>Large text</span><input type="checkbox" data-text-toggle></label>
+        <label class="control-row"><span>Reduced motion</span><input type="checkbox" data-motion-toggle></label>
+      </div>
+    </aside>
 
-        <section class="boundary-note" id="boundary" aria-labelledby="boundary-title">
-          <p class="eyebrow">Boundary</p>
-          <h2 id="boundary-title">Candidate routing, not final authority</h2>
-          <p>
-            Synthia uses public NSS sources to structure software behavior.
-            Generated classifications are source-linked candidates for review, not
-            final mathematical, scientific, medical, legal, or nomenclatural authority.
-          </p>
-        </section>
-      </main>
-
-      <footer class="page-footer">
-        <strong>SYNTHIA</strong>
-        <span>Neutrosophic lexicon page template for future complete lexicons.</span>
-        <a href="./index.html">Back to Synthia home</a>
-        <a href="https://github.com/SeCuReDmE-main-dev/Synthia">GitHub repository</a>
-      </footer>
+    <div class="action-dock" data-action-dock aria-label="Display controls">
+      <button type="button" data-theme-toggle>Theme: Night</button>
+      <button type="button" data-access-open>Access</button>
     </div>
+
+    <footer class="page-footer">
+      <strong>SYNTHIA</strong>
+      <span>Neutrosophic lexicon page template for future complete lexicons.</span>
+      <a href="index.html">Back to Synthia home</a>
+      <a href="https://github.com/SeCuReDmE-main-dev/Synthia">GitHub repository</a>
+    </footer>
+    <script src="assets/synthia-public-shell.914bc27e1baa67e2.js" defer></script>
   </body>
 </html>

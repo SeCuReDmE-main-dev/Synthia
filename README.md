@@ -58,6 +58,16 @@ Public site: <https://synthia.securedme.ca/>
 
 Repository: <https://github.com/SeCuReDmE-main-dev/Synthia>
 
+### Public site deployment
+
+The canonical public source is [`web/landing/`](web/landing/), released from
+`new/synthia-public-landing` to
+`/home/xacm7978/synthia.securedme.ca/` through [`.cpanel.yml`](.cpanel.yml).
+The static package is deployed directly from that directory; no `dist/`
+directory is part of the live path. See the
+[public-site deployment map](web/landing/README.md) for the versioned local
+shell assets, release check, and cache verification sequence.
+
 ## Conception And Scientific Collaboration
 
 - Jean-Sebastien Beaulieu: lead builder for Synthia's software architecture, implementation, public repository, and ORCID identity: <https://orcid.org/0009-0007-2904-0443>.
