@@ -1,0 +1,208 @@
+{
+  "run_id": "aea7c3aa1158",
+  "profile": "taxonomy-review",
+  "term_count": 17,
+  "terms": [
+    {
+      "term": "species as systems",
+      "domain": "taxonomy",
+      "source_ids": [
+        "gdoc.aguilar_beaulieu_white_paper"
+      ],
+      "block_ids": [
+        "blk-0001",
+        "blk-0002"
+      ]
+    },
+    {
+      "term": "taxonomic",
+      "domain": "taxonomy",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0003"
+      ]
+    },
+    {
+      "term": "taxonomy",
+      "domain": "taxonomy",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0002"
+      ]
+    },
+    {
+      "term": "clade",
+      "domain": "phylocode_nomenclature",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0003"
+      ]
+    },
+    {
+      "term": "nomenclature",
+      "domain": "phylocode_nomenclature",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0003"
+      ]
+    },
+    {
+      "term": "phylocode",
+      "domain": "phylocode_nomenclature",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0003"
+      ]
+    },
+    {
+      "term": "redescription",
+      "domain": "phylocode_nomenclature",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0003"
+      ]
+    },
+    {
+      "term": "taxonomic memory repair",
+      "domain": "phylocode_nomenclature",
+      "source_ids": [
+        "gdoc.aguilar_beaulieu_white_paper"
+      ],
+      "block_ids": [
+        "blk-0003"
+      ]
+    },
+    {
+      "term": "conservation",
+      "domain": "conservation",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0004"
+      ]
+    },
+    {
+      "term": "conservation report",
+      "domain": "conservation",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0004"
+      ]
+    },
+    {
+      "term": "habitat monitoring",
+      "domain": "conservation",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0004"
+      ]
+    },
+    {
+      "term": "integral conservation",
+      "domain": "conservation",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0004"
+      ]
+    },
+    {
+      "term": "AI-assisted traceability",
+      "domain": "ai_governance",
+      "source_ids": [
+        "gdoc.aguilar_beaulieu_white_paper"
+      ],
+      "block_ids": [
+        "blk-0005"
+      ]
+    },
+    {
+      "term": "human review",
+      "domain": "ai_governance",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0005"
+      ]
+    },
+    {
+      "term": "review boundary",
+      "domain": "ai_governance",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0005"
+      ]
+    },
+    {
+      "term": "source-linked evidence",
+      "domain": "ai_governance",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0005"
+      ]
+    },
+    {
+      "term": "traceability",
+      "domain": "ai_governance",
+      "source_ids": [
+        "document.profile.taxonomy-review"
+      ],
+      "block_ids": [
+        "blk-0005"
+      ]
+    }
+  ],
+  "dominant_domain_counts": {
+    "taxonomy": 2,
+    "phylocode_nomenclature": 1,
+    "conservation": 1,
+    "ai_governance": 1
+  },
+  "unresolved_blocks": [
+    {
+      "block_id": "blk-0003",
+      "dominant_domain": "phylocode_nomenclature",
+      "heading_hint": "",
+      "candidate_terms": [
+        "taxonomic",
+        "memory",
+        "repair",
+        "phylocode",
+        "nomenclature"
+      ]
+    }
+  ],
+  "unresolved_candidate_terms": [
+    "memory",
+    "nomenclature",
+    "phylocode",
+    "repair",
+    "taxonomic"
+  ],
+  "human_review_required": true,
+  "authority_boundary": "Formal nomenclatural authority remains governed by the relevant Code and human review.",
+  "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+}

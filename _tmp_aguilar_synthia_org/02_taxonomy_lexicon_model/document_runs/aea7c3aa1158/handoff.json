@@ -1,0 +1,130 @@
+{
+  "run_id": "aea7c3aa1158",
+  "command": "python -m synthia_core.cli document pipeline --input tests/fixtures/document_pipeline_taxonomy_review.md --profile taxonomy-review --private-org '[private-org]' --emit-lexicon --emit-annex",
+  "profile": "taxonomy-review",
+  "overall_status": "done_by_synthia",
+  "stop_stage": "handoff",
+  "next_actor": "codex",
+  "input_path": "tests/fixtures/document_pipeline_taxonomy_review.md",
+  "input_format": "md",
+  "reason": "synthia_owned_stages_complete",
+  "message": "Synthia completed its owned stages and prepared a bounded Codex handoff.",
+  "next_steps": [
+    "assemble final document",
+    "translate final prose",
+    "style-polish the handoff package",
+    "export or convert downstream formats"
+  ],
+  "allowed_codex_actions": [
+    "assemble final document",
+    "translate final prose",
+    "style-polish the handoff package",
+    "export or convert downstream formats"
+  ],
+  "forbidden_claims": [
+    "Codex must not claim Synthia completed unsupported stages.",
+    "Neither Synthia nor Codex may claim formal nomenclatural authority or autonomous scientific authority."
+  ],
+  "completed_stage_records": [
+    {
+      "timestamp": "2026-07-23T12:40:39.482940+00:00",
+      "stage": "ingest",
+      "status": "done_by_synthia",
+      "actor": "synthia",
+      "message": "Synthia ingested and normalized the document input.",
+      "details": {
+        "block_count": 5,
+        "input_format": "md",
+        "input_size": 500,
+        "input_mtime": 1783586865,
+        "supported_formats": [
+          "docx",
+          "md",
+          "txt"
+        ]
+      }
+    },
+    {
+      "timestamp": "2026-07-23T12:40:39.537620+00:00",
+      "stage": "classify",
+      "status": "done_by_synthia",
+      "actor": "synthia",
+      "message": "Synthia classified document blocks into the configured review domains.",
+      "details": {
+        "block_count": 5,
+        "dominant_domain_counts": {
+          "taxonomy": 2,
+          "phylocode_nomenclature": 1,
+          "conservation": 1,
+          "ai_governance": 1
+        },
+        "unresolved_block_count": 1
+      }
+    },
+    {
+      "timestamp": "2026-07-23T12:40:39.539935+00:00",
+      "stage": "lexicon",
+      "status": "done_by_synthia",
+      "actor": "synthia",
+      "message": "Synthia aggregated matched terms, unresolved candidates, and source-linked lexicon coverage.",
+      "details": {
+        "term_count": 17,
+        "unresolved_candidate_term_count": 5
+      }
+    },
+    {
+      "timestamp": "2026-07-23T12:40:39.548090+00:00",
+      "stage": "annex",
+      "status": "done_by_synthia",
+      "actor": "synthia",
+      "message": "Synthia generated the taxonomy review annex and preserved the authority boundary.",
+      "details": {
+        "annex_path": "C:\\Users\\jeans\\Desktop\\Case study\\modele\\Synthia\\Synthia\\_tmp_aguilar_synthia_org\\02_taxonomy_lexicon_model\\document_runs\\aea7c3aa1158\\taxonomy_annex.md"
+      }
+    },
+    {
+      "timestamp": "2026-07-23T12:40:39.550102+00:00",
+      "stage": "handoff",
+      "status": "done_by_synthia",
+      "actor": "synthia",
+      "message": "Synthia emitted the final handoff bundle for Codex-owned downstream work.",
+      "details": {
+        "next_actor": "codex"
+      }
+    }
+  ],
+  "ownership": {
+    "ingest": {
+      "actor": "synthia",
+      "status": "done_by_synthia"
+    },
+    "classify": {
+      "actor": "synthia",
+      "status": "done_by_synthia"
+    },
+    "lexicon": {
+      "actor": "synthia",
+      "status": "done_by_synthia"
+    },
+    "annex": {
+      "actor": "synthia",
+      "status": "done_by_synthia"
+    },
+    "handoff": {
+      "actor": "synthia",
+      "status": "done_by_synthia"
+    }
+  },
+  "artifact_paths": {
+    "bundle_dir": "02_taxonomy_lexicon_model/document_runs/aea7c3aa1158",
+    "decision": "02_taxonomy_lexicon_model/document_runs/aea7c3aa1158/decision.json",
+    "stage_log": "02_taxonomy_lexicon_model/document_runs/aea7c3aa1158/stage_log.jsonl",
+    "normalized_document": "02_taxonomy_lexicon_model/document_runs/aea7c3aa1158/normalized_document.json",
+    "block_map": "02_taxonomy_lexicon_model/document_runs/aea7c3aa1158/block_map.json",
+    "lexicon_summary": "02_taxonomy_lexicon_model/document_runs/aea7c3aa1158/lexicon_summary.json",
+    "taxonomy_annex": "02_taxonomy_lexicon_model/document_runs/aea7c3aa1158/taxonomy_annex.md",
+    "handoff": "02_taxonomy_lexicon_model/document_runs/aea7c3aa1158/handoff.json"
+  },
+  "human_review_required": true,
+  "authority_boundary": "Formal nomenclatural authority remains governed by the relevant Code and human review."
+}

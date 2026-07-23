@@ -1,0 +1,1033 @@
+{
+  "run_id": "aea7c3aa1158",
+  "profile": "taxonomy-review",
+  "input_path": "C:\\Users\\jeans\\Desktop\\Case study\\modele\\Synthia\\Synthia\\tests\\fixtures\\document_pipeline_taxonomy_review.md",
+  "input_format": "md",
+  "dominant_domain_counts": {
+    "taxonomy": 2,
+    "phylocode_nomenclature": 1,
+    "conservation": 1,
+    "ai_governance": 1
+  },
+  "unresolved_block_count": 1,
+  "blocks": [
+    {
+      "block_id": "blk-0001",
+      "index": 0,
+      "heading_hint": "Species as Systems",
+      "char_count": 18,
+      "candidate_terms": [],
+      "matched_terms": [
+        {
+          "term": "species as systems",
+          "domain": "taxonomy",
+          "source_ids": [
+            "gdoc.aguilar_beaulieu_white_paper"
+          ],
+          "block_ids": [
+            "blk-0001"
+          ]
+        }
+      ],
+      "matched_domains": [
+        "taxonomy"
+      ],
+      "dominant_domain": "taxonomy",
+      "unresolved": false,
+      "classification_profile": {
+        "classification_family": "I",
+        "plithogenic_classified_as": "I_system^S",
+        "plithogenic_i_profile": {
+          "classification_family": "I",
+          "canonical_indeterminacy_class": "I_system^S",
+          "aliases": [
+            "I_s",
+            "I_s_system",
+            "I_system"
+          ],
+          "role": "multi-attribute / multi-variable system indeterminacy organizer",
+          "evidence_status": "public_nss_supported + system_indeterminacy_inferred",
+          "notation": {
+            "canonical_id": "I_system^S",
+            "ascii": "I_system^S",
+            "latex": "I_{\\mathrm{system}}^{S}",
+            "unicode": "I_system^S",
+            "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+            "aliases": [
+              "I_s",
+              "I_s_system",
+              "I_system"
+            ]
+          },
+          "algorithm_notation": {
+            "canonical_id": "plithogenic_matrix",
+            "ascii": "P(attributes, contradiction_degree, TIF)",
+            "latex": "P(A, c(v_i,v_j), (T,I,F))",
+            "unicode": "P(attributes, contradiction_degree, TIF)",
+            "algorithm": "P := aggregate(attribute_values, contradiction_degree, TIF, weights)",
+            "aliases": []
+          },
+          "source_ids": [
+            "nss.hub",
+            "nss.plithogenic_set",
+            "nss.plithogenic_logic",
+            "nss.plithogenic_probability_statistics",
+            "nss.symbolic_plithogenic_algebra"
+          ],
+          "human_authority_boundary": "Public NSS sources support the math layer; Synthia remains an educational classifier."
+        },
+        "weighted_I": 0.1,
+        "system_indeterminacy_chain": {
+          "I": 0.1,
+          "I_system^S": 0.1,
+          "H_lex": 0.1,
+          "G_lex": 0.09999999999999998,
+          "I_lexicon": 0.06666666666666667,
+          "carrier_type": "lexicon_distribution",
+          "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon",
+          "classification_family": "I",
+          "source": "explicit_or_derived",
+          "layers": [
+            {
+              "canonical_id": "I",
+              "order": 0,
+              "role": "base indeterminacy signal",
+              "notation": {
+                "canonical_id": "I",
+                "ascii": "I",
+                "latex": "I",
+                "unicode": "I",
+                "algorithm": "I := base_indeterminacy(TIF)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.unifying_field_logics",
+                "nss.indeterminacy"
+              ]
+            },
+            {
+              "canonical_id": "I_system^S",
+              "order": 1,
+              "role": "system-scoped indeterminacy inside the active lexicon, task, corpus, and source context",
+              "notation": {
+                "canonical_id": "I_system^S",
+                "ascii": "I_system^S",
+                "latex": "I_{\\mathrm{system}}^{S}",
+                "unicode": "I_system^S",
+                "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+                "aliases": [
+                  "I_s",
+                  "I_s_system",
+                  "I_system"
+                ]
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.unifying_field_logics",
+                "nss.indeterminacy",
+                "nss.plithogenic_logic"
+              ]
+            },
+            {
+              "canonical_id": "H_lex",
+              "order": 2,
+              "role": "normalized lexicon entropy over candidate lexicons",
+              "notation": {
+                "canonical_id": "H_lex",
+                "ascii": "H_lex",
+                "latex": "H_{\\mathrm{lex}}",
+                "unicode": "H_lex",
+                "algorithm": "H_lex := -sum(P(L_i) log(P(L_i))) / log(|L|)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "G_lex",
+              "order": 3,
+              "role": "lexicon decision-gap uncertainty between the strongest and second-strongest lexicon",
+              "notation": {
+                "canonical_id": "G_lex",
+                "ascii": "G_lex",
+                "latex": "G_{\\mathrm{lex}}",
+                "unicode": "G_lex",
+                "algorithm": "G_lex := 1 - (P_top - P_second)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "I_lexicon",
+              "order": 4,
+              "role": "final context-preserving lexicon indeterminacy state",
+              "notation": {
+                "canonical_id": "I_lexicon",
+                "ascii": "I_lexicon",
+                "latex": "I_{\\mathrm{lexicon}}",
+                "unicode": "I_lexicon",
+                "algorithm": "I_lexicon := bounded(alpha*H_lex + beta*G_lex + gamma*contradiction_load)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_logic",
+                "nss.plithogenic_probability_statistics"
+              ]
+            }
+          ]
+        },
+        "chain_count": 1,
+        "rule": "Plithogenic classification is treated as a system-level aggregation and contradiction layer before final lexicon selection.",
+        "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+      }
+    },
+    {
+      "block_id": "blk-0002",
+      "index": 1,
+      "heading_hint": "",
+      "char_count": 92,
+      "candidate_terms": [],
+      "matched_terms": [
+        {
+          "term": "species as systems",
+          "domain": "taxonomy",
+          "source_ids": [
+            "gdoc.aguilar_beaulieu_white_paper"
+          ],
+          "block_ids": [
+            "blk-0002"
+          ]
+        },
+        {
+          "term": "taxonomy",
+          "domain": "taxonomy",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0002"
+          ]
+        }
+      ],
+      "matched_domains": [
+        "taxonomy"
+      ],
+      "dominant_domain": "taxonomy",
+      "unresolved": false,
+      "classification_profile": {
+        "classification_family": "I",
+        "plithogenic_classified_as": "I_system^S",
+        "plithogenic_i_profile": {
+          "classification_family": "I",
+          "canonical_indeterminacy_class": "I_system^S",
+          "aliases": [
+            "I_s",
+            "I_s_system",
+            "I_system"
+          ],
+          "role": "multi-attribute / multi-variable system indeterminacy organizer",
+          "evidence_status": "public_nss_supported + system_indeterminacy_inferred",
+          "notation": {
+            "canonical_id": "I_system^S",
+            "ascii": "I_system^S",
+            "latex": "I_{\\mathrm{system}}^{S}",
+            "unicode": "I_system^S",
+            "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+            "aliases": [
+              "I_s",
+              "I_s_system",
+              "I_system"
+            ]
+          },
+          "algorithm_notation": {
+            "canonical_id": "plithogenic_matrix",
+            "ascii": "P(attributes, contradiction_degree, TIF)",
+            "latex": "P(A, c(v_i,v_j), (T,I,F))",
+            "unicode": "P(attributes, contradiction_degree, TIF)",
+            "algorithm": "P := aggregate(attribute_values, contradiction_degree, TIF, weights)",
+            "aliases": []
+          },
+          "source_ids": [
+            "nss.hub",
+            "nss.plithogenic_set",
+            "nss.plithogenic_logic",
+            "nss.plithogenic_probability_statistics",
+            "nss.symbolic_plithogenic_algebra"
+          ],
+          "human_authority_boundary": "Public NSS sources support the math layer; Synthia remains an educational classifier."
+        },
+        "weighted_I": 0.125,
+        "system_indeterminacy_chain": {
+          "I": 0.125,
+          "I_system^S": 0.125,
+          "H_lex": 0.125,
+          "G_lex": 0.17499999999999993,
+          "I_lexicon": 0.1333333333333333,
+          "carrier_type": "lexicon_distribution",
+          "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon",
+          "classification_family": "I",
+          "source": "explicit_or_derived",
+          "layers": [
+            {
+              "canonical_id": "I",
+              "order": 0,
+              "role": "base indeterminacy signal",
+              "notation": {
+                "canonical_id": "I",
+                "ascii": "I",
+                "latex": "I",
+                "unicode": "I",
+                "algorithm": "I := base_indeterminacy(TIF)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.unifying_field_logics",
+                "nss.indeterminacy"
+              ]
+            },
+            {
+              "canonical_id": "I_system^S",
+              "order": 1,
+              "role": "system-scoped indeterminacy inside the active lexicon, task, corpus, and source context",
+              "notation": {
+                "canonical_id": "I_system^S",
+                "ascii": "I_system^S",
+                "latex": "I_{\\mathrm{system}}^{S}",
+                "unicode": "I_system^S",
+                "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+                "aliases": [
+                  "I_s",
+                  "I_s_system",
+                  "I_system"
+                ]
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.unifying_field_logics",
+                "nss.indeterminacy",
+                "nss.plithogenic_logic"
+              ]
+            },
+            {
+              "canonical_id": "H_lex",
+              "order": 2,
+              "role": "normalized lexicon entropy over candidate lexicons",
+              "notation": {
+                "canonical_id": "H_lex",
+                "ascii": "H_lex",
+                "latex": "H_{\\mathrm{lex}}",
+                "unicode": "H_lex",
+                "algorithm": "H_lex := -sum(P(L_i) log(P(L_i))) / log(|L|)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "G_lex",
+              "order": 3,
+              "role": "lexicon decision-gap uncertainty between the strongest and second-strongest lexicon",
+              "notation": {
+                "canonical_id": "G_lex",
+                "ascii": "G_lex",
+                "latex": "G_{\\mathrm{lex}}",
+                "unicode": "G_lex",
+                "algorithm": "G_lex := 1 - (P_top - P_second)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "I_lexicon",
+              "order": 4,
+              "role": "final context-preserving lexicon indeterminacy state",
+              "notation": {
+                "canonical_id": "I_lexicon",
+                "ascii": "I_lexicon",
+                "latex": "I_{\\mathrm{lexicon}}",
+                "unicode": "I_lexicon",
+                "algorithm": "I_lexicon := bounded(alpha*H_lex + beta*G_lex + gamma*contradiction_load)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_logic",
+                "nss.plithogenic_probability_statistics"
+              ]
+            }
+          ]
+        },
+        "chain_count": 2,
+        "rule": "Plithogenic classification is treated as a system-level aggregation and contradiction layer before final lexicon selection.",
+        "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+      }
+    },
+    {
+      "block_id": "blk-0003",
+      "index": 2,
+      "heading_hint": "",
+      "char_count": 127,
+      "candidate_terms": [
+        "taxonomic",
+        "memory",
+        "repair",
+        "phylocode",
+        "nomenclature"
+      ],
+      "matched_terms": [
+        {
+          "term": "taxonomic",
+          "domain": "taxonomy",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0003"
+          ]
+        },
+        {
+          "term": "clade",
+          "domain": "phylocode_nomenclature",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0003"
+          ]
+        },
+        {
+          "term": "nomenclature",
+          "domain": "phylocode_nomenclature",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0003"
+          ]
+        },
+        {
+          "term": "phylocode",
+          "domain": "phylocode_nomenclature",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0003"
+          ]
+        },
+        {
+          "term": "redescription",
+          "domain": "phylocode_nomenclature",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0003"
+          ]
+        },
+        {
+          "term": "taxonomic memory repair",
+          "domain": "phylocode_nomenclature",
+          "source_ids": [
+            "gdoc.aguilar_beaulieu_white_paper"
+          ],
+          "block_ids": [
+            "blk-0003"
+          ]
+        }
+      ],
+      "matched_domains": [
+        "taxonomy",
+        "phylocode_nomenclature"
+      ],
+      "dominant_domain": "phylocode_nomenclature",
+      "unresolved": true,
+      "classification_profile": {
+        "classification_family": "I",
+        "plithogenic_classified_as": "I_system^S",
+        "plithogenic_i_profile": {
+          "classification_family": "I",
+          "canonical_indeterminacy_class": "I_system^S",
+          "aliases": [
+            "I_s",
+            "I_s_system",
+            "I_system"
+          ],
+          "role": "multi-attribute / multi-variable system indeterminacy organizer",
+          "evidence_status": "public_nss_supported + system_indeterminacy_inferred",
+          "notation": {
+            "canonical_id": "I_system^S",
+            "ascii": "I_system^S",
+            "latex": "I_{\\mathrm{system}}^{S}",
+            "unicode": "I_system^S",
+            "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+            "aliases": [
+              "I_s",
+              "I_s_system",
+              "I_system"
+            ]
+          },
+          "algorithm_notation": {
+            "canonical_id": "plithogenic_matrix",
+            "ascii": "P(attributes, contradiction_degree, TIF)",
+            "latex": "P(A, c(v_i,v_j), (T,I,F))",
+            "unicode": "P(attributes, contradiction_degree, TIF)",
+            "algorithm": "P := aggregate(attribute_values, contradiction_degree, TIF, weights)",
+            "aliases": []
+          },
+          "source_ids": [
+            "nss.hub",
+            "nss.plithogenic_set",
+            "nss.plithogenic_logic",
+            "nss.plithogenic_probability_statistics",
+            "nss.symbolic_plithogenic_algebra"
+          ],
+          "human_authority_boundary": "Public NSS sources support the math layer; Synthia remains an educational classifier."
+        },
+        "weighted_I": 0.136,
+        "system_indeterminacy_chain": {
+          "I": 0.136,
+          "I_system^S": 0.136,
+          "H_lex": 0.136,
+          "G_lex": 0.21599999999999997,
+          "I_lexicon": 0.15288888888888888,
+          "carrier_type": "lexicon_distribution",
+          "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon",
+          "classification_family": "I",
+          "source": "explicit_or_derived",
+          "layers": [
+            {
+              "canonical_id": "I",
+              "order": 0,
+              "role": "base indeterminacy signal",
+              "notation": {
+                "canonical_id": "I",
+                "ascii": "I",
+                "latex": "I",
+                "unicode": "I",
+                "algorithm": "I := base_indeterminacy(TIF)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.unifying_field_logics",
+                "nss.indeterminacy"
+              ]
+            },
+            {
+              "canonical_id": "I_system^S",
+              "order": 1,
+              "role": "system-scoped indeterminacy inside the active lexicon, task, corpus, and source context",
+              "notation": {
+                "canonical_id": "I_system^S",
+                "ascii": "I_system^S",
+                "latex": "I_{\\mathrm{system}}^{S}",
+                "unicode": "I_system^S",
+                "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+                "aliases": [
+                  "I_s",
+                  "I_s_system",
+                  "I_system"
+                ]
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.unifying_field_logics",
+                "nss.indeterminacy",
+                "nss.plithogenic_logic"
+              ]
+            },
+            {
+              "canonical_id": "H_lex",
+              "order": 2,
+              "role": "normalized lexicon entropy over candidate lexicons",
+              "notation": {
+                "canonical_id": "H_lex",
+                "ascii": "H_lex",
+                "latex": "H_{\\mathrm{lex}}",
+                "unicode": "H_lex",
+                "algorithm": "H_lex := -sum(P(L_i) log(P(L_i))) / log(|L|)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "G_lex",
+              "order": 3,
+              "role": "lexicon decision-gap uncertainty between the strongest and second-strongest lexicon",
+              "notation": {
+                "canonical_id": "G_lex",
+                "ascii": "G_lex",
+                "latex": "G_{\\mathrm{lex}}",
+                "unicode": "G_lex",
+                "algorithm": "G_lex := 1 - (P_top - P_second)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "I_lexicon",
+              "order": 4,
+              "role": "final context-preserving lexicon indeterminacy state",
+              "notation": {
+                "canonical_id": "I_lexicon",
+                "ascii": "I_lexicon",
+                "latex": "I_{\\mathrm{lexicon}}",
+                "unicode": "I_lexicon",
+                "algorithm": "I_lexicon := bounded(alpha*H_lex + beta*G_lex + gamma*contradiction_load)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_logic",
+                "nss.plithogenic_probability_statistics"
+              ]
+            }
+          ]
+        },
+        "chain_count": 5,
+        "rule": "Plithogenic classification is treated as a system-level aggregation and contradiction layer before final lexicon selection.",
+        "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+      }
+    },
+    {
+      "block_id": "blk-0004",
+      "index": 3,
+      "heading_hint": "",
+      "char_count": 122,
+      "candidate_terms": [],
+      "matched_terms": [
+        {
+          "term": "conservation",
+          "domain": "conservation",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0004"
+          ]
+        },
+        {
+          "term": "conservation report",
+          "domain": "conservation",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0004"
+          ]
+        },
+        {
+          "term": "habitat monitoring",
+          "domain": "conservation",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0004"
+          ]
+        },
+        {
+          "term": "integral conservation",
+          "domain": "conservation",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0004"
+          ]
+        }
+      ],
+      "matched_domains": [
+        "conservation"
+      ],
+      "dominant_domain": "conservation",
+      "unresolved": false,
+      "classification_profile": {
+        "classification_family": "I",
+        "plithogenic_classified_as": "I_system^S",
+        "plithogenic_i_profile": {
+          "classification_family": "I",
+          "canonical_indeterminacy_class": "I_system^S",
+          "aliases": [
+            "I_s",
+            "I_s_system",
+            "I_system"
+          ],
+          "role": "multi-attribute / multi-variable system indeterminacy organizer",
+          "evidence_status": "public_nss_supported + system_indeterminacy_inferred",
+          "notation": {
+            "canonical_id": "I_system^S",
+            "ascii": "I_system^S",
+            "latex": "I_{\\mathrm{system}}^{S}",
+            "unicode": "I_system^S",
+            "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+            "aliases": [
+              "I_s",
+              "I_s_system",
+              "I_system"
+            ]
+          },
+          "algorithm_notation": {
+            "canonical_id": "plithogenic_matrix",
+            "ascii": "P(attributes, contradiction_degree, TIF)",
+            "latex": "P(A, c(v_i,v_j), (T,I,F))",
+            "unicode": "P(attributes, contradiction_degree, TIF)",
+            "algorithm": "P := aggregate(attribute_values, contradiction_degree, TIF, weights)",
+            "aliases": []
+          },
+          "source_ids": [
+            "nss.hub",
+            "nss.plithogenic_set",
+            "nss.plithogenic_logic",
+            "nss.plithogenic_probability_statistics",
+            "nss.symbolic_plithogenic_algebra"
+          ],
+          "human_authority_boundary": "Public NSS sources support the math layer; Synthia remains an educational classifier."
+        },
+        "weighted_I": 0.15,
+        "system_indeterminacy_chain": {
+          "I": 0.15,
+          "I_system^S": 0.15,
+          "H_lex": 0.15,
+          "G_lex": 0.25,
+          "I_lexicon": 0.15,
+          "carrier_type": "lexicon_distribution",
+          "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon",
+          "classification_family": "I",
+          "source": "explicit_or_derived",
+          "layers": [
+            {
+              "canonical_id": "I",
+              "order": 0,
+              "role": "base indeterminacy signal",
+              "notation": {
+                "canonical_id": "I",
+                "ascii": "I",
+                "latex": "I",
+                "unicode": "I",
+                "algorithm": "I := base_indeterminacy(TIF)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.unifying_field_logics",
+                "nss.indeterminacy"
+              ]
+            },
+            {
+              "canonical_id": "I_system^S",
+              "order": 1,
+              "role": "system-scoped indeterminacy inside the active lexicon, task, corpus, and source context",
+              "notation": {
+                "canonical_id": "I_system^S",
+                "ascii": "I_system^S",
+                "latex": "I_{\\mathrm{system}}^{S}",
+                "unicode": "I_system^S",
+                "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+                "aliases": [
+                  "I_s",
+                  "I_s_system",
+                  "I_system"
+                ]
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.unifying_field_logics",
+                "nss.indeterminacy",
+                "nss.plithogenic_logic"
+              ]
+            },
+            {
+              "canonical_id": "H_lex",
+              "order": 2,
+              "role": "normalized lexicon entropy over candidate lexicons",
+              "notation": {
+                "canonical_id": "H_lex",
+                "ascii": "H_lex",
+                "latex": "H_{\\mathrm{lex}}",
+                "unicode": "H_lex",
+                "algorithm": "H_lex := -sum(P(L_i) log(P(L_i))) / log(|L|)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "G_lex",
+              "order": 3,
+              "role": "lexicon decision-gap uncertainty between the strongest and second-strongest lexicon",
+              "notation": {
+                "canonical_id": "G_lex",
+                "ascii": "G_lex",
+                "latex": "G_{\\mathrm{lex}}",
+                "unicode": "G_lex",
+                "algorithm": "G_lex := 1 - (P_top - P_second)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "I_lexicon",
+              "order": 4,
+              "role": "final context-preserving lexicon indeterminacy state",
+              "notation": {
+                "canonical_id": "I_lexicon",
+                "ascii": "I_lexicon",
+                "latex": "I_{\\mathrm{lexicon}}",
+                "unicode": "I_lexicon",
+                "algorithm": "I_lexicon := bounded(alpha*H_lex + beta*G_lex + gamma*contradiction_load)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_logic",
+                "nss.plithogenic_probability_statistics"
+              ]
+            }
+          ]
+        },
+        "chain_count": 4,
+        "rule": "Plithogenic classification is treated as a system-level aggregation and contradiction layer before final lexicon selection.",
+        "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+      }
+    },
+    {
+      "block_id": "blk-0005",
+      "index": 4,
+      "heading_hint": "",
+      "char_count": 121,
+      "candidate_terms": [],
+      "matched_terms": [
+        {
+          "term": "AI-assisted traceability",
+          "domain": "ai_governance",
+          "source_ids": [
+            "gdoc.aguilar_beaulieu_white_paper"
+          ],
+          "block_ids": [
+            "blk-0005"
+          ]
+        },
+        {
+          "term": "human review",
+          "domain": "ai_governance",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0005"
+          ]
+        },
+        {
+          "term": "review boundary",
+          "domain": "ai_governance",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0005"
+          ]
+        },
+        {
+          "term": "source-linked evidence",
+          "domain": "ai_governance",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0005"
+          ]
+        },
+        {
+          "term": "traceability",
+          "domain": "ai_governance",
+          "source_ids": [
+            "document.profile.taxonomy-review"
+          ],
+          "block_ids": [
+            "blk-0005"
+          ]
+        }
+      ],
+      "matched_domains": [
+        "ai_governance"
+      ],
+      "dominant_domain": "ai_governance",
+      "unresolved": false,
+      "classification_profile": {
+        "classification_family": "I",
+        "plithogenic_classified_as": "I_system^S",
+        "plithogenic_i_profile": {
+          "classification_family": "I",
+          "canonical_indeterminacy_class": "I_system^S",
+          "aliases": [
+            "I_s",
+            "I_s_system",
+            "I_system"
+          ],
+          "role": "multi-attribute / multi-variable system indeterminacy organizer",
+          "evidence_status": "public_nss_supported + system_indeterminacy_inferred",
+          "notation": {
+            "canonical_id": "I_system^S",
+            "ascii": "I_system^S",
+            "latex": "I_{\\mathrm{system}}^{S}",
+            "unicode": "I_system^S",
+            "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+            "aliases": [
+              "I_s",
+              "I_s_system",
+              "I_system"
+            ]
+          },
+          "algorithm_notation": {
+            "canonical_id": "plithogenic_matrix",
+            "ascii": "P(attributes, contradiction_degree, TIF)",
+            "latex": "P(A, c(v_i,v_j), (T,I,F))",
+            "unicode": "P(attributes, contradiction_degree, TIF)",
+            "algorithm": "P := aggregate(attribute_values, contradiction_degree, TIF, weights)",
+            "aliases": []
+          },
+          "source_ids": [
+            "nss.hub",
+            "nss.plithogenic_set",
+            "nss.plithogenic_logic",
+            "nss.plithogenic_probability_statistics",
+            "nss.symbolic_plithogenic_algebra"
+          ],
+          "human_authority_boundary": "Public NSS sources support the math layer; Synthia remains an educational classifier."
+        },
+        "weighted_I": 0.14400000000000002,
+        "system_indeterminacy_chain": {
+          "I": 0.14400000000000002,
+          "I_system^S": 0.14400000000000002,
+          "H_lex": 0.14400000000000002,
+          "G_lex": 0.2320000000000001,
+          "I_lexicon": 0.15200000000000002,
+          "carrier_type": "lexicon_distribution",
+          "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon",
+          "classification_family": "I",
+          "source": "explicit_or_derived",
+          "layers": [
+            {
+              "canonical_id": "I",
+              "order": 0,
+              "role": "base indeterminacy signal",
+              "notation": {
+                "canonical_id": "I",
+                "ascii": "I",
+                "latex": "I",
+                "unicode": "I",
+                "algorithm": "I := base_indeterminacy(TIF)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.unifying_field_logics",
+                "nss.indeterminacy"
+              ]
+            },
+            {
+              "canonical_id": "I_system^S",
+              "order": 1,
+              "role": "system-scoped indeterminacy inside the active lexicon, task, corpus, and source context",
+              "notation": {
+                "canonical_id": "I_system^S",
+                "ascii": "I_system^S",
+                "latex": "I_{\\mathrm{system}}^{S}",
+                "unicode": "I_system^S",
+                "algorithm": "I_system^S := system_scope(I, active_system, source_context)",
+                "aliases": [
+                  "I_s",
+                  "I_s_system",
+                  "I_system"
+                ]
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.unifying_field_logics",
+                "nss.indeterminacy",
+                "nss.plithogenic_logic"
+              ]
+            },
+            {
+              "canonical_id": "H_lex",
+              "order": 2,
+              "role": "normalized lexicon entropy over candidate lexicons",
+              "notation": {
+                "canonical_id": "H_lex",
+                "ascii": "H_lex",
+                "latex": "H_{\\mathrm{lex}}",
+                "unicode": "H_lex",
+                "algorithm": "H_lex := -sum(P(L_i) log(P(L_i))) / log(|L|)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "G_lex",
+              "order": 3,
+              "role": "lexicon decision-gap uncertainty between the strongest and second-strongest lexicon",
+              "notation": {
+                "canonical_id": "G_lex",
+                "ascii": "G_lex",
+                "latex": "G_{\\mathrm{lex}}",
+                "unicode": "G_lex",
+                "algorithm": "G_lex := 1 - (P_top - P_second)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_probability_statistics"
+              ]
+            },
+            {
+              "canonical_id": "I_lexicon",
+              "order": 4,
+              "role": "final context-preserving lexicon indeterminacy state",
+              "notation": {
+                "canonical_id": "I_lexicon",
+                "ascii": "I_lexicon",
+                "latex": "I_{\\mathrm{lexicon}}",
+                "unicode": "I_lexicon",
+                "algorithm": "I_lexicon := bounded(alpha*H_lex + beta*G_lex + gamma*contradiction_load)",
+                "aliases": []
+              },
+              "source_ids": [
+                "nss.hub",
+                "nss.plithogenic_logic",
+                "nss.plithogenic_probability_statistics"
+              ]
+            }
+          ]
+        },
+        "chain_count": 5,
+        "rule": "Plithogenic classification is treated as a system-level aggregation and contradiction layer before final lexicon selection.",
+        "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+      }
+    }
+  ],
+  "hierarchy": "I -> I_system^S -> H_lex -> G_lex -> I_lexicon"
+}
