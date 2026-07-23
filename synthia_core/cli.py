@@ -10,6 +10,7 @@ import sys
 
 from .codex_connector import build_wake_prompt, codex_status
 from .document_pipeline import run_document_pipeline
+from .dmqc_admission_gate import evaluate_dmqc_admission
 from .hipporag_bridge import (
     HippoRAGEdgeTrace,
     RethinkDBHippoRAGTraceStore,
@@ -404,6 +405,12 @@ def main(argv: list[str] | None = None) -> int:
     research_object_provenance_score = research_object_provenance_sub.add_parser("score")
     research_object_provenance_score.add_argument("--case", required=True, help="JSON object or path")
     research_object_provenance_sub.add_parser("demo")
+
+    dmqc = subparsers.add_parser("dmqc")
+    dmqc_sub = dmqc.add_subparsers(dest="command", required=True)
+    dmqc_admission = dmqc_sub.add_parser("admission-check")
+    dmqc_admission.add_argument("--input", required=True, help="JSON object or path")
+    dmqc_admission.add_argument("--json", action="store_true")
 
     neutrino = subparsers.add_parser("neutrino")
     neutrino_sub = neutrino.add_subparsers(dest="command", required=True)
@@ -851,6 +858,14 @@ def main(argv: list[str] | None = None) -> int:
                 raise ValueError("--case must decode to a JSON object")
             _print_json(score_research_object_provenance_case(provenance_case))
             return 0
+
+    if args.area == "dmqc" and args.command == "admission-check":
+        payload = _load_json_value(args.input)
+        if not isinstance(payload, dict):
+            raise ValueError("--input must decode to a JSON object")
+        result = evaluate_dmqc_admission(payload)
+        _print_json(result)
+        return 0 if result["ready_for_fnp"] else 1
 
     if args.area == "neutrino":
         if args.command == "guardrail-check":

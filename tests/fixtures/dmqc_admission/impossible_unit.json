@@ -1,0 +1,49 @@
+{
+  "schema_version": "synthia.dmqc_admission_input.v1",
+  "case_id": "growth-ambiguous-001.impossible-unit",
+  "source_type": "synthetic_material_case",
+  "domain": "materials.crystal_growth",
+  "method": {
+    "name": "controlled_fixture_v1",
+    "category": "synthetic_benchmark"
+  },
+  "software": {
+    "name": "fixture-generator",
+    "version": "1.0.0"
+  },
+  "input_parameters": {},
+  "raw_result_reference": {
+    "uri": "fixture://dmqc/base/growth-ambiguous-001",
+    "sha256": "e7c491086c7d53fbc9729523f3277d2ee59e7af9ad7246e919d2cc54600f6b31"
+  },
+  "provenance_reference": {
+    "entity_id": "case:growth-ambiguous-001",
+    "activity_id": "activity:fixture-generation-v1",
+    "agent_id": "agent:benchmark-maintainer"
+  },
+  "units": {
+    "formation_energy": "kelvin",
+    "growth_rate": "normalized_benchmark_unit",
+    "branch_drift": "dimensionless",
+    "surface_roughness": "dimensionless",
+    "defect_density": "dimensionless"
+  },
+  "timestamp": "2026-07-23T00:00:00Z",
+  "uncertainty_model": {
+    "type": "bounded_synthetic",
+    "declared": true
+  },
+  "convergence_or_quality_flags": {
+    "schema_valid": true,
+    "finite_values": true,
+    "controlled_fixture": true
+  },
+  "licence_and_access": {
+    "licence": "CC-BY-4.0",
+    "access": "public"
+  },
+  "requested_claims": [
+    "synthetic_case_is_eligible_for_crystal_route"
+  ],
+  "declared_contradictions": []
+}
