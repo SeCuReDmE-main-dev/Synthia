@@ -969,3 +969,100 @@ a.timeline-citation {
   }
 }
 
+/* Stitch Design System & Utility Dock */
+.stitch-profile-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8b949e;
+}
+.utility-dock {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.utility-dock-button {
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  background: rgba(5, 12, 24, 0.92);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.utility-dock-button:hover {
+  border-color: #00f0ff;
+  color: #00f0ff;
+}
+
+.utility-dock-support {
+  border-color: #00f0ff;
+  background: linear-gradient(135deg, #0284c7, #7c3aed);
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+:root[data-theme="day"] {
+  --bg: #f4f7f6;
+  --surface: #ffffff;
+  --surface-border: #d0ded6;
+  --text: #0b1c18;
+  --muted: #4e6059;
+}
+
+:root[data-theme="day"] .stitch-telemetry-panel {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(0, 169, 157, 0.35);
+}
+
+:root[data-theme="day"] .utility-dock-button {
+  background: rgba(255, 255, 255, 0.95);
+  color: #0b1c18;
+  border-color: #bcd4ca;
+}
+
+:root[data-access-profile="autism-calm"] * {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}
+
+:root[data-access-profile="adhd-sprint"] button:focus-visible,
+:root[data-access-profile="adhd-sprint"] a:focus-visible {
+  outline: 3px solid #00f0ff;
+  outline-offset: 3px;
+}
+
+:root[data-access-profile="deep-work"] .stitch-telemetry-panel {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .utility-dock {
+    position: static;
+    margin: 1rem 0;
+    align-items: stretch;
+  }
+}
+

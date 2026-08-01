@@ -24,7 +24,7 @@
 
         <nav class="nav-links" aria-label="Primary sections">
           <a href="#model">Model</a>
-          <a href="#i-lexicon">I_lexicon</a>
+          <a href="#i-lexicon">Lexicon output</a>
           <a href="./trace-lab.html">Trace Lab</a>
           <a href="./neutrosophic-lexicon.html">Neutrosophic</a>
           <a href="#biology">Biology</a>
@@ -75,16 +75,46 @@
               </div>
             </article>
 
-            <aside class="signal-panel" aria-label="Synthia identity and invariant">
-              <div class="signal-orb" aria-hidden="true">
-                <span></span>
+            <aside class="signal-panel stitch-telemetry-panel" aria-label="Synthia identity and invariant">
+              <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 8px; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="stitch-profile-dot" aria-hidden="true"></span>
+                  <span style="color: #00f0ff; font-weight: 800; font-size: 11px; letter-spacing: 0.05em;">SYNTHIA RESEARCH PROFILE</span>
+                </div>
+                <span style="padding: 2px 8px; border-radius: 4px; background: rgba(0, 240, 255, 0.15); border: 1px solid rgba(0, 240, 255, 0.35); color: #00f0ff; font-size: 10px; font-weight: 800;">CAPABILITY PREVIEW</span>
               </div>
-              <p class="panel-label">Public invariant</p>
-              <div class="chain-line">I -> I_system^S -> H_lex -> G_lex -> I_lexicon</div>
-              <p>
-                The chain preserves indeterminacy, system location, lexicon
-                hypothesis, graph context, and final classification state.
-              </p>
+
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px;">
+                <div style="background: rgba(13, 27, 48, 0.8); padding: 6px 8px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.06);">
+                  <span style="color: #8b949e; font-size: 9px; text-transform: uppercase; display: block;">Safeguard Gate</span>
+                  <strong style="color: #00f0ff; font-family: monospace; font-size: 11px;">AWAITING INPUT</strong>
+                </div>
+                <div style="background: rgba(13, 27, 48, 0.8); padding: 6px 8px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.06);">
+                  <span style="color: #8b949e; font-size: 9px; text-transform: uppercase; display: block;">Invariant</span>
+                  <strong style="color: #f0f6fc; font-family: monospace; font-size: 11px;">Canonical chain</strong>
+                </div>
+                <div style="background: rgba(13, 27, 48, 0.8); padding: 6px 8px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.06);">
+                  <span style="color: #8b949e; font-size: 9px; text-transform: uppercase; display: block;">Indeterminacy</span>
+                  <strong style="color: #ffb703; font-family: monospace; font-size: 11px;">Computed per run</strong>
+                </div>
+                <div style="background: rgba(13, 27, 48, 0.8); padding: 6px 8px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.06);">
+                  <span style="color: #8b949e; font-size: 9px; text-transform: uppercase; display: block;">Authority</span>
+                  <strong style="color: #34d399; font-family: monospace; font-size: 11px;">HUMAN-REVIEW</strong>
+                </div>
+              </div>
+
+              <div style="border-radius: 6px; background: radial-gradient(circle at center, rgba(12, 28, 52, 0.8) 0%, rgba(5, 12, 24, 0.95) 100%); border: 1px solid rgba(0, 240, 255, 0.18); padding: 8px; display: flex; justify-content: center; margin-bottom: 10px;">
+                <svg viewBox="0 0 420 120" style="width: 100%; max-height: 120px;" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Canonical invariant chain from I to i fractal">
+                  <path d="M 48 60 L 372 60" stroke="rgba(0, 240, 255, 0.55)" stroke-width="2" fill="none"/>
+                  <g transform="translate(48, 60)"><circle r="16" fill="rgba(7, 20, 40, 0.95)" stroke="#00f0ff" stroke-width="1.8"/><text y="3" text-anchor="middle" fill="#00f0ff" font-size="8" font-weight="bold">I</text></g>
+                  <g transform="translate(129, 60)"><circle r="18" fill="rgba(7, 20, 40, 0.95)" stroke="#00f0ff" stroke-width="1.5"/><text y="3" text-anchor="middle" fill="#e2e8f0" font-size="7" font-weight="bold">I_sys^S</text></g>
+                  <g transform="translate(210, 60)"><circle r="16" fill="rgba(20, 30, 50, 0.95)" stroke="#ffb703" stroke-width="1.8"/><text y="3" text-anchor="middle" fill="#ffb703" font-size="8" font-weight="bold">D_f</text></g>
+                  <g transform="translate(291, 60)"><circle r="16" fill="rgba(20, 30, 50, 0.95)" stroke="#ffb703" stroke-width="1.8"/><text y="3" text-anchor="middle" fill="#ffb703" font-size="8" font-weight="bold">dF</text></g>
+                  <g transform="translate(372, 60)"><circle r="20" fill="rgba(10, 25, 45, 0.95)" stroke="#34d399" stroke-width="2"/><text y="3" text-anchor="middle" fill="#34d399" font-size="7" font-weight="bold">i_fractal</text></g>
+                </svg>
+              </div>
+
+              <div class="chain-line" style="font-size: 11px; margin-bottom: 6px;">I -&gt; I_system^S -&gt; D_f -&gt; dF -&gt; i_fractal</div>
               <div class="signal-tags" aria-label="Research tags">
                 <span>Transparent</span>
                 <span>Source-linked</span>
@@ -127,8 +157,8 @@
           <div class="feature-grid">
             <article class="feature-card">
               <span class="card-index">01</span>
-              <h3>I_lexicon nodes</h3>
-              <p>Concepts carry domain, definition, source IDs, T/I/F values, and lexicon state.</p>
+              <h3>Lexicon output nodes</h3>
+              <p>Concepts carry domain, definition, source IDs, review values, and lexicon state.</p>
             </article>
             <article class="feature-card">
               <span class="card-index">02</span>
@@ -161,7 +191,7 @@
         <section class="section-band dark-band" id="i-lexicon" aria-labelledby="lexicon-title">
           <div class="split-layout">
             <div>
-              <p class="eyebrow">I_lexicon engine</p>
+              <p class="eyebrow">Lexicon output</p>
               <h2 id="lexicon-title">A classification system that knows which language it is using</h2>
             </div>
             <div class="stacked-content">
@@ -170,13 +200,14 @@
                 the lexicon behind the classification: biology terms, PhyloCode terms,
                 neutrosophic math terms, governance terms, and the bridges between them.
               </p>
-              <div class="flow-row" aria-label="I_lexicon chain">
+              <div class="flow-row" aria-label="Canonical Synthia hierarchy">
                 <span>I</span>
                 <span>I_system^S</span>
-                <span>H_lex</span>
-                <span>G_lex</span>
-                <span>I_lexicon</span>
+                <span>D_f</span>
+                <span>dF</span>
+                <span>i_fractal</span>
               </div>
+              <p><code>I_lexicon</code> is an application output attached to this hierarchy, not a replacement hierarchy node.</p>
             </div>
           </div>
         </section>
@@ -262,5 +293,76 @@
         <a href="https://github.com/SeCuReDmE-main-dev/Synthia">GitHub repository</a>
       </footer>
     </div>
+
+    <aside class="utility-dock" aria-label="Page utilities">
+      <button class="utility-dock-button" type="button" data-utility-language aria-label="Change locale preference">Locale: EN</button>
+      <button class="utility-dock-button" type="button" data-utility-theme>Theme: Night</button>
+      <button class="utility-dock-button" type="button" data-utility-access>Access</button>
+      <a class="utility-dock-button utility-dock-support" href="https://securedme.ca/pay/" target="_blank" rel="noopener">Support SecuredMe</a>
+    </aside>
+
+    <script>
+      (function() {
+        var root = document.documentElement;
+        var langBtn = document.querySelector('[data-utility-language]');
+        var themeBtn = document.querySelector('[data-utility-theme]');
+        var accessBtn = document.querySelector('[data-utility-access]');
+
+        var languages = ['en', 'fr', 'es'];
+        var langLabels = { en: 'Locale: EN', fr: 'Locale : FR', es: 'Configuración: ES' };
+        var accessProfiles = ['base', 'autism-calm', 'adhd-sprint', 'deep-work'];
+        var accessLabels = { base: 'Access', 'autism-calm': 'Access: Calm', 'adhd-sprint': 'Access: Sprint', 'deep-work': 'Access: Deep' };
+
+        var currentLang = localStorage.getItem('securedme.synthia.language') || 'en';
+        var currentTheme = localStorage.getItem('securedme.synthia.theme') || 'night';
+        var currentAccess = localStorage.getItem('securedme.synthia.access') || 'base';
+
+        function setLang(lang) {
+          currentLang = languages.indexOf(lang) !== -1 ? lang : 'en';
+          root.lang = currentLang;
+          root.dataset.lang = currentLang;
+          localStorage.setItem('securedme.synthia.language', currentLang);
+          if (langBtn) langBtn.textContent = langLabels[currentLang];
+        }
+
+        function setTheme(theme) {
+          currentTheme = theme === 'day' ? 'day' : 'night';
+          root.dataset.theme = currentTheme;
+          localStorage.setItem('securedme.synthia.theme', currentTheme);
+          if (themeBtn) themeBtn.textContent = currentTheme === 'day' ? 'Theme: Day' : 'Theme: Night';
+        }
+
+        function setAccess(profile) {
+          currentAccess = accessProfiles.indexOf(profile) !== -1 ? profile : 'base';
+          root.dataset.accessProfile = currentAccess;
+          localStorage.setItem('securedme.synthia.access', currentAccess);
+          if (accessBtn) accessBtn.textContent = accessLabels[currentAccess];
+        }
+
+        setLang(currentLang);
+        setTheme(currentTheme);
+        setAccess(currentAccess);
+
+        if (langBtn) {
+          langBtn.addEventListener('click', function() {
+            var idx = languages.indexOf(currentLang);
+            setLang(languages[(idx + 1) % languages.length]);
+          });
+        }
+
+        if (themeBtn) {
+          themeBtn.addEventListener('click', function() {
+            setTheme(currentTheme === 'day' ? 'night' : 'day');
+          });
+        }
+
+        if (accessBtn) {
+          accessBtn.addEventListener('click', function() {
+            var idx = accessProfiles.indexOf(currentAccess);
+            setAccess(accessProfiles[(idx + 1) % accessProfiles.length]);
+          });
+        }
+      })();
+    </script>
   </body>
 </html>
