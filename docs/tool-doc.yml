@@ -1,0 +1,37 @@
+schema: securedme.tool-doc.v2
+slug: synthia
+title: Synthia
+version: 0.1.0
+status: public-preview
+license: LicenseRef-SEL-2.0
+summary: A traceability system for scientific candidate memories, lexicons, sources,
+  and uncertainty.
+identity:
+  logo: assets/logo/light/logo 4 light .png
+  family: Synthia
+runtime:
+  type: browser-app
+  availability: verified
+  public_url: https://synthia.securedme.ca
+source:
+  repository: https://github.com/SeCuReDmE-main-dev/Synthia
+  issues: https://github.com/SeCuReDmE-main-dev/Synthia/issues
+documentation:
+  public_root: docs/public
+  source_language: en
+  languages:
+  - en
+  - fr
+  - es
+commands:
+  install:
+  - python -m venv .venv
+  - .venv\Scripts\python -m pip install -e .
+  start:
+  - .venv\Scripts\synthia --help
+  test:
+  - .venv\Scripts\python -m pytest
+boundaries:
+  authority: Preserve I -> I_system^S -> H_lex -> G_lex -> I_lexicon; Synthia supports
+    traceability and does not certify taxonomy or science.
+  human_review_required: true
