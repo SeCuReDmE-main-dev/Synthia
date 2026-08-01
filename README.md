@@ -1,5 +1,19 @@
 # Synthia
 
+<!-- SECUREDME-CPAI-MESH:START -->
+<p align="center">
+  <img alt="CodeProject.AI Server embedded mesh node" src="https://img.shields.io/badge/CodeProject.AI%20Server-Embedded%20Mesh%20Node-1F6FEB?style=for-the-badge" />
+  <img alt="YOLO real local inference validated" src="https://img.shields.io/badge/YOLO-Real%20Local%20Inference-16A34A?style=for-the-badge" />
+</p>
+<!-- SECUREDME-CPAI-MESH:END -->
+
+[Embedded CodeProject.AI node operations](infra/codeproject-ai/README.md)
+
+Synthia's `CPAIOnboardVisionAdapter` uses the repository-local node on port
+`32177` for real bounded YOLO inference when no reviewed simulation detections
+are supplied. It never infers a label from the image filename. Explicit
+detections remain fixture-only inputs for supervised tests and simulations.
+
 **Living taxonomy for scientific memory.** Synthia is a free, source-available
 educational research system that turns scattered biological evidence into
 traceable candidate memories for human review. It preserves the lexicon,

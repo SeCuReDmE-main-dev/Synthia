@@ -14,6 +14,8 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, Mapping
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 from uuid import uuid4
 
 from .lexicon import ILexicon, LexiconDomain, LexiconNode, seed_base_lexicon
@@ -261,15 +263,21 @@ class MAVLinkTelemetryAdapter:
 
 
 class CPAIOnboardVisionAdapter:
-    """Small local-vision adapter.
+    """Bounded CodeProject.AI vision adapter for Synthia field observations.
 
-    This object accepts explicit detections for tests/simulation. It also has a
-    filename heuristic so the CLI can run offline before a CodeProject.AI server
-    or Raspberry Pi is attached.
+    Explicit detections remain available for reviewed simulations. Without an
+    explicit fixture, the adapter performs real local YOLO inference and never
+    infers semantic labels from a filename.
     """
 
-    def __init__(self, endpoint: str | None = None) -> None:
-        self.endpoint = endpoint
+    DEFAULT_ENDPOINT = "http://127.0.0.1:32177/v1/vision/detection"
+    MAX_IMAGE_BYTES = 20 * 1024 * 1024
+    MAX_RESPONSE_BYTES = 4 * 1024 * 1024
+
+    def __init__(self, endpoint: str | None = None, *, opener=None, timeout_seconds: float = 120.0) -> None:
+        self.endpoint = (endpoint or self.DEFAULT_ENDPOINT).rstrip("/")
+        self._opener = opener or urlopen
+        self.timeout_seconds = max(0.1, float(timeout_seconds))
 
     def detect_image(self, image_path: str | Path, detections: Iterable[Mapping[str, object]] | None = None) -> list[VisionDetection]:
         if detections is not None:
@@ -283,12 +291,61 @@ class CPAIOnboardVisionAdapter:
                 for item in detections
             ]
 
-        name = Path(image_path).stem.lower().replace("-", "_")
-        inferred: list[VisionDetection] = []
-        for marker in sorted(BIOLOGY_MARKERS | ARCHAEOLOGY_MARKERS | PHYSICS_MARKERS | RISK_MARKERS):
-            if marker in name:
-                inferred.append(VisionDetection(marker, 0.62, source="filename_heuristic"))
-        return inferred or [VisionDetection("unknown_field_signal", 0.35, source="filename_heuristic")]
+        path = Path(image_path)
+        if not path.is_file():
+            raise ValueError("image_path must reference an approved image file")
+        image_size = path.stat().st_size
+        if not 0 < image_size <= self.MAX_IMAGE_BYTES:
+            raise ValueError("image_path must be between 1 byte and 20 MiB")
+
+        boundary = f"----synthia-cpai-{uuid4().hex}"
+        mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+        body = b"".join(
+            (
+                f'--{boundary}\r\nContent-Disposition: form-data; name="image"; filename="frame{path.suffix}"\r\nContent-Type: {mime}\r\n\r\n'.encode("utf-8"),
+                path.read_bytes(),
+                f"\r\n--{boundary}--\r\n".encode("ascii"),
+            )
+        )
+        request = Request(
+            self.endpoint,
+            data=body,
+            method="POST",
+            headers={
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+                "X-CPAI-Forwarded": "true",
+            },
+        )
+        try:
+            with self._opener(request, timeout=self.timeout_seconds) as response:
+                raw = response.read(self.MAX_RESPONSE_BYTES + 1)
+        except (HTTPError, URLError, OSError, TimeoutError) as exc:
+            raise RuntimeError(f"CodeProject.AI vision unavailable: {type(exc).__name__}") from exc
+        if len(raw) > self.MAX_RESPONSE_BYTES:
+            raise RuntimeError("CodeProject.AI response exceeded the bounded limit")
+        try:
+            payload = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise RuntimeError("CodeProject.AI returned an invalid response") from exc
+        if not isinstance(payload, dict) or payload.get("success") is not True:
+            raise RuntimeError("CodeProject.AI detection did not complete")
+
+        detections_out: list[VisionDetection] = []
+        predictions = payload.get("predictions")
+        for item in predictions[:500] if isinstance(predictions, list) else []:
+            if not isinstance(item, Mapping):
+                continue
+            coordinates = (item.get("x_min"), item.get("y_min"), item.get("x_max"), item.get("y_max"))
+            box = tuple(float(value) for value in coordinates) if all(value is not None for value in coordinates) else None
+            detections_out.append(
+                VisionDetection(
+                    label=str(item.get("label") or "unknown")[:128],
+                    confidence=clamp01(float(item.get("confidence", 0.0))),
+                    source="codeproject_ai_yolo",
+                    box_xyxy=box,
+                )
+            )
+        return detections_out
 
 
 class FieldLexiconClassifier:

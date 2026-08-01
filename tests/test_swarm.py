@@ -5,6 +5,7 @@ from synthia_core.cli import main
 from synthia_core.safety import HIERARCHY
 from synthia_core.swarm import (
     AntiEntropyTrustLedger,
+    CPAIOnboardVisionAdapter,
     DroneNodeApp,
     EvidenceVault,
     OfflineObservationBuffer,
@@ -14,6 +15,57 @@ from synthia_core.swarm import (
     SwarmEndpointApp,
     SwarmReviewPacketBuilder,
 )
+
+
+class _CPAIResponse:
+    def __init__(self, payload: dict[str, object]):
+        self._payload = json.dumps(payload).encode("utf-8")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
+
+    def read(self, _limit: int) -> bytes:
+        return self._payload
+
+
+def test_cpai_adapter_uses_real_transport_not_filename_heuristics(tmp_path: Path):
+    image = tmp_path / "frog_by_filename_only.jpg"
+    image.write_bytes(b"approved-fixture")
+    requests = []
+
+    def opener(request, **_kwargs):
+        requests.append(request)
+        return _CPAIResponse(
+            {
+                "success": True,
+                "predictions": [
+                    {"label": "tree", "confidence": 0.91, "x_min": 1, "y_min": 2, "x_max": 3, "y_max": 4}
+                ],
+            }
+        )
+
+    adapter = CPAIOnboardVisionAdapter(opener=opener)
+    detections = adapter.detect_image(image)
+
+    assert len(requests) == 1
+    assert requests[0].full_url == CPAIOnboardVisionAdapter.DEFAULT_ENDPOINT
+    assert requests[0].headers["X-cpai-forwarded"] == "true"
+    assert [detection.label for detection in detections] == ["tree"]
+    assert detections[0].source == "codeproject_ai_yolo"
+    assert detections[0].box_xyxy == (1.0, 2.0, 3.0, 4.0)
+
+
+def test_cpai_adapter_rejects_missing_file_without_network():
+    adapter = CPAIOnboardVisionAdapter(opener=lambda *_args, **_kwargs: None)
+    try:
+        adapter.detect_image("missing-image.jpg")
+    except ValueError as exc:
+        assert "approved image" in str(exc)
+    else:
+        raise AssertionError("missing image must be rejected")
 
 
 def test_drone_node_builds_candidate_observation(tmp_path: Path):
